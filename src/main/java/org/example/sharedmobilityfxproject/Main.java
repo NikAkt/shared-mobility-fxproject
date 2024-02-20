@@ -1,4 +1,4 @@
-package main.java.org.example;
+package org.example.sharedmobilityfxproject;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
@@ -16,16 +16,16 @@ import javafx.stage.Stage;
 public class Main {
     public static void main(String[] args) {
         // Create a Player object
-        org.example.Player player = new org.example.Player(0, 0);
-        Application.launch(org.example.Mapper.class, args);
+        org.example.sharedmobilityfxproject.Player player = new org.example.sharedmobilityfxproject.Player(0, 0);
+        Application.launch(org.example.sharedmobilityfxproject.Mapper.class, args);
         // Print initial player position
-        System.out.println("Initial player position: (" + player.getCoordX() + ", " + player.getCoordY() + ")");
+        System.out.println("Initial player position: (" + Player.getCoordX() + ", " + Player.getCoordY() + ")");
 
         // Move the player
-        player.moveRight();
-        player.moveDown();
+        Player.moveRight();
+        Player.moveDown();
 
         // Print new player position
-        System.out.println("New player position: (" + player.getCoordX() + ", " + player.getCoordY() + ")");
+        System.out.println("New player position: (" + Player.getCoordX() + ", " + Player.getCoordY() + ")");
     }
 }

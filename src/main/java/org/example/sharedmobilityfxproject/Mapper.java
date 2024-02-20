@@ -1,9 +1,6 @@
-package main.java.org.example;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+package org.example.sharedmobilityfxproject;
+
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -14,10 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -25,26 +18,31 @@ import javafx.stage.Stage;
 public class Mapper extends Application {
     private Image backgroundImage;
     private ImageView backgroundImageView; // Reference to the ImageView
-    Circle object = new Circle(10); // Circle with radius 10
-        object.setFill(Color.RED); // Set the color of the circle
 
-    // Set the position of the circle on the map
-    double xCoordinate = 300; // Example X coordinate
-    double yCoordinate = 200; // Example Y coordinate
-        object.setCenterX(xCoordinate);
-        object.setCenterY(yCoordinate);
-    @Override public void init() {
+    @Override
+    public void init() {
         backgroundImage = new Image("https://www.narniaweb.com/wp-content/uploads/2009/08/NarniaMap-768x579.jpg");
         backgroundImageView = new ImageView(backgroundImage); // Initialize ImageView
     }
 
-    @Override public void start(Stage stage) {
+    @Override
+    public void start(Stage stage) {
         stage.setTitle("Drag the mouse to pan and scroll to zoom the map");
+
+        // Set the position of the circle on the map
+        double xCoordinate = 300; // Example X coordinate
+        double yCoordinate = 200; // Example Y coordinate
+
+        Circle object = new Circle(10); // Circle with radius 10
+        object.setFill(Color.RED); // Set the color of the circle
+        object.setCenterX(xCoordinate);
+        object.setCenterY(yCoordinate);
 
         // construct the scene contents over a stacked background.
         StackPane layout = new StackPane();
         layout.getChildren().setAll(
                 backgroundImageView,
+                object,
                 createKillButton()
         );
 
@@ -106,6 +104,7 @@ public class Mapper extends Application {
         return scroll;
     }
 
-
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

@@ -1,10 +1,10 @@
-package org.example;
+package org.example.sharedmobilityfxproject;
 
 public class Player {
-    public int x; // x position
-    public int y; // y position
+    public static int x; // x position
+    public static int y; // y position
     public int stamina; // stamina
-    public int speed; // speed
+    public static int speed; // speed
     public double co2; // co2 produced
 
 
@@ -16,10 +16,10 @@ public Player(int x, int y) {
         this.co2=0;
     }
 
-    public int getCoordX() {
+    public static int getCoordX() {
         return x;
     }
-    public int getCoordY() {
+    public static int getCoordY() {
         return y;
     }
     public int getStamina() {
@@ -34,13 +34,13 @@ public Player(int x, int y) {
     public void moveUp(){
         y=y-speed;
     }
-    public void moveDown(){
+    public static void moveDown(){
         y=y+speed;
     }
     public void moveLeft(){
         x=x-speed;
     }
-    public void moveRight(){
+    public static void moveRight(){
         x=x+speed;
     }
     public void decreaseStamina(){ //alternatively we could have each item change the stamina
