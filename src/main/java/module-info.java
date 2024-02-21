@@ -13,4 +13,6 @@ module org.example.sharedmobilityfxproject {
 
     opens org.example.sharedmobilityfxproject to javafx.fxml;
     exports org.example.sharedmobilityfxproject;
+    exports org.example.sharedmobilityfxproject.model;
+    opens org.example.sharedmobilityfxproject.model to javafx.fxml;
 }

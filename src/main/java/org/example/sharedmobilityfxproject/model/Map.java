@@ -1,4 +1,4 @@
-package org.example.sharedmobilityfxproject;
+package org.example.sharedmobilityfxproject.model;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-public class Mapper extends Application {
+public class Map extends Application {
     private Image backgroundImage;
     private ImageView backgroundImageView; // Reference to the ImageView
 
