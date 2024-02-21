@@ -1,4 +1,4 @@
-package org.example.sharedmobilityfxproject;
+package org.example.sharedmobilityfxproject.model;
 
 public class Player {
     public static int x; // x position
