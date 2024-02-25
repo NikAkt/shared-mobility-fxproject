@@ -8,7 +8,7 @@ public class Bicycle extends TransportationMode {
 
     @Override
     public double calculateCarbonFootprint(double distance) {
-        // 자전거는 탄소 배출량이 0
+        // Bicycle's carbon_footPrint is 0
         return 0;
     }
 }
