@@ -1,5 +1,5 @@
 package org.example.sharedmobilityfxproject.model.tranportMode;
-import org.example.sharedmobilityfxproject.model.TransportationMode;
+
 public class Car extends TransportationMode {
     public Car(double speed) {
         super("petrolCar", speed);
