@@ -1,15 +1,9 @@
 package org.example.sharedmobilityfxproject;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.PickResult;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -18,8 +12,8 @@ public class Main extends Application {
 
     boolean showHoverCursor = true;
 
-    int rows = 15;
-    int columns = 20;
+    int rows = 30;
+    int columns = 60;
     double width = 800;
     double height = 600;
 
@@ -34,30 +28,27 @@ public class Main extends Application {
             // create grid
             Grid grid = new Grid( columns, rows, width, height);
 
-            MouseGestures mg = new MouseGestures();
-
+            KeyboardActions ka = new KeyboardActions(grid);
+            Scene scene = new Scene(root, width, height);
             // fill grid
             for (int row = 0; row < rows; row++) {
                 for (int column = 0; column < columns; column++) {
+
                     Cell cell = new Cell(column, row);
 
-                    // Check if the column is even
-                    if (column % 2 == 0) {
-                        cell.setDisable(true); // Disable the cell
-                    } else {
-                        // Add mouse event handling for cells in odd columns
-                        mg.makePaintable(cell);
-                    }
+                    ka.setupKeyboardActions(scene);
 
                     grid.add(cell, column, row);
                 }
             }
 
+            // Initialize currentCell after the grid has been filled
+            ka.currentCell = grid.getCell(0, 0);
 
             root.getChildren().addAll(imageView, grid);
 
             // create scene and stage
-            Scene scene = new Scene(root, width, height);
+
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -179,91 +170,45 @@ public class Main extends Application {
         }
     }
 
-    public class MouseGestures {
+    public class KeyboardActions {
 
-        public void makePaintable( Node node) {
+        private Grid grid;
+        public Cell currentCell; // Made public for access in start method
+        private int currentRow = 0;
+        private int currentColumn = 0;
 
-
-            // that's all there is needed for hovering, the other code is just for painting
-            if( showHoverCursor) {
-                node.hoverProperty().addListener(new ChangeListener<Boolean>(){
-
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-
-                        System.out.println( observable + ": " + newValue);
-
-                        if( newValue) {
-                            ((Cell) node).hoverHighlight();
-                        } else {
-                            ((Cell) node).hoverUnhighlight();
-                        }
-
-                        for( String s: node.getStyleClass())
-                            System.out.println( node + ": " + s);
-                    }
-
-                });
-            }
-
-            node.setOnMousePressed( onMousePressedEventHandler);
-            node.setOnDragDetected( onDragDetectedEventHandler);
-            node.setOnMouseDragEntered(onMouseDragEnteredEventHandler);
-
+        public KeyboardActions(Grid grid) {
+            this.grid = grid;
+            // Don't initialize currentCell here
         }
 
-        EventHandler<MouseEvent> onMousePressedEventHandler = event -> {
-
-            Cell cell = (Cell) event.getSource();
-
-            if( event.isPrimaryButtonDown()) {
-                cell.highlight();
-            } else if( event.isSecondaryButtonDown()) {
-                cell.unhighlight();
-            }
-        };
-
-        EventHandler<MouseEvent> onMouseDraggedEventHandler = event -> {
-
-            PickResult pickResult = event.getPickResult();
-            Node node = pickResult.getIntersectedNode();
-
-            if( node instanceof Cell) {
-
-                Cell cell = (Cell) node;
-
-                if( event.isPrimaryButtonDown()) {
-                    cell.highlight();
-                } else if( event.isSecondaryButtonDown()) {
-                    cell.unhighlight();
+        public void setupKeyboardActions(Scene scene) {
+            scene.setOnKeyPressed(event -> {
+                switch (event.getCode()) {
+                    case RIGHT -> moveSelection(1, 0);
+                    case LEFT -> moveSelection(-1, 0);
+                    case UP -> moveSelection(0, -1);
+                    case DOWN -> moveSelection(0, 1);
+                    case H -> currentCell.highlight();
+                    case U -> currentCell.unhighlight();
+                    // Add more cases as needed
                 }
+            });
+        }
 
-            }
+        private void moveSelection(int dx, int dy) {
+            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
+            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
 
-        };
+            // Optionally unhighlight the old cell
+            currentCell.unhighlight();
 
-        EventHandler<MouseEvent> onMouseReleasedEventHandler = event -> {
-        };
+            currentCell = grid.getCell(newColumn, newRow);
+            currentRow = newRow;
+            currentColumn = newColumn;
 
-        EventHandler<MouseEvent> onDragDetectedEventHandler = event -> {
-
-            Cell cell = (Cell) event.getSource();
-            cell.startFullDrag();
-
-        };
-
-        EventHandler<MouseEvent> onMouseDragEnteredEventHandler = event -> {
-
-            Cell cell = (Cell) event.getSource();
-
-            if( event.isPrimaryButtonDown()) {
-                cell.highlight();
-            } else if( event.isSecondaryButtonDown()) {
-                cell.unhighlight();
-            }
-
-        };
-
+            // Optionally highlight the new cell
+            currentCell.highlight();
+        }
     }
-
 }
