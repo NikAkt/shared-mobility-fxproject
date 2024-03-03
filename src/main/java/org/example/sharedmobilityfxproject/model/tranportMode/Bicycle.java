@@ -18,11 +18,16 @@ public class Bicycle extends Player {
     }
 
     // Getter and Setter for speed
-    public double getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
     }
+    public void increase_Speed() {
+        int currentSpeed = getSpeed(); // bring currentSpeed
+        setSpeed(currentSpeed + 20); // 현재 속도에 20을 더해 새 속도를 설정
+    }
+
 }
