@@ -39,14 +39,20 @@ public class Main extends Application {
             // fill grid
             for (int row = 0; row < rows; row++) {
                 for (int column = 0; column < columns; column++) {
-
                     Cell cell = new Cell(column, row);
 
-                    mg.makePaintable(cell);
+                    // Check if the column is even
+                    if (column % 2 == 0) {
+                        cell.setDisable(true); // Disable the cell
+                    } else {
+                        // Add mouse event handling for cells in odd columns
+                        mg.makePaintable(cell);
+                    }
 
                     grid.add(cell, column, row);
                 }
             }
+
 
             root.getChildren().addAll(imageView, grid);
 
