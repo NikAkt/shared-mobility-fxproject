@@ -23,7 +23,7 @@ public class Bus extends Player {
     }
 
     // Getter and Setter for speed
-    public double getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
