@@ -1,6 +1,7 @@
 .cell {
     -fx-border-color: dodgerblue;
     -fx-border-width: 0px;
+    -fx-border-radius:100%;
 }
 .cell-highlight {
     -fx-background-color:blue;
