@@ -185,10 +185,10 @@ public class Main extends Application {
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
                 switch (event.getCode()) {
-                    case RIGHT -> moveSelection(1, 0);
-                    case LEFT -> moveSelection(-1, 0);
-                    case UP -> moveSelection(0, -1);
-                    case DOWN -> moveSelection(0, 1);
+                    case D -> moveSelection(1, 0);
+                    case A -> moveSelection(-1, 0);
+                    case W -> moveSelection(0, -1);
+                    case S -> moveSelection(0, 1);
                     case H -> currentCell.highlight();
                     case U -> currentCell.unhighlight();
                     // Add more cases as needed
