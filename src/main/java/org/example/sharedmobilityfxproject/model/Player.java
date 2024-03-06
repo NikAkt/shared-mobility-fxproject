@@ -8,7 +8,7 @@ public class Player {
     public double co2; // co2 produced
 
 
-public Player(int x, int y) {
+public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         this.x = x;
         this.y = y;
         this.stamina=100;
@@ -25,11 +25,20 @@ public Player(int x, int y) {
     public int getStamina() {
         return stamina;
     }
+    public void setSpeed(int speed) {
+    this.speed=speed;
+    }
     public int getSpeed() {
         return speed;
     }
     public double getCo2() {
         return co2;
+    }
+    public void setCo2(double co2) {
+        this.co2=co2;
+    }
+    public void setStamina(int stamina) {
+        this.stamina=stamina;
     }
     public void moveUp(){
         y=y-speed;
