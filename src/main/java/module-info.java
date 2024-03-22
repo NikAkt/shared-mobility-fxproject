@@ -2,6 +2,11 @@ module org.example.sharedmobilityfxproject {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
+    //Background
+    requires javafx.graphics;
+
+    //BGM
+    requires javafx.media;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
@@ -17,4 +22,8 @@ module org.example.sharedmobilityfxproject {
     opens org.example.sharedmobilityfxproject.model to javafx.fxml;
     exports org.example.sharedmobilityfxproject.model.tranportMode;
     opens org.example.sharedmobilityfxproject.model.tranportMode to javafx.fxml;
+    exports org.example.sharedmobilityfxproject.controller;
+    opens org.example.sharedmobilityfxproject.controller to javafx.fxml;
+
+
 }

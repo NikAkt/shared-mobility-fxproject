@@ -1,19 +1,20 @@
 package org.example.sharedmobilityfxproject.controller;
-import javafx.scene.layout.Pane;
-import org.example.sharedmobilityfxproject.model.Map;
+import org.example.sharedmobilityfxproject.model.Player;
+import org.example.sharedmobilityfxproject.model.StageCity;
 
 public class GameController {
-    private Map gameMap;
+    private StageCity currentStage;
+    private Player currentPlayer;
 
-    public GameController() {
-        // Initialize the game map with default dimensions
-        this.gameMap = new Map();
+    // Game initialization and stage control logic here.
+
+    public void startNewGame() {
+        // Initialize game elements and start the first stage.
     }
 
-    public void startGame(Pane gamePane) {
-        // Start game logic here
-        gameMap.render(gamePane);
-        System.out.println("Game Started");
+    public void switchToNextStage() {
+        // Logic to move to the next stage.
     }
 }
+
 
