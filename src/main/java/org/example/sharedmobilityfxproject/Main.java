@@ -24,12 +24,20 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
             StackPane root = new StackPane();
+            Scene scene = new Scene(root);
+
+            // Settings
+            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+            primaryStage.getIcons().add(icon);
+            primaryStage.setTitle("Shared Mobility Application");
+            primaryStage.setWidth(width);
+            primaryStage.setHeight(height);
+            primaryStage.setResizable(false);
 
             // create grid
             Grid grid = new Grid( columns, rows, width, height);
 
             KeyboardActions ka = new KeyboardActions(grid);
-            Scene scene = new Scene(root, width, height);
             // fill grid
             for (int row = 0; row < rows; row++) {
                 for (int column = 0; column < columns; column++) {
@@ -185,10 +193,10 @@ public class Main extends Application {
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
                 switch (event.getCode()) {
-                    case D -> moveSelection(1, 0);
-                    case A -> moveSelection(-1, 0);
-                    case W -> moveSelection(0, -1);
-                    case S -> moveSelection(0, 1);
+                    case RIGHT -> moveSelection(1, 0);
+                    case LEFT -> moveSelection(-1, 0);
+                    case UP -> moveSelection(0, -1);
+                    case DOWN -> moveSelection(0, 1);
                     case H -> currentCell.highlight();
                     case U -> currentCell.unhighlight();
                     // Add more cases as needed
