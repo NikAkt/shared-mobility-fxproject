@@ -15,7 +15,7 @@ public class Walk extends TransportMode {
         return 0;
     }
     public void walk(Player player, double distance) {
-        player.decreaseStamina(20); // Decrease the player's stamina by 20 when walking
+        player.decreaseStamina(5); // Decrease the player's stamina by 20 when walking
         // Additional logic for walking the distance can be added here
     }
 }
