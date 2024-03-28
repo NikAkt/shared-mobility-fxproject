@@ -1,6 +1,8 @@
 package org.example.sharedmobilityfxproject;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -22,11 +24,15 @@ public class Main extends Application {
     private MediaPlayer mediaPlayer;
     //Static Box size setting
     private static final double BUTTON_WIDTH = 200;
-
+    private Stage primaryStage;
+    private VBox buttonBox;
+    private VBox gameModeBox;
+    private StackPane root;
     @Override
     public void start(Stage primaryStage) {
         try {
             // Load the image
+            this.primaryStage = primaryStage;
             InputStream is = getClass().getResourceAsStream("/images/waybackHome.png");
             if (is == null) {
                 System.err.println("Cannot find image file");
@@ -48,47 +54,22 @@ public class Main extends Application {
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Play the BGM in a loop
             mediaPlayer.play(); // Start playing the BGM
 
-            // Selection Btn Setting
-            // Create buttons with a specific style
-            Button btnStartGame = new Button("GAME START");
-            btnStartGame.setMinWidth(BUTTON_WIDTH);
-            btnStartGame.setMaxWidth(BUTTON_WIDTH);
-            btnStartGame.setStyle(normalButtonStyle());
-            //hover colour change
-            btnStartGame.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                if (isNowFocused) {
-                    btnStartGame.setStyle(focusedButtonStyle());
-                } else {
-                    btnStartGame.setStyle(normalButtonStyle());
-                }
-            });
+            // Create and configure the "Game Start" button
+            btnStartGame = createButton("Game Start", this::showPlayerModeSelection);
 
-            btnStartGame.setOnAction(event -> startGame());
-            btnStartGame.setFocusTraversable(true);
+            // Create and configure the "Exit" button
+            btnExit = createButton("Exit", event -> primaryStage.close());
 
-            Button btnExit = new Button("EXIT");
-            btnExit.setMinWidth(BUTTON_WIDTH);
-            btnExit.setMaxWidth(BUTTON_WIDTH);
-            btnExit.setStyle(normalButtonStyle());
-            //hover colour change
-            btnExit.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                if (isNowFocused) {
-                    btnExit.setStyle(focusedButtonStyle());
-                } else {
-                    btnExit.setStyle(normalButtonStyle());
-                }
-            });
-            btnExit.setOnAction(event -> primaryStage.close()); // Close the application
-            btnExit.setFocusTraversable(true);
+
 
             // Create a VBox for buttons
-            VBox buttonBox = new VBox(20, btnStartGame, btnExit);
+            buttonBox = new VBox(20, this.btnStartGame, this.btnExit);
             buttonBox.setAlignment(Pos.CENTER); // Align buttons to center
 
             // Center the VBox in the StackPane
             StackPane.setAlignment(buttonBox, Pos.CENTER);
 
-            StackPane root = new StackPane(backgroundImageView,buttonBox);
+            this.root = new StackPane(backgroundImageView,buttonBox);
 
             // Set up the scene with the StackPane and show the stage
             Scene scene = new Scene(root, 1082, 1117); // Use the same size as the image for a full background
@@ -102,20 +83,20 @@ public class Main extends Application {
             scene.setOnKeyPressed(event -> {
                 switch (event.getCode()) {
                     case DOWN:
-                        if (btnStartGame.isFocused()) {
-                            btnExit.requestFocus();
+                        if (this.btnStartGame.isFocused()) {
+                            this.btnExit.requestFocus();
                         }
                         break;
                     case UP:
-                        if (btnExit.isFocused()) {
-                            btnStartGame.requestFocus();
+                        if (this.btnExit.isFocused()) {
+                            this.btnStartGame.requestFocus();
                         }
                         break;
                     case ENTER:
-                        if (btnStartGame.isFocused()) {
-                            btnStartGame.fire();
+                        if (this.btnStartGame.isFocused()) {
+                            this.btnStartGame.fire();
                         } else if (btnExit.isFocused()) {
-                            btnExit.fire();
+                            this.btnExit.fire();
                         }
                         break;
                     default:
@@ -124,19 +105,54 @@ public class Main extends Application {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
+           e.printStackTrace();
         }
+    }
+
+    private void showPlayerModeSelection(ActionEvent actionEvent) {
+        buttonBox.setVisible(false);
+
+        Button btnOnePlayer = createButton("1-Player Game", event -> startGame(1));
+        btnOnePlayer.setMinWidth(BUTTON_WIDTH);
+        btnOnePlayer.setMaxWidth(BUTTON_WIDTH);
+        btnOnePlayer.setStyle("-fx-font-size: 24px;");
+        btnOnePlayer.setOnAction(event -> startGame(1));
+
+        Button btnTwoPlayer = createButton("2-Player Game", event -> startGame(2));
+        btnTwoPlayer.setMinWidth(BUTTON_WIDTH);
+        btnTwoPlayer.setMaxWidth(BUTTON_WIDTH);
+        btnTwoPlayer.setStyle("-fx-font-size: 24px;");
+        btnTwoPlayer.setOnAction(event -> startGame(2));
+
+        Button backToMenu = createButton("Back", event -> startGame(2));
+        backToMenu.setMinWidth(BUTTON_WIDTH);
+        backToMenu.setMaxWidth(BUTTON_WIDTH);
+        backToMenu.setStyle("-fx-font-size: 24px;");
+
+        // Create the game mode selection box if not already created
+        if (gameModeBox == null) {
+            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
+            gameModeBox.setAlignment(Pos.CENTER);
+        }
+        // Add the game mode box to the root stack pane, making it visible
+        if (!root.getChildren().contains(gameModeBox)) {
+            root.getChildren().add(gameModeBox);
+        }
+
+        // Make the game mode selection box visible
+        gameModeBox.setVisible(true);
+
     }
 
     private void setupKeyControls(Scene scene) {
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DOWN) {
-                if (btnStartGame.isFocused()) {
-                    btnExit.requestFocus();
+                if (this.btnStartGame.isFocused()) {
+                    this.btnExit.requestFocus();
                 }
             } else if (event.getCode() == KeyCode.UP) {
-                if (btnExit.isFocused()) {
-                    btnStartGame.requestFocus();
+                if (this.btnExit.isFocused()) {
+                    this.btnStartGame.requestFocus();
                 }
             }
         });
@@ -150,9 +166,13 @@ public class Main extends Application {
         return "-fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white;";
     }
 
-    private void startGame() {
+    private void startGame(int playerMode) {
         // Logic to start the game
-        System.out.println("Game is starting!");
+        System.out.println("Starting " + playerMode + "-player mode");
+        // Remove player selection screen and load the main game screen
+        // Hide the game mode selection box and show the initial button box again
+        gameModeBox.setVisible(false);
+        buttonBox.setVisible(true);
     }
 
     @Override
@@ -161,7 +181,39 @@ public class Main extends Application {
             mediaPlayer.stop(); // Stop the music when the application is closed
         }
     }
+    private Button createButton(String text, EventHandler<ActionEvent> action) {
+        Button button = new Button(text);
+        button.setMinWidth(BUTTON_WIDTH);
+        button.setMaxWidth(BUTTON_WIDTH);
+        button.setStyle(normalButtonStyle());
+        button.setOnAction(action);
+        button.setFocusTraversable(true);
 
+
+
+        //hover colour change
+        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                button.setStyle(focusedButtonStyle());
+            } else {
+                button.setStyle(normalButtonStyle());
+            }
+        });
+
+        return button;
+    }
+    private void setBackground(Stage stage, String imagePath) {
+        InputStream is = getClass().getResourceAsStream(imagePath);
+        if (is == null) {
+            throw new IllegalStateException("Cannot find image file");
+        }
+        Image backgroundImage = new Image(is);
+        ImageView backgroundImageView = new ImageView(backgroundImage);
+        backgroundImageView.setPreserveRatio(false);
+        backgroundImageView.fitWidthProperty().bind(stage.widthProperty());
+        backgroundImageView.fitHeightProperty().bind(stage.heightProperty());
+        root.getChildren().add(backgroundImageView);
+    }
     public static void main(String[] args) {
         launch(args);
     }

@@ -9,6 +9,9 @@ public class Bus extends TransportMode {
     public Bus() {
         super("Bus", 50, 30); // Assuming 50 as carbon footprint and 30 as speed.
     }
-
-    // Bus-specific methods can be added here.
+    @Override
+    public double calculateCarbonFootprint(double distance) {
+        // Implement the calculation specific to Bicycle
+        return getCarbonFootprint()  * distance;
+    }
 }

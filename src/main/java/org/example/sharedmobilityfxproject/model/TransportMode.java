@@ -1,19 +1,19 @@
 package org.example.sharedmobilityfxproject.model;
 // Model/TransportMode.java
-public class TransportMode {
-    private String name;
+public abstract class TransportMode {
+    private String modeName;
     private double carbonFootprint;
-    private int speed; // Speed can be an abstract concept depending on the game design.
+    private int speed; // Speed cBan be an abstract concept depending on the game design.
 
-    public TransportMode(String name, double carbonFootprint, int speed) {
-        this.name = name;
+    public TransportMode(String modeName, double carbonFootprint, int speed) {
+        this.modeName = modeName;
         this.carbonFootprint = carbonFootprint;
         this.speed = speed;
     }
 
     // Getters
-    public String getName() {
-        return name;
+    public String getModeName() {
+        return modeName;
     }
 
     public double getCarbonFootprint() {
@@ -24,5 +24,9 @@ public class TransportMode {
         return speed;
     }
 
-    // You might want to add setter methods or other functionality here.
+    //This is the abstract method, and Each child of TransportMode has to implement this method
+    public abstract double calculateCarbonFootprint(double distance);
+
+    // Getters and Setters for modeName, carbonFootprintFactor, and speed
+
 }

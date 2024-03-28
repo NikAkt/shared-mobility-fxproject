@@ -6,8 +6,12 @@ import org.example.sharedmobilityfxproject.model.TransportMode;
 
 public class Bicycle extends TransportMode {
     public Bicycle() {
-        super("Bicycle", 0, 15); // Assuming 0 carbon footprint and 15 as speed.
+        super("Bicycle", 0.1, 15); // These values are examples, adjust them as necessary
     }
 
-    // Bicycle-specific methods can be added here.
+    @Override
+    public double calculateCarbonFootprint(double distance) {
+        // Implement the calculation specific to Bicycle
+        return getCarbonFootprint()  * distance;
+    }
 }

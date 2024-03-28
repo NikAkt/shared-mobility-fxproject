@@ -9,5 +9,13 @@ public class Walk extends TransportMode {
         super("Walk", 0, 5); // Walking has no carbon footprint and is slower.
     }
 
-    // Walk-specific methods.
+    @Override
+    public double calculateCarbonFootprint(double distance) {
+        // Implement the calculation specific to Bicycle
+        return 0;
+    }
+    public void walk(Player player, double distance) {
+        player.decreaseStamina(20); // Decrease the player's stamina by 20 when walking
+        // Additional logic for walking the distance can be added here
+    }
 }

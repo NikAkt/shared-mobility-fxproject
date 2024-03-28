@@ -8,7 +8,10 @@ public class Taxi extends TransportMode {
     public Taxi() {
         super("Taxi", 100, 60); // Example values.
     }
-
-    // Taxi-specific methods.
+    @Override
+    public double calculateCarbonFootprint(double distance) {
+        // Implement the calculation specific to Bicycle
+        return getCarbonFootprint()  * distance;
+    }
 }
 
