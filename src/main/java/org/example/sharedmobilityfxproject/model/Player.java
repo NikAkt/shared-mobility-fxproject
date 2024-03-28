@@ -10,7 +10,6 @@ public class Player {
     // Assuming the default transportation mode is Walk and each walk action reduces 20 stamina
     private static final int STAMINA_DECREASE_ON_WALK = 20;
 
-
     // Constructor, getters, and setters.
     public Player(){
         this.stamina = 100; // Default stamina value
