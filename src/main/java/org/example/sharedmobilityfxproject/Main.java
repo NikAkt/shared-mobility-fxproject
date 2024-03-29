@@ -21,13 +21,14 @@ public class Main extends Application {
 
     //Player
     private Point player;
-    private Image obstacle;
+    private Point obstacle;
     private int obstacleX;
     private int obstacleY;
     private boolean gameOver;
     private int facingDirection;
 
-    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
+//    removed from scene
+//    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
 
 
     @Override
@@ -65,10 +66,9 @@ public class Main extends Application {
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
-            root.getChildren().addAll(imageView, grid);
+            root.getChildren().addAll(grid);
 
-            // create scene and stage
-
+            // create scene and set to stage
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -84,6 +84,10 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * Grid class represents a two-dimensional grid of cells.
+     * It is responsible for managing the cells and their layout within the grid.
+     */
     private class Grid extends Pane {
 
         int rows;
@@ -142,6 +146,10 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Cell class represents a single cell within a grid.
+     * It manages the visual representation and state of the cell, such as highlighting.
+     */
     private class Cell extends StackPane {
 
         int column;
@@ -190,6 +198,14 @@ public class Main extends Application {
         }
     }
 
+    private void generateObstacle(){
+
+    }
+
+    /**
+     * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
+     * It manages the current cell selection and applies keyboard actions to it.
+     */
     public class KeyboardActions {
 
         private Grid grid;
