@@ -8,14 +8,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.awt.Point;
+
 public class Main extends Application {
 
     boolean showHoverCursor = true;
 
-    int rows = 30;
-    int columns = 60;
-    double width = 800;
-    double height = 600;
+    private static final int ROWS = 30;
+    private static final int COLUMNS = 60;
+    private static final double WIDTH = 800;
+    private static final double HEIGHT = 600;
+
+    //Player
+    private Point player;
+    private Image obstacle;
+    private int obstacleX;
+    private int obstacleY;
+    private boolean gameOver;
+    private int facingDirection;
 
     ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
 
@@ -30,17 +40,19 @@ public class Main extends Application {
             Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
             primaryStage.getIcons().add(icon);
             primaryStage.setTitle("Shared Mobility Application");
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
+            primaryStage.setWidth(WIDTH);
+            primaryStage.setHeight(HEIGHT);
             primaryStage.setResizable(false);
+//            primaryStage.setFullScreen(true);
+//            primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
             // create grid
-            Grid grid = new Grid( columns, rows, width, height);
+            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
             KeyboardActions ka = new KeyboardActions(grid);
             // fill grid
-            for (int row = 0; row < rows; row++) {
-                for (int column = 0; column < columns; column++) {
+            for (int row = 0; row < ROWS; row++) {
+                for (int column = 0; column < COLUMNS; column++) {
 
                     Cell cell = new Cell(column, row);
 
