@@ -238,7 +238,7 @@ public class Main extends Application {
          */
         private void createObstacle() {
             Cell obstacleCell = grid.getCell(column, row);
-            obstacleCell.setStyle("-fx-background-color: red;"); // Assuming Cell extends a JavaFX Pane
+            obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
         }
 
         // Methods to get the column and row of the obstacle
