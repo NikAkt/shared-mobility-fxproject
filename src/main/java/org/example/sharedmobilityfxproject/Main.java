@@ -1,4 +1,7 @@
 package org.example.sharedmobilityfxproject;
+import org.example.sharedmobilityfxproject.model.Grid;
+import org.example.sharedmobilityfxproject.model.Cell;
+import org.example.sharedmobilityfxproject.model.Obstacle;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -99,157 +102,157 @@ public class Main extends Application {
      * Grid class represents a two-dimensional grid of cells.
      * It is responsible for managing the cells and their layout within the grid.
      */
-    private class Grid extends Pane {
-
-        int rows;
-        int columns;
-
-        double width;
-        double height;
-
-        Cell[][] cells;
-
-        public Grid( int columns, int rows, double width, double height) {
-
-            this.columns = columns;
-            this.rows = rows;
-            this.width = width;
-            this.height = height;
-
-            cells = new Cell[rows][columns];
-
-        }
-
-        /**
-         * Add cell to array and to the UI.
-         */
-        public void add(Cell cell, int column, int row) {
-
-            cells[row][column] = cell;
-
-            double w = width / columns;
-            double h = height / rows;
-            double x = w * column;
-            double y = h * row;
-
-            cell.setLayoutX(x);
-            cell.setLayoutY(y);
-            cell.setPrefWidth(w);
-            cell.setPrefHeight(h);
-
-            getChildren().add(cell);
-
-        }
-
-        public Cell getCell(int column, int row) {
-            return cells[row][column];
-        }
-
-        /**
-         * Unhighlight all cells
-         */
-        public void unhighlight() {
-            for( int row=0; row < rows; row++) {
-                for( int col=0; col < columns; col++) {
-                    cells[row][col].unhighlight();
-                }
-            }
-        }
-    }
-
-    /**
-     * Cell class represents a single cell within a grid.
-     * It manages the visual representation and state of the cell, such as highlighting.
-     */
-    private class Cell extends StackPane {
-
-        int column;
-        int row;
-
-        public Cell(int column, int row) {
-
-            this.column = column;
-            this.row = row;
-
-            getStyleClass().add("cell");
-
-//          Label label = new Label(this.toString());
+//    private class Grid extends Pane {
 //
-//          getChildren().add(label);
+//        int rows;
+//        int columns;
+//
+//        double width;
+//        double height;
+//
+//        Cell[][] cells;
+//
+//        public Grid( int columns, int rows, double width, double height) {
+//
+//            this.columns = columns;
+//            this.rows = rows;
+//            this.width = width;
+//            this.height = height;
+//
+//            cells = new Cell[rows][columns];
+//
+//        }
+//
+//        /**
+//         * Add cell to array and to the UI.
+//         */
+//        public void add(Cell cell, int column, int row) {
+//
+//            cells[row][column] = cell;
+//
+//            double w = width / columns;
+//            double h = height / rows;
+//            double x = w * column;
+//            double y = h * row;
+//
+//            cell.setLayoutX(x);
+//            cell.setLayoutY(y);
+//            cell.setPrefWidth(w);
+//            cell.setPrefHeight(h);
+//
+//            getChildren().add(cell);
+//
+//        }
+//
+//        public Cell getCell(int column, int row) {
+//            return cells[row][column];
+//        }
+//
+//        /**
+//         * Unhighlight all cells
+//         */
+//        public void unhighlight() {
+//            for( int row=0; row < rows; row++) {
+//                for( int col=0; col < columns; col++) {
+//                    cells[row][col].unhighlight();
+//                }
+//            }
+//        }
+//    }
 
-            setOpacity(0.9);
-        }
+//    /**
+//     * Cell class represents a single cell within a grid.
+//     * It manages the visual representation and state of the cell, such as highlighting.
+//     */
+//    private class Cell extends StackPane {
+//
+//        int column;
+//        int row;
+//
+//        public Cell(int column, int row) {
+//
+//            this.column = column;
+//            this.row = row;
+//
+//            getStyleClass().add("cell");
+//
+////          Label label = new Label(this.toString());
+////
+////          getChildren().add(label);
+//
+//            setOpacity(0.9);
+//        }
+//
+//        public void highlight() {
+//            // ensure the style is only once in the style list
+//            getStyleClass().remove("cell-highlight");
+//
+//            // add style
+//            getStyleClass().add("cell-highlight");
+//        }
+//
+//        public void unhighlight() {
+//            getStyleClass().remove("cell-highlight");
+//        }
+//
+//        public void hoverHighlight() {
+//            // ensure the style is only once in the style list
+//            getStyleClass().remove("cell-hover-highlight");
+//
+//            // add style
+//            getStyleClass().add("cell-hover-highlight");
+//        }
+//
+//        public void hoverUnhighlight() {
+//            getStyleClass().remove("cell-hover-highlight");
+//        }
+//
+//        public String toString() {
+//            return this.column + "/" + this.row;
+//        }
+//    }
 
-        public void highlight() {
-            // ensure the style is only once in the style list
-            getStyleClass().remove("cell-highlight");
-
-            // add style
-            getStyleClass().add("cell-highlight");
-        }
-
-        public void unhighlight() {
-            getStyleClass().remove("cell-highlight");
-        }
-
-        public void hoverHighlight() {
-            // ensure the style is only once in the style list
-            getStyleClass().remove("cell-hover-highlight");
-
-            // add style
-            getStyleClass().add("cell-hover-highlight");
-        }
-
-        public void hoverUnhighlight() {
-            getStyleClass().remove("cell-hover-highlight");
-        }
-
-        public String toString() {
-            return this.column + "/" + this.row;
-        }
-    }
-
-    /**
-     * Obstacle class represents an obstacle on the grid.
-     * It is responsible for managing the state of the cells that form the obstacle.
-     */
-    public class Obstacle {
-
-        private Grid grid;
-        private int column;
-        private int row;
-
-        /**
-         * Constructs an obstacle located at the specified column and row.
-         *
-         * @param grid   The grid on which the obstacle is placed.
-         * @param column The column index of the obstacle's location on the grid.
-         * @param row    The row index of the obstacle's location on the grid.
-         */
-        public Obstacle(Grid grid, int column, int row) {
-            this.grid = grid;
-            this.column = column;
-            this.row = row;
-            createObstacle();
-        }
-
-        /**
-         * Marks the cell at the obstacle's location as an obstacle by changing its color to red.
-         */
-        private void createObstacle() {
-            Cell obstacleCell = grid.getCell(column, row);
-            obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
-        }
-
-        // Methods to get the column and row of the obstacle
-        public int getColumn() {
-            return column;
-        }
-
-        public int getRow() {
-            return row;
-        }
-    }
+//    /**
+//     * Obstacle class represents an obstacle on the grid.
+//     * It is responsible for managing the state of the cells that form the obstacle.
+//     */
+//    public class Obstacle {
+//
+//        private Grid grid;
+//        private int column;
+//        private int row;
+//
+//        /**
+//         * Constructs an obstacle located at the specified column and row.
+//         *
+//         * @param grid   The grid on which the obstacle is placed.
+//         * @param column The column index of the obstacle's location on the grid.
+//         * @param row    The row index of the obstacle's location on the grid.
+//         */
+//        public Obstacle(Grid grid, int column, int row) {
+//            this.grid = grid;
+//            this.column = column;
+//            this.row = row;
+//            createObstacle();
+//        }
+//
+//        /**
+//         * Marks the cell at the obstacle's location as an obstacle by changing its color to red.
+//         */
+//        private void createObstacle() {
+//            Cell obstacleCell = grid.getCell(column, row);
+//            obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
+//        }
+//
+//        // Methods to get the column and row of the obstacle
+//        public int getColumn() {
+//            return column;
+//        }
+//
+//        public int getRow() {
+//            return row;
+//        }
+//    }
 
 
     /**
@@ -299,8 +302,8 @@ public class Main extends Application {
          * @param dy The number of rows to move. A positive number moves down, a negative number moves up.
          */
         private void moveSelection(int dx, int dy) {
-            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
-            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
+            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
 
             // Check if the next cell is an obstacle
             if (!isNextCellObstacle(newColumn, newRow)) {
