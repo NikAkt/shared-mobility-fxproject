@@ -259,6 +259,15 @@ public class Main extends Application {
             // Implement game over logic here.
             System.out.println("Game Over!");
         }
+
+        // Methods to get the column and row of the obstacle
+        public int getColumn() {
+            return column;
+        }
+
+        public int getRow() {
+            return row;
+        }
     }
 
 
@@ -292,24 +301,43 @@ public class Main extends Application {
             });
         }
 
+        /**
+         * Checks whether the specified cell position coincides with any of the obstacles in the grid.
+         *
+         * @return true if there is an obstacle at the specified location, otherwise false.
+         */
+        private boolean isNextCellObstacle(int column, int row) {
+            return obstacles.stream().anyMatch(obstacle -> obstacle.getColumn() == column && obstacle.getRow() == row);
+        }
+
+        /**
+         * Attempts to move the current selection by a specified number of columns and rows.
+         * The movement is performed if the destination cell is not an obstacle.
+         *
+         * @param dx The number of columns to move. A positive number moves right, a negative number moves left.
+         * @param dy The number of rows to move. A positive number moves down, a negative number moves up.
+         */
         private void moveSelection(int dx, int dy) {
             int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
             int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
 
-            // Optionally unhighlight the old cell
-            currentCell.unhighlight();
+            // Check if the next cell is an obstacle
+            if (!isNextCellObstacle(newColumn, newRow)) {
+                // Move the player to the new cell because there is no obstacle
+                Cell nextCell = grid.getCell(newColumn, newRow);
 
-            currentCell = grid.getCell(newColumn, newRow);
-            currentRow = newRow;
-            currentColumn = newColumn;
+                // Optionally unhighlight the old cell
+                currentCell.unhighlight();
 
-            // Optionally highlight the new cell
-            currentCell.highlight();
+                currentCell = nextCell;
+                currentRow = newRow;
+                currentColumn = newColumn;
 
-            // check the collision
-//            firstObstacle.checkCollision(currentCell);
-
-
+                // Optionally highlight the new cell
+                currentCell.highlight();
+            }
+            // If there is an obstacle, don't move and possibly add some feedback
         }
+
     }
 }
