@@ -5,6 +5,7 @@ public class Player {
     private int score;
     private int currentPosition;
     private int gemsCollected;
+
     private int stamina;
 
     // Assuming the default transportation mode is Walk and each walk action reduces 20 stamina
