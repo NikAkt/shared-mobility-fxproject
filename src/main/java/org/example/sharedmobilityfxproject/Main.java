@@ -9,6 +9,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application {
 
@@ -23,7 +25,8 @@ public class Main extends Application {
 //    private Point player;
 
     // Obstacles (will be implemented)
-    private Obstacle firstObstacle;
+    // List to keep track of all obstacles
+    private List<Obstacle> obstacles;
 //    private int obstacleX;
 //    private int obstacleY;
 //    private boolean gameOver;
@@ -66,7 +69,10 @@ public class Main extends Application {
             }
 
             // Initialize Obstacles
-            firstObstacle = new Obstacle(grid,5,5);
+            obstacles = new ArrayList<>();
+            obstacles.add(new Obstacle(grid, 5, 5));
+            obstacles.add(new Obstacle(grid, 10, 5));
+            obstacles.add(new Obstacle(grid, 5, 10));
 
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
@@ -301,7 +307,7 @@ public class Main extends Application {
             currentCell.highlight();
 
             // check the collision
-            firstObstacle.checkCollision(currentCell);
+//            firstObstacle.checkCollision(currentCell);
 
 
         }
