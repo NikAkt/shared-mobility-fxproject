@@ -241,25 +241,6 @@ public class Main extends Application {
             obstacleCell.setStyle("-fx-background-color: red;"); // Assuming Cell extends a JavaFX Pane
         }
 
-        /**
-         * Checks if the specified cell is the obstacle's location and ends the game if so.
-         *
-         * @param cell The cell to check against the obstacle's location.
-         */
-        public void checkCollision(Cell cell) {
-            if (grid.getCell(column, row) == cell) {
-                endGame();
-            }
-        }
-
-        /**
-         * Ends the game by handling the game over condition.
-         */
-        private void endGame() {
-            // Implement game over logic here.
-            System.out.println("Game Over!");
-        }
-
         // Methods to get the column and row of the obstacle
         public int getColumn() {
             return column;
