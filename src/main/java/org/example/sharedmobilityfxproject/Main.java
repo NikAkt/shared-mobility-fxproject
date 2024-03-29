@@ -19,13 +19,15 @@ public class Main extends Application {
     private static final double WIDTH = 800;
     private static final double HEIGHT = 600;
 
-    //Player
-    private Point player;
-    private Point obstacle;
-    private int obstacleX;
-    private int obstacleY;
-    private boolean gameOver;
-    private int facingDirection;
+    // Player (will be implemented)
+//    private Point player;
+
+    // Obstacles (will be implemented)
+    private Obstacle firstObstacle;
+//    private int obstacleX;
+//    private int obstacleY;
+//    private boolean gameOver;
+//    private int facingDirection;
 
 //    removed from scene
 //    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
@@ -64,7 +66,7 @@ public class Main extends Application {
             }
 
             // Initialize Obstacles
-            Obstacle firstObstacle = new Obstacle(grid,5,5);
+            firstObstacle = new Obstacle(grid,5,5);
 
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
@@ -297,6 +299,9 @@ public class Main extends Application {
 
             // Optionally highlight the new cell
             currentCell.highlight();
+
+            // check the collision
+            firstObstacle.checkCollision(currentCell);
 
 
         }
