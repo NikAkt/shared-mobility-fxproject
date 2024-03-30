@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.example.sharedmobilityfxproject.model.Player;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -73,6 +74,10 @@ public class Main extends Application {
             obstacles.add(new Obstacle(grid, 10, 5));
             obstacles.add(new Obstacle(grid, 5, 10));
 
+            // Initialize Player
+            Player playerUno = new Player(25,25,10,1,10,0);
+            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
@@ -102,6 +107,7 @@ public class Main extends Application {
 
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
+        public Cell playerUnosCell; // Made public for access in start method
         private int currentRow = 0;
         private int currentColumn = 0;
 
@@ -119,6 +125,11 @@ public class Main extends Application {
                     case DOWN -> moveSelection(0, 1);
                     case H -> currentCell.highlight();
                     case U -> currentCell.unhighlight();
+                    // Player
+                    case D -> movePLayer(1, 0);
+                    case A -> movePLayer(-1, 0);
+                    case W -> movePLayer(0, -1);
+                    case S -> movePLayer(0, 1);
                     // Add more cases as needed
                 }
             });
@@ -149,6 +160,25 @@ public class Main extends Application {
 
                 // Optionally highlight the new cell
                 currentCell.highlight();
+            }
+            // If there is an obstacle, don't move and possibly add some feedback
+        }
+        private void movePLayer(int dx, int dy) {
+            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
+
+            // Check if the next cell is an obstacle
+            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+                // Move the player to the new cell because there is no obstacle
+                Cell nextCell = grid.getCell(newColumn, newRow);
+
+                // Optionally unhighlight the old cell
+                playerUnosCell.unhighlight();
+
+                playerUnosCell = nextCell;
+
+                // Optionally highlight the new cell
+                playerUnosCell.highlight();
             }
             // If there is an obstacle, don't move and possibly add some feedback
         }
