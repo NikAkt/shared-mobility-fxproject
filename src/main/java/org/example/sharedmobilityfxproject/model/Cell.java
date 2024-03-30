@@ -49,6 +49,14 @@ public class Cell extends StackPane {
         getStyleClass().remove("cell-hover-highlight");
     }
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
     public String toString() {
         return this.column + "/" + this.row;
     }
