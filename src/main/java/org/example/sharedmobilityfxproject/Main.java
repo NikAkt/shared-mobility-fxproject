@@ -55,6 +55,9 @@ public class Main extends Application {
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
 
+    // Boolean flag to track if the player is in a taxi
+    boolean hailTaxi = false;
+
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -330,9 +333,25 @@ public class Main extends Application {
                     case DOWN -> moveSelection(0, 1);
                     case H -> currentCell.highlight();
                     case U -> currentCell.unhighlight();
+                    case T -> hailTaxi();
                     // Add more cases as needed
                 }
             });
+        }
+
+        /**
+         * Hail a taxi and change the player's appearance to yellow.
+         */
+        private void hailTaxi() {
+            if (!hailTaxi) {
+                hailTaxi = true;
+                // Change the color of the player's cell to yellow
+                currentCell.setStyle("-fx-background-color: yellow;");
+            } else {
+                hailTaxi = false;
+                // Change the color of the player's cell back to blue
+                currentCell.setStyle("-fx-background-color: blue;");
+            }
         }
 
         /**
