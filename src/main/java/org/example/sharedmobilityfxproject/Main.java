@@ -18,14 +18,14 @@ import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // Main class extends Application for JavaFX application
 public class Main extends Application {
 
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
-
-    // Grid dimensions and window dimensions
+    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
     private static final int ROWS = 30;
     private static final int COLUMNS = 60;
     private static final double WIDTH = 800;
@@ -455,7 +455,7 @@ public class Main extends Application {
 
     // Method to play the gem collect sound
     private void playGemCollectSound() {
-        Media sound = new Media(getClass().getResource(GEM_COLLECT_SOUND).toString());
+        Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
 
