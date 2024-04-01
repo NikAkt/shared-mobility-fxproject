@@ -12,6 +12,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.awt.Point;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,8 @@ public class Main extends Application {
 //    removed from scene
 //    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
 
+    // Finish cell
+    private Cell finishCell;
 
     @Override
     public void start(Stage primaryStage) {
@@ -73,11 +77,8 @@ public class Main extends Application {
             // Fill grid with cells
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
-
                     Cell cell = new Cell(column, row);
-
                     ka.setupKeyboardActions(scene);
-
                     grid.add(cell, column, row);
                 }
             }
@@ -108,13 +109,24 @@ public class Main extends Application {
             obstacles.add(new Obstacle(grid, 10, 5));
             obstacles.add(new Obstacle(grid, 5, 10));
 
-            // Initialize currentCell after the grid has been filled
+            // Place the finish cell after the grid is filled and the player's position is initialised
+            int finishColumn;
+            int finishRow;
+            do {
+                finishColumn = (int) (Math.random() * COLUMNS);
+                finishRow = (int) (Math.random() * ROWS);
+            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
+            finishCell = new Cell(finishColumn, finishRow);
+            finishCell.getStyleClass().add("finish");
+            grid.add(finishCell, finishColumn, finishRow);
+
+            // Initialise currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid, vbox);
 
-            // create scene and set to stage
+            // Create scene and set to stage
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -348,7 +360,6 @@ public class Main extends Application {
 
                 // Optionally unhighlight the old cell
                 currentCell.unhighlight();
-
                 currentCell = nextCell;
                 currentRow = newRow;
                 currentColumn = newColumn;
@@ -356,6 +367,20 @@ public class Main extends Application {
                 // Optionally highlight the new cell
                 currentCell.highlight();
                 // If there is an obstacle, don't move and possibly add some feedback
+            }
+
+            if (newCell == finishCell) {
+                // Player reached the finish cell
+                // Display "Level Complete" text and exit after five seconds
+                Label levelCompleteLabel = new Label("Level Complete");
+                levelCompleteLabel.setStyle("-fx-font-size: 24px;");
+                StackPane root = (StackPane) grid.getScene().getRoot();
+                root.getChildren().add(levelCompleteLabel);
+
+                // Pause transition to delay the exit
+                PauseTransition pause = new PauseTransition(Duration.seconds(5));
+                pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
+                pause.play();
             }
 
             if ("gem".equals(newCell.getUserData())) {
