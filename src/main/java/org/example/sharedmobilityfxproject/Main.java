@@ -32,8 +32,14 @@ public class Main extends Application {
     // Gem count
     int gemCount = 0;
 
+    // Carbon footprint
+    int carbonFootprint = 0;
+
     // Label to keep track of gem count
     Label gemCountLabel; // Label to display gem count
+
+    // Label to keep track of total carbon footprint
+    Label carbonFootprintLabel; // Label to display carbon footprint
 
     // Player (will be implemented)
 //    private Point player;
@@ -95,8 +101,14 @@ public class Main extends Application {
             gemCountLabel.setAlignment(Pos.TOP_LEFT);
             gemCountLabel.setPadding(new Insets(10));
 
+            // Create label for carbon footprint
+            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
+            carbonFootprintLabel.setPadding(new Insets(10));
+
             // Create a VBox to hold the gem count label
-            VBox vbox = new VBox(gemCountLabel);
+            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
             vbox.setAlignment(Pos.TOP_LEFT);
 
             // Place the gem after the grid is filled and the player's position is initialized
@@ -345,6 +357,9 @@ public class Main extends Application {
         private void hailTaxi() {
             if (!hailTaxi) {
                 hailTaxi = true;
+                // Increase carbon footprint
+                carbonFootprint += 75;
+                updateCarbonFootprintLabel();
                 // Change the color of the player's cell to yellow
                 currentCell.setStyle("-fx-background-color: yellow;");
             } else {
@@ -425,4 +440,9 @@ public class Main extends Application {
     private void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
         }
+
+    // Method to update the carbon footprint label
+    private void updateCarbonFootprintLabel() {
+        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
     }
+}
