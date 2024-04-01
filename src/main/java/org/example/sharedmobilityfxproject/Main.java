@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -268,11 +270,21 @@ public class Main extends Application {
 
     // Gem class representing a gem in the grid
     private class Gem extends Cell {
-        // Constructor to initialize gem coordinates
+        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected_sound_effect.mp3"; // Path to the gem collect sound file
+        // Constructor to initialise gem coordinates
         public Gem(int column, int row) {
             super(column, row);
             getStyleClass().add("gem");
             setUserData("gem"); // Set a custom attribute to identify the gem cell
+        }
+
+        // Override the highlight method to play the gem collect sound and increment the gem count
+        @Override
+        public void highlight() {
+            super.highlight();
+            playGemCollectSound(); // Play the gem collect sound
+            gemCount++; // Increment the gem count
+            updateGemCountLabel(); // Update the gem count label
         }
     }
 
@@ -440,6 +452,16 @@ public class Main extends Application {
     private void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
         }
+
+    // Method to play the gem collect sound
+    private void playGemCollectSound() {
+        Media sound = new Media(getClass().getResource(GEM_COLLECT_SOUND).toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+
+        // Release resources after sound finishes playing3211
+        mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
+    }
 
     // Method to update the carbon footprint label
     private void updateCarbonFootprintLabel() {
