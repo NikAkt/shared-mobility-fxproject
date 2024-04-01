@@ -270,7 +270,7 @@ public class Main extends Application {
 
     // Gem class representing a gem in the grid
     private class Gem extends Cell {
-        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected_sound_effect.mp3"; // Path to the gem collect sound file
+        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected.mp3"; // Path to the gem collect sound file
         // Constructor to initialise gem coordinates
         public Gem(int column, int row) {
             super(column, row);
@@ -285,6 +285,7 @@ public class Main extends Application {
             playGemCollectSound(); // Play the gem collect sound
             gemCount++; // Increment the gem count
             updateGemCountLabel(); // Update the gem count label
+
         }
     }
 
