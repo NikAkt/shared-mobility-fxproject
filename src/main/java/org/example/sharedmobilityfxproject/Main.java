@@ -52,6 +52,9 @@ public class Main extends Application {
     // Finish cell
     private Cell finishCell;
 
+    // Boolean flag to track if the game has finished
+    boolean gameFinished = false;
+
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -349,6 +352,11 @@ public class Main extends Application {
          * @param dy The number of rows to move. A positive number moves down, a negative number moves up.
          */
         private void moveSelection(int dx, int dy) {
+            // Check if the game is finished, if so, return without allowing movement
+            if (gameFinished) {
+                return;
+            }
+
             int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
             int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
@@ -371,13 +379,14 @@ public class Main extends Application {
 
             if (newCell == finishCell) {
                 // Player reached the finish cell
-                // Display "Level Complete" text and exit after five seconds
+                gameFinished = true; // Set game as finished
+                // Display "Level Complete" text
                 Label levelCompleteLabel = new Label("Level Complete");
                 levelCompleteLabel.setStyle("-fx-font-size: 24px;");
                 StackPane root = (StackPane) grid.getScene().getRoot();
                 root.getChildren().add(levelCompleteLabel);
 
-                // Pause transition to delay the exit
+                // Exit the game after five seconds
                 PauseTransition pause = new PauseTransition(Duration.seconds(5));
                 pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
                 pause.play();
