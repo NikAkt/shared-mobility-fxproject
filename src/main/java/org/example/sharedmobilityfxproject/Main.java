@@ -16,12 +16,16 @@ import javafx.stage.Stage;
 import java.awt.Point;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+import org.example.sharedmobilityfxproject.model.Cell;
+import org.example.sharedmobilityfxproject.model.Gem;
+import org.example.sharedmobilityfxproject.model.GemCollector;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 // Main class extends Application for JavaFX application
-public class Main extends Application {
+public class Main extends Application implements GemCollector {
 
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
@@ -32,7 +36,7 @@ public class Main extends Application {
     private static final double HEIGHT = 600;
 
     // Gem count
-    int gemCount = 0;
+    public int gemCount = 0;
 
     // Carbon footprint
     int carbonFootprint = 0;
@@ -58,14 +62,21 @@ public class Main extends Application {
 //    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
 
     // Finish cell
-    private Cell finishCell;
+    public Cell finishCell;
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+    @Override
+    public void collectGem() {
+        // Increment the gem count
+        gemCount++;
+        // Update the gem count label
 
+        gemCountLabel.setText("Gem Count: " + gemCount);
+    }
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -120,8 +131,7 @@ public class Main extends Application {
                 gemColumn = (int) (Math.random() * COLUMNS);
                 gemRow = (int) (Math.random() * ROWS);
             } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
-            Gem gem = new Gem(gemColumn, gemRow);
-            grid.add(gem, gemColumn, gemRow);
+            Gem gem = new Gem(gemColumn, gemRow, this);            grid.add(gem, gemColumn, gemRow);
 
             // Initialise Obstacles
             obstacles = new ArrayList<>();
@@ -221,78 +231,10 @@ public class Main extends Application {
      * Cell class represents a single cell within a grid.
      * It manages the visual representation and state of the cell, such as highlighting.
      */
-    private class Cell extends StackPane {
 
-        int column;
-        int row;
-
-        // Constructor to initialise cell coordinates
-        public Cell(int column, int row) {
-            this.column = column;
-            this.row = row;
-            getStyleClass().add("cell");
-            // Label label = new Label(this.toString());
-            // getChildren().add(label);
-            setOpacity(0.9);
-        }
-
-        // Highlight the cell
-        public void highlight() {
-            // Ensure the style is only coded once in the style list
-            getStyleClass().remove("cell-highlight");
-            // Add style
-            getStyleClass().add("cell-highlight");
-        }
-
-        // Unhighlight the cell
-        public void unhighlight() {
-            getStyleClass().remove("cell-highlight");
-        }
-
-        // Highlight the cell when hovering over it
-        public void hoverHighlight() {
-            // Ensure the style is only coded once in the style list
-            getStyleClass().remove("cell-hover-highlight");
-            // Add style
-            getStyleClass().add("cell-hover-highlight");
-        }
-
-        // Unhighlight the cell when hovering over it
-        public void hoverUnhighlight() {
-            getStyleClass().remove("cell-hover-highlight");
-        }
-
-        // Override toString method to provide coordinates
-        public String toString() {
-            return this.column + "/" + this.row;
-        }
-    }
 
     // Gem class representing a gem in the grid
-    private class Gem extends Cell {
-        public boolean isCollected = false; // Flag to track if the gem has been collected
-        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected.mp3"; // Path to the gem collect sound file
 
-        // Constructor to initialise gem coordinates
-        public Gem(int column, int row) {
-            super(column, row);
-            getStyleClass().add("gem");
-            setUserData("gem"); // Set a custom attribute to identify the gem cell
-        }
-
-        // Override the highlight method to play the gem collect sound and increment the gem count
-        @Override
-        public void highlight() {
-            super.highlight();
-            if (!isCollected) {
-                System.out.println("Gem collected"); //debug
-                playGemCollectSound(); // Play the gem collect sound
-                gemCount++; // Increment the gem count
-                updateGemCountLabel(); // Update the gem count label
-                isCollected = true; // Set the flag to true after the gem is collected
-            }
-        }
-    }
     /**
      * Obstacle class represents an obstacle on the grid.
      * It is responsible for managing the state of the cells that form the obstacle.
@@ -452,20 +394,7 @@ public class Main extends Application {
         }
     }
 
-    // Method to update the gem count label
-    private void updateGemCountLabel() {
-        gemCountLabel.setText("Gem Count: " + gemCount);
-        }
 
-    // Method to play the gem collect sound
-    private void playGemCollectSound() {
-        Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
-
-        // Release resources after sound finishes playing3211
-        mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
-    }
 
     // Method to update the carbon footprint label
     private void updateCarbonFootprintLabel() {
