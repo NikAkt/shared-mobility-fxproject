@@ -1,25 +1,37 @@
 package org.example.sharedmobilityfxproject;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+// Main class extends Application for JavaFX application
 public class Main extends Application {
 
+    // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
 
+    // Grid dimensions and window dimensions
     private static final int ROWS = 30;
     private static final int COLUMNS = 60;
     private static final double WIDTH = 800;
     private static final double HEIGHT = 600;
+
+    // Gem count
+    int gemCount = 0;
+
+    // Label to keep track of gem count
+    Label gemCountLabel; // Label to display gem count
 
     // Player (will be implemented)
 //    private Point player;
@@ -39,6 +51,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            // Create a StackPane to hold all elements
             StackPane root = new StackPane();
             Scene scene = new Scene(root);
 
@@ -52,11 +65,12 @@ public class Main extends Application {
 //            primaryStage.setFullScreen(true);
 //            primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
-            // create grid
+            // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
+            // Create keyboard actions handler
             KeyboardActions ka = new KeyboardActions(grid);
-            // fill grid
+            // Fill grid with cells
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
 
@@ -68,7 +82,27 @@ public class Main extends Application {
                 }
             }
 
-            // Initialize Obstacles
+            // Create label for gem count
+            gemCountLabel = new Label("Gem Count: " + gemCount);
+            gemCountLabel.setStyle("-fx-font-size: 16px;");
+            gemCountLabel.setAlignment(Pos.TOP_LEFT);
+            gemCountLabel.setPadding(new Insets(10));
+
+            // Create a VBox to hold the gem count label
+            VBox vbox = new VBox(gemCountLabel);
+            vbox.setAlignment(Pos.TOP_LEFT);
+
+            // Place the gem after the grid is filled and the player's position is initialized
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
+            Gem gem = new Gem(gemColumn, gemRow);
+            grid.add(gem, gemColumn, gemRow);
+
+            // Initialise Obstacles
             obstacles = new ArrayList<>();
             obstacles.add(new Obstacle(grid, 5, 5));
             obstacles.add(new Obstacle(grid, 10, 5));
@@ -77,20 +111,20 @@ public class Main extends Application {
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
-            root.getChildren().addAll(grid);
+            // Add background image, grid, and gem count label to the root StackPane
+            root.getChildren().addAll(grid, vbox);
 
             // create scene and set to stage
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
 
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    // Main method to launch the JavaFX application
     public static void main(String[] args) {
         launch(args);
     }
@@ -109,38 +143,32 @@ public class Main extends Application {
 
         Cell[][] cells;
 
+        // Constructor to initialise grid dimensions and cell array
         public Grid( int columns, int rows, double width, double height) {
-
             this.columns = columns;
             this.rows = rows;
             this.width = width;
             this.height = height;
-
             cells = new Cell[rows][columns];
-
         }
 
         /**
          * Add cell to array and to the UI.
          */
         public void add(Cell cell, int column, int row) {
-
             cells[row][column] = cell;
-
             double w = width / columns;
             double h = height / rows;
             double x = w * column;
             double y = h * row;
-
             cell.setLayoutX(x);
             cell.setLayoutY(y);
             cell.setPrefWidth(w);
             cell.setPrefHeight(h);
-
             getChildren().add(cell);
-
         }
 
+        // Get cell at given coordinates
         public Cell getCell(int column, int row) {
             return cells[row][column];
         }
@@ -149,8 +177,8 @@ public class Main extends Application {
          * Unhighlight all cells
          */
         public void unhighlight() {
-            for( int row=0; row < rows; row++) {
-                for( int col=0; col < columns; col++) {
+            for(int row = 0; row < rows; row++) {
+                for(int col = 0; col < columns; col++) {
                     cells[row][col].unhighlight();
                 }
             }
@@ -166,46 +194,55 @@ public class Main extends Application {
         int column;
         int row;
 
+        // Constructor to initialise cell coordinates
         public Cell(int column, int row) {
-
             this.column = column;
             this.row = row;
-
             getStyleClass().add("cell");
-
-//          Label label = new Label(this.toString());
-//
-//          getChildren().add(label);
-
+            // Label label = new Label(this.toString());
+            // getChildren().add(label);
             setOpacity(0.9);
         }
 
+        // Highlight the cell
         public void highlight() {
-            // ensure the style is only once in the style list
+            // Ensure the style is only coded once in the style list
             getStyleClass().remove("cell-highlight");
-
-            // add style
+            // Add style
             getStyleClass().add("cell-highlight");
         }
 
+        // Unhighlight the cell
         public void unhighlight() {
             getStyleClass().remove("cell-highlight");
         }
 
+        // Highlight the cell when hovering over it
         public void hoverHighlight() {
-            // ensure the style is only once in the style list
+            // Ensure the style is only coded once in the style list
             getStyleClass().remove("cell-hover-highlight");
-
-            // add style
+            // Add style
             getStyleClass().add("cell-hover-highlight");
         }
 
+        // Unhighlight the cell when hovering over it
         public void hoverUnhighlight() {
             getStyleClass().remove("cell-hover-highlight");
         }
 
+        // Override toString method to provide coordinates
         public String toString() {
             return this.column + "/" + this.row;
+        }
+    }
+
+    // Gem class representing a gem in the grid
+    private class Gem extends Cell {
+        // Constructor to initialize gem coordinates
+        public Gem(int column, int row) {
+            super(column, row);
+            getStyleClass().add("gem");
+            setUserData("gem"); // Set a custom attribute to identify the gem cell
         }
     }
 
@@ -263,9 +300,10 @@ public class Main extends Application {
         private int currentRow = 0;
         private int currentColumn = 0;
 
+        // Constructor to initialise grid
         public KeyboardActions(Grid grid) {
             this.grid = grid;
-            // Don't initialize currentCell here
+            // Don't initialise currentCell here
         }
 
         public void setupKeyboardActions(Scene scene) {
@@ -301,6 +339,7 @@ public class Main extends Application {
         private void moveSelection(int dx, int dy) {
             int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
             int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
+            Cell newCell = grid.getCell(newColumn, newRow);
 
             // Check if the next cell is an obstacle
             if (!isNextCellObstacle(newColumn, newRow)) {
@@ -316,9 +355,21 @@ public class Main extends Application {
 
                 // Optionally highlight the new cell
                 currentCell.highlight();
+                // If there is an obstacle, don't move and possibly add some feedback
             }
-            // If there is an obstacle, don't move and possibly add some feedback
-        }
 
+            if ("gem".equals(newCell.getUserData())) {
+                gemCount++; // Increase gem count
+                grid.getChildren().remove(newCell);
+                newCell.unhighlight(); // Unhighlight only the gem cell
+                grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
+                updateGemCountLabel(); // Update gem count label
+            }
+        }
     }
-}
+
+    // Method to update the gem count label
+    private void updateGemCountLabel() {
+        gemCountLabel.setText("Gem Count: " + gemCount);
+        }
+    }
