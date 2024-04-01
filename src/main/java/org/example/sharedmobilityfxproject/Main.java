@@ -270,7 +270,9 @@ public class Main extends Application {
 
     // Gem class representing a gem in the grid
     private class Gem extends Cell {
+        public boolean isCollected = false; // Flag to track if the gem has been collected
         private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected.mp3"; // Path to the gem collect sound file
+
         // Constructor to initialise gem coordinates
         public Gem(int column, int row) {
             super(column, row);
@@ -282,13 +284,15 @@ public class Main extends Application {
         @Override
         public void highlight() {
             super.highlight();
-            playGemCollectSound(); // Play the gem collect sound
-            gemCount++; // Increment the gem count
-            updateGemCountLabel(); // Update the gem count label
-
+            if (!isCollected) {
+                System.out.println("Gem collected"); //debug
+                playGemCollectSound(); // Play the gem collect sound
+                gemCount++; // Increment the gem count
+                updateGemCountLabel(); // Update the gem count label
+                isCollected = true; // Set the flag to true after the gem is collected
+            }
         }
     }
-
     /**
      * Obstacle class represents an obstacle on the grid.
      * It is responsible for managing the state of the cells that form the obstacle.
@@ -440,7 +444,6 @@ public class Main extends Application {
             }
 
             if ("gem".equals(newCell.getUserData())) {
-                gemCount++; // Increase gem count
                 grid.getChildren().remove(newCell);
                 newCell.unhighlight(); // Unhighlight only the gem cell
                 grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
