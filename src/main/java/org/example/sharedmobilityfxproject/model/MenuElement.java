@@ -3,8 +3,12 @@ package org.example.sharedmobilityfxproject.model;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.image.ImageView;
+import org.example.sharedmobilityfxproject.view.GameView;
 
 public class MenuElement {
+    private GameView gameView;
     public static final double BUTTON_WIDTH = 200;
     public Button createButton(String text, EventHandler<ActionEvent> action) {
         Button button = new Button(text);
@@ -13,8 +17,6 @@ public class MenuElement {
         button.setStyle(normalButtonStyle());
         button.setOnAction(action);
         button.setFocusTraversable(true);
-
-
 
         //hover colour change
         button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
@@ -27,13 +29,23 @@ public class MenuElement {
 
         return button;
     }
+    public Button createStageButton(String stage, ImageView stageImage) {
+        Button stageButton = new Button(stage);
+        stageButton.setGraphic(stageImage);
+        stageButton.setContentDisplay(ContentDisplay.TOP);
+        stageButton.setOnAction(event -> gameView.selectStage(stage));
+        return stageButton;
+    }
 
 
-    private String normalButtonStyle() {
+
+
+
+    public String normalButtonStyle() {
         return "-fx-font-size: 24px; -fx-background-color: rgba(255, 255, 240, 0.7); -fx-text-fill: black;";
     }
 
-    private String focusedButtonStyle() {
+    public String focusedButtonStyle() {
         return "-fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white;";
     }
 

@@ -1,7 +1,6 @@
 package org.example.sharedmobilityfxproject;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.MediaView;
 import org.example.sharedmobilityfxproject.model.*;
 
 import javafx.application.Application;
@@ -12,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -72,6 +73,8 @@ public class Main extends Application {
     private static final double WIDTH = 800;
     private static final double HEIGHT = 600;
 
+    public MediaPlayer mediaPlayer;
+
     // Gem count
     int gemCount = 0;
 
@@ -102,14 +105,13 @@ public class Main extends Application {
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
-    private Stage primaryStage;
-    private MediaPlayer mediaPlayer;
-    private Button btnStartGame;
-    private MenuElement menuElement;
-    private Button btnExit;
-    private VBox buttonBox;
-    private VBox imgBox;
-    private GameView gameView;
+    public Stage primaryStage;
+    public Button btnStartGame;
+    public MenuElement menuElement;
+    public Button btnExit;
+    public VBox buttonBox;
+    public VBox imgBox;
+    public GameView gameView;
     public StackPane root;
 
     @Override
@@ -139,7 +141,7 @@ public class Main extends Application {
             bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             bgmediaPlayer.play();
             // Create and configure the "Game Start" button
-            btnStartGame = menuElement.createButton("Game Start", gameView.showPlayerModeSelection());
+            btnStartGame = menuElement.createButton("Game Start", this::showPlayerModeSelection);
 
             // Create and configure the "Exit" button
             btnExit = menuElement.createButton("Exit", event -> primaryStage.close());
@@ -272,7 +274,30 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+    public void showPlayerModeSelection(ActionEvent actionEvent) {
+        buttonBox.setVisible(false);
+        Button btnOnePlayer = menuElement.createButton("SinglePlay", event -> gameView.showStageSelectionScreen());
+        Button btnTwoPlayer = menuElement.createButton("MultiPlay", event -> gameView.showStageSelectionScreen());
 
+        Button backToMenu = menuElement.createButton("Back", event -> this.gameView.showInitialScreen());
+        backToMenu.setMinWidth(MenuElement.BUTTON_WIDTH);
+        backToMenu.setMaxWidth(MenuElement.BUTTON_WIDTH);
+        backToMenu.setStyle("-fx-font-size: 24px;");
+
+        // Create the game mode selection box if not already created
+        if (gameView.gameModeBox == null) {
+            gameView.gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
+            gameView.gameModeBox.setAlignment(Pos.CENTER);
+        }
+        // Add the game mode box to the root stack pane, making it visible
+        if (!gameView.main.root.getChildren().contains(gameView.gameModeBox)) {
+            gameView.main.root.getChildren().add(gameView.gameModeBox);
+        }
+
+        // Make the game mode selection box visible
+        gameView.gameModeBox.setVisible(true);
+
+    }
     private void setupKeyControls(Scene scene) {
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DOWN) {

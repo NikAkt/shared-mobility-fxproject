@@ -6,9 +6,9 @@ import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -16,44 +16,32 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.model.MenuElement;
 
+import java.io.File;
 import java.io.InputStream;
 
 public class GameView {
-    private MenuElement menuElement;
-    private VBox gameModeBox;
-    private Main main;
-    private HBox topRow;
-    private HBox bottomRow;
-    private void showPlayerModeSelection(ActionEvent actionEvent) {
-//        buttonBox.setVisible(false);
-        Button btnOnePlayer = menuElement.createButton("SinglePlay", event -> showStageSelectionScreen());
-        Button btnTwoPlayer = menuElement.createButton("MultiPlay", event -> showStageSelectionScreen());
+    public MenuElement menuElement;
+    public VBox gameModeBox;
+    public Main main;
+    public VBox buttonBox;
+    public StackPane root;
+    public MediaPlayer mediaPlayer;
+    public HBox topRow;
+    public HBox bottomRow;
 
-//        Button backToMenu = menuElement.createButton("Back", event -> showInitialScreen());
-//        backToMenu.setMinWidth(menuElement.BUTTON_WIDTH);
-//        backToMenu.setMaxWidth(menuElement.BUTTON_WIDTH);
-//        backToMenu.setStyle("-fx-font-size: 24px;");
+    public Stage primaryStage;
+    public VBox stageSelectionBox;
 
-        // Create the game mode selection box if not already created
-        if (gameModeBox == null) {
-            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
-            gameModeBox.setAlignment(Pos.CENTER);
-        }
-        // Add the game mode box to the root stack pane, making it visible
-        if (!main.root.getChildren().contains(gameModeBox)) {
-            main.root.getChildren().add(gameModeBox);
-        }
-
-        // Make the game mode selection box visible
-        gameModeBox.setVisible(true);
-
-    }
-    private void showStageSelectionScreen() {
+    public void showStageSelectionScreen() {
         if (topRow == null && bottomRow == null) {
             topRow = new HBox(10);
             bottomRow = new HBox(10);
@@ -65,17 +53,16 @@ public class GameView {
 
             for (String stage : topStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = createStageButton(stage, stageImage);
+                Button stageButton = menuElement.createStageButton(stage, stageImage);
                 topRow.getChildren().add(stageButton);
             }
 
             for (String stage : bottomStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = createStageButton(stage, stageImage);
+                Button stageButton = menuElement.createStageButton(stage, stageImage);
                 bottomRow.getChildren().add(stageButton);
             }
         }
-
         stageSelectionBox = new VBox(20, topRow, bottomRow);
         stageSelectionBox.setAlignment(Pos.CENTER);
 
@@ -83,7 +70,7 @@ public class GameView {
         root.getChildren().removeAll(buttonBox, gameModeBox);
         root.getChildren().add(stageSelectionBox);
     }
-    private ImageView createStageImage(String stageName) {
+    public ImageView createStageImage(String stageName) {
         String imagePath;
         switch (stageName) {
             case "Seoul":
@@ -119,7 +106,7 @@ public class GameView {
         imageView.setFitWidth(150);  // 이미지 너비를 설정
         return imageView;
     }
-    private void loadGameScreen(String stageName) {
+    public void loadGameScreen(String stageName) {
 
         // Create the gameplay pane and layout
         // Overall layout container
@@ -184,11 +171,74 @@ public class GameView {
 
         // Set this layout in the scene
         Scene scene = new Scene(borderPane, 1496, 1117);
-//        primaryStage.setScene(scene);
-//        primaryStage.setTitle("Welcome To "+ stageName);
-//        primaryStage.show();
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Welcome To "+ stageName);
+        primaryStage.show();
 
     }
+
+    public void selectStage(String stageName) {
+        // Here, you would implement what happens when a stage is selected
+        // For example, you might load the game scene for the selected stage
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+        System.out.println("Stage selected: " + stageName);
+        String musicFilePath;
+        switch (stageName) {
+            case "Seoul":
+                musicFilePath = "path/to/seoul/song.mp3";
+                break;
+            case "Athens":
+                // Load Athens stage
+                break;
+            case "Dublin":
+                // Load Dublin stage
+                break;
+            case "Istanbul":
+                // Load Istanbul stage
+                break;
+            case "Vilnius":
+                // Load Vilnius stage
+                break;
+            case "Back":
+                // Go back to the previous screen
+                main.showPlayerModeSelection(null);
+                break;
+            default:
+                // Handle default case if necessary
+                break;
+        }
+        Media gameMusic = new Media(new File("src/main/resources/music/Merry_go.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(gameMusic);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
+        mediaPlayer.play(); // Start playing the new background music
+        // This is where you would transition to the actual game play scene
+        // For now, just printing out the selection
+        System.out.println("You have selected the stage: " + stageName);
+
+        // You might want to hide the stage selection screen and display the game screen, like so:
+        stageSelectionBox.setVisible(false);
+        loadGameScreen(stageName);
+    }
+    public void showInitialScreen() {
+        // 다른 UI 요소들을 숨깁니다.
+        if (gameModeBox != null) {
+            gameModeBox.setVisible(false);
+        }
+        if (stageSelectionBox != null) {
+            stageSelectionBox.setVisible(false);
+        }
+        // 초기 버튼들을 다시 보여줍니다.
+        buttonBox.setVisible(true);
+        // root에서 필요 없는 요소들을 제거합니다. 선택적으로 사용
+        root.getChildren().removeAll(gameModeBox, stageSelectionBox);
+        // root에 buttonBox가 이미 포함되어 있지 않다면 다시 추가합니다.
+        if (!root.getChildren().contains(buttonBox)) {
+            root.getChildren().add(buttonBox);
+        }
+    }
+
 
 //    public EventHandler<ActionEvent> showPlayerModeSelection() { if (topRow == null && bottomRow == null) {
 //        topRow = new HBox(10);
