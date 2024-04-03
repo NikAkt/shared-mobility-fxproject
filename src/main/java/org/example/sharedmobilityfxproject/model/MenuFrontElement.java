@@ -8,8 +8,10 @@ import javafx.scene.image.ImageView;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 public class MenuFrontElement {
-    private GameView gameView;
+
+    public GameView gameView;
     public static final double BUTTON_WIDTH = 200;
+
     public Button createButton(String text, EventHandler<ActionEvent> action) {
         Button button = new Button(text);
         button.setMinWidth(BUTTON_WIDTH);
@@ -29,16 +31,18 @@ public class MenuFrontElement {
 
         return button;
     }
+
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageButton = new Button(stage);
         stageButton.setGraphic(stageImage);
         stageButton.setContentDisplay(ContentDisplay.TOP);
-        stageButton.setOnAction(event -> gameView.selectStage(stage));
+        if (this.gameView != null) {
+            stageButton.setOnAction(event -> gameView.selectStage(stage));
+        } else {
+            System.out.println("gameView is not initialized");
+        }
         return stageButton;
     }
-
-
-
 
 
     public String normalButtonStyle() {

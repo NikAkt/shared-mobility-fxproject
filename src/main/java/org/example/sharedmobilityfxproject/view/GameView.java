@@ -36,6 +36,7 @@ public class GameView {
     public MediaPlayer mediaPlayer;
     public HBox topRow;
     public HBox bottomRow;
+    public GameView gameView;
 
     public Stage primaryStage;
     public VBox stageSelectionBox;
@@ -169,6 +170,11 @@ public class GameView {
     }
 
     public void selectStage(String stageName) {
+        if (this.gameView != null) {
+            this.gameView.selectStage(stageName);
+        } else {
+            System.out.println("gameView is not initialized");
+        }
         // Here, you would implement what happens when a stage is selected
         // For example, you might load the game scene for the selected stage
         if (mediaPlayer != null) {
@@ -178,19 +184,19 @@ public class GameView {
         String musicFilePath;
         switch (stageName) {
             case "Seoul":
-                musicFilePath = "path/to/seoul/song.mp3";
+                musicFilePath = "/music/pokemon.mp3";
                 break;
             case "Athens":
-                // Load Athens stage
+                musicFilePath = "/music/pokemon.mp3";
                 break;
             case "Dublin":
-                // Load Dublin stage
+                musicFilePath = "/music/pokemon.mp3";
                 break;
             case "Istanbul":
-                // Load Istanbul stage
+                musicFilePath = "/music/pokemon.mp3";
                 break;
             case "Vilnius":
-                // Load Vilnius stage
+                musicFilePath = "/music/pokemon.mp3";
                 break;
             case "Back":
                 // Go back to the previous screen
@@ -200,7 +206,7 @@ public class GameView {
                 // Handle default case if necessary
                 break;
         }
-        Media gameMusic = new Media(new File("src/main/resources/music/Merry_go.mp3").toURI().toString());
+        Media gameMusic = new Media(new File("src/main/resources/music/pokemon.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(gameMusic);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
         mediaPlayer.play(); // Start playing the new background music

@@ -85,7 +85,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+
             // Load the image
+
             this.primaryStage = primaryStage;
             menuFrontElement = new MenuFrontElement();
             Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
@@ -258,6 +260,7 @@ public class Main extends Application {
     }
     public void showPlayerModeSelection(ActionEvent actionEvent) {
         GameView gameView = new GameView(this);
+
         buttonBox.setVisible(false);
         Button btnOnePlayer = menuFrontElement.createButton("SinglePlay", event -> gameView.showStageSelectionScreen());
         Button btnTwoPlayer = menuFrontElement.createButton("MultiPlay", event -> gameView.showStageSelectionScreen());
