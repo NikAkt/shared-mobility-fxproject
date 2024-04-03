@@ -1,11 +1,11 @@
 package org.example.sharedmobilityfxproject.model;
 
 public class Player {
-    public static int x; // x position
-    public static int y; // y position
-    public int stamina; // stamina
-    public static int speed; // speed
-    public double co2; // co2 produced
+    private int x; // x position
+    private int y; // y position
+    private int stamina; // stamina
+    private int speed; // speed
+    private double co2; // co2 produced
 
 
 public Player(int x, int y,int stamina,int speed,double co2,int gems) {
@@ -16,10 +16,10 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         this.co2=0;
     }
 
-    public static int getCoordX() {
+    public int getCoordX() {
         return x;
     }
-    public static int getCoordY() {
+    public int getCoordY() {
         return y;
     }
     public int getStamina() {
@@ -43,13 +43,13 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
     public void moveUp(){
         y=y-speed;
     }
-    public static void moveDown(){
+    public void moveDown(){
         y=y+speed;
     }
     public void moveLeft(){
         x=x-speed;
     }
-    public static void moveRight(){
+    public void moveRight(){
         x=x+speed;
     }
     public void decreaseStamina(){ //alternatively we could have each item change the stamina

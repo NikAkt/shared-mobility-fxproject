@@ -1,4 +1,7 @@
 package org.example.sharedmobilityfxproject;
+import org.example.sharedmobilityfxproject.model.Grid;
+import org.example.sharedmobilityfxproject.model.Cell;
+import org.example.sharedmobilityfxproject.model.Obstacle;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -13,6 +16,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.sharedmobilityfxproject.model.Player;
+
 import java.awt.Point;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
@@ -46,7 +51,7 @@ public class Main extends Application {
     // Player (will be implemented)
 //    private Point player;
 
-    // Obstacles (will be implemented)
+    // Obstacles
     // List to keep track of all obstacles
     private List<Obstacle> obstacles;
 //    private int obstacleX;
@@ -91,8 +96,11 @@ public class Main extends Application {
             // Fill grid with cells
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
+
                     Cell cell = new Cell(column, row);
+
                     ka.setupKeyboardActions(scene);
+
                     grid.add(cell, column, row);
                 }
             }
@@ -141,6 +149,11 @@ public class Main extends Application {
             grid.add(finishCell, finishColumn, finishRow);
 
             // Initialise currentCell after the grid has been filled
+            // Initialize Player
+            Player playerUno = new Player(25,25,10,1,10,0);
+            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+
+            // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
             // Add background image, grid, and gem count label to the root StackPane
@@ -150,6 +163,8 @@ public class Main extends Application {
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -344,6 +359,7 @@ public class Main extends Application {
 
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
+        public Cell playerUnosCell; // Made public for access in start method
         private int currentRow = 0;
         private int currentColumn = 0;
 
@@ -363,6 +379,11 @@ public class Main extends Application {
                     case H -> currentCell.highlight();
                     case U -> currentCell.unhighlight();
                     case T -> hailTaxi();
+                    // Player
+                    case D -> movePLayer(1, 0);
+                    case A -> movePLayer(-1, 0);
+                    case W -> movePLayer(0, -1);
+                    case S -> movePLayer(0, 1);
                     // Add more cases as needed
                 }
             });
@@ -411,14 +432,17 @@ public class Main extends Application {
             int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
             int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
+            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
 
             // Check if the next cell is an obstacle
-            if (!isNextCellObstacle(newColumn, newRow)) {
+            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
                 // Optionally unhighlight the old cell
                 currentCell.unhighlight();
+
                 currentCell = nextCell;
                 currentRow = newRow;
                 currentColumn = newColumn;
@@ -427,6 +451,28 @@ public class Main extends Application {
                 currentCell.highlight();
                 // If there is an obstacle, don't move and possibly add some feedback
             }
+            }
+            // If there is an obstacle, don't move and possibly add some feedback
+        }
+        private void movePLayer(int dx, int dy) {
+            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
+
+            // Check if the next cell is an obstacle
+            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+                // Move the player to the new cell because there is no obstacle
+                Cell nextCell = grid.getCell(newColumn, newRow);
+
+                // Optionally unhighlight the old cell
+                playerUnosCell.unhighlight();
+
+                playerUnosCell = nextCell;
+
+                // Optionally highlight the new cell
+                playerUnosCell.highlight();
+            }
+            // If there is an obstacle, don't move and possibly add some feedback
+        }
 
             if (newCell == finishCell) {
                 // Player reached the finish cell
