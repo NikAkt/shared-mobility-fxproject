@@ -4,11 +4,12 @@ public abstract class TransportationMode {
     protected double carbon_footprint_amount;
     protected double speed;
 
-    public TransportationMode(String modeName, double speed) {
-        this.modeName = modeName;
-        this.carbon_footprint_amount = 0; // Default value for general transportation modes
-        this.speed = speed;
-    }
+//    !!!!!!!!!!!!! This is previous constructor before we started working on UML -> for design purposes new one created below
+//    public TransportationMode(String modeName, double speed) {
+//        this.modeName = modeName;
+//        this.carbon_footprint_amount = 0; // Default value for general transportation modes
+//        this.speed = speed;
+//    }
 
     public TransportationMode(int x, int y, int stamina, int i, int i1, int gemCount) {
     }
