@@ -3,13 +3,13 @@ package org.example.sharedmobilityfxproject.model.tranportMode;
 
 import org.example.sharedmobilityfxproject.model.Player;
 
-public class Bus extends Player {
-    private int speed;
+public class Bus extends TransportationMode {
+    private double speed;
     private double carbonFootprintAmount;
     private final double carbonFootprintPerKm = 97; // Specific rate for a bus
 
-    public Bus(int x, int y, int stamina, int GemCount, int speed) {
-        super(x, y, stamina, 10, 0, GemCount); // Assuming default speed is 10 and CO2 is 0 for initialization
+    public Bus(String name, double speed) {
+        super(name,speed); // Assuming default speed is 10 and CO2 is 0 for initialization
         this.speed = speed;
         this.carbonFootprintAmount = 75; // Initial carbon footprint amount for Bus
     }
@@ -23,7 +23,7 @@ public class Bus extends Player {
     }
 
     // Getter and Setter for speed
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
