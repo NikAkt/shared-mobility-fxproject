@@ -9,16 +9,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.model.Player;
 
-import java.awt.Point;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import java.util.ArrayList;

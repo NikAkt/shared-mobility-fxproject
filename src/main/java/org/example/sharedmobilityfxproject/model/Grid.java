@@ -16,7 +16,7 @@ public class Grid extends Pane {
 
     Cell[][] cells;
 
-    public Grid( int columns, int rows, double width, double height) {
+    public Grid(int columns, int rows, double width, double height) {
 
         this.columns = columns;
         this.rows = rows;
