@@ -4,7 +4,6 @@ import javafx.scene.image.ImageView;
 import org.example.sharedmobilityfxproject.model.*;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -21,44 +20,12 @@ import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 //gyuwon
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import java.io.File;
-import java.io.InputStream;
 import javafx.scene.input.KeyCode;
-import javafx.stage.StageStyle;
-import javafx.util.Duration;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 import org.example.sharedmobilityfxproject.view.GameView;
 
@@ -107,7 +74,8 @@ public class Main extends Application {
     boolean hailTaxi = false;
     public Stage primaryStage;
     public Button btnStartGame;
-    public MenuElement menuElement;
+    public VBox gameModeBox;
+    public MenuFrontElement menuFrontElement;
     public Button btnExit;
     public VBox buttonBox;
     public VBox imgBox;
@@ -119,6 +87,7 @@ public class Main extends Application {
         try {
             // Load the image
             this.primaryStage = primaryStage;
+            menuFrontElement = new MenuFrontElement();
             Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
             Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
             MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -133,18 +102,18 @@ public class Main extends Application {
 
 
             // Initialize the Media and MediaPlayer for background music
-            Media media = new Media(new File("src/main/resources/music/waybackHome.mp3").toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Play the BGM in a loop
-            mediaPlayer.play(); // Start playing the BGM
+//            Media media = new Media(new File("src/main/resources/music/waybackHome.mp3").toURI().toString());
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Play the BGM in a loop
+//            mediaPlayer.play(); // Start playing the BGM
 
             bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             bgmediaPlayer.play();
             // Create and configure the "Game Start" button
-            btnStartGame = menuElement.createButton("Game Start", this::showPlayerModeSelection);
+            btnStartGame = menuFrontElement.createButton("Game Start", this::showPlayerModeSelection);
 
             // Create and configure the "Exit" button
-            btnExit = menuElement.createButton("Exit", event -> primaryStage.close());
+            btnExit = menuFrontElement.createButton("Exit", event -> primaryStage.close());
 
             // Create a VBox for buttons
             buttonBox = new VBox(20, this.btnStartGame, this.btnExit, imageView);
@@ -168,16 +137,29 @@ public class Main extends Application {
             primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
             primaryStage.setScene(scene);
             primaryStage.show();
-
-
-
-
-
-
-
-
-
-
+            scene.setOnKeyPressed(event -> {
+                switch (event.getCode()) {
+                    case DOWN:
+                        if (this.btnStartGame.isFocused()) {
+                            this.btnExit.requestFocus();
+                        }
+                        break;
+                    case UP:
+                        if (this.btnExit.isFocused()) {
+                            this.btnStartGame.requestFocus();
+                        }
+                        break;
+                    case ENTER:
+                        if (this.btnStartGame.isFocused()) {
+                            this.btnStartGame.fire();
+                        } else if (btnExit.isFocused()) {
+                            this.btnExit.fire();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
 
 
 //
@@ -275,27 +257,27 @@ public class Main extends Application {
         }
     }
     public void showPlayerModeSelection(ActionEvent actionEvent) {
+        GameView gameView = new GameView(this);
         buttonBox.setVisible(false);
-        Button btnOnePlayer = menuElement.createButton("SinglePlay", event -> gameView.showStageSelectionScreen());
-        Button btnTwoPlayer = menuElement.createButton("MultiPlay", event -> gameView.showStageSelectionScreen());
-
-        Button backToMenu = menuElement.createButton("Back", event -> this.gameView.showInitialScreen());
-        backToMenu.setMinWidth(MenuElement.BUTTON_WIDTH);
-        backToMenu.setMaxWidth(MenuElement.BUTTON_WIDTH);
+        Button btnOnePlayer = menuFrontElement.createButton("SinglePlay", event -> gameView.showStageSelectionScreen());
+        Button btnTwoPlayer = menuFrontElement.createButton("MultiPlay", event -> gameView.showStageSelectionScreen());
+        Button backToMenu = menuFrontElement.createButton("Back", event -> this.gameView.showInitialScreen());
+        backToMenu.setMinWidth(MenuFrontElement.BUTTON_WIDTH);
+        backToMenu.setMaxWidth(MenuFrontElement.BUTTON_WIDTH);
         backToMenu.setStyle("-fx-font-size: 24px;");
 
         // Create the game mode selection box if not already created
-        if (gameView.gameModeBox == null) {
-            gameView.gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
-            gameView.gameModeBox.setAlignment(Pos.CENTER);
+        if (gameModeBox == null) {
+            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
+            gameModeBox.setAlignment(Pos.CENTER);
         }
         // Add the game mode box to the root stack pane, making it visible
-        if (!gameView.main.root.getChildren().contains(gameView.gameModeBox)) {
-            gameView.main.root.getChildren().add(gameView.gameModeBox);
+        if (!root.getChildren().contains(gameModeBox)) {
+            root.getChildren().add(gameModeBox);
         }
 
         // Make the game mode selection box visible
-        gameView.gameModeBox.setVisible(true);
+        gameModeBox.setVisible(true);
 
     }
     private void setupKeyControls(Scene scene) {

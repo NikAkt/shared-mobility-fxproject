@@ -5,7 +5,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 
@@ -23,13 +22,13 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.Main;
-import org.example.sharedmobilityfxproject.model.MenuElement;
+import org.example.sharedmobilityfxproject.model.MenuFrontElement;
 
 import java.io.File;
 import java.io.InputStream;
 
 public class GameView {
-    public MenuElement menuElement;
+    public MenuFrontElement menuFrontElement;
     public VBox gameModeBox;
     public Main main;
     public VBox buttonBox;
@@ -40,8 +39,11 @@ public class GameView {
 
     public Stage primaryStage;
     public VBox stageSelectionBox;
-
+    public GameView(Main main) {
+        this.main = main;
+    }
     public void showStageSelectionScreen() {
+        menuFrontElement = new MenuFrontElement();
         if (topRow == null && bottomRow == null) {
             topRow = new HBox(10);
             bottomRow = new HBox(10);
@@ -53,57 +55,46 @@ public class GameView {
 
             for (String stage : topStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = menuElement.createStageButton(stage, stageImage);
+                Button stageButton = menuFrontElement.createStageButton(stage, stageImage);
                 topRow.getChildren().add(stageButton);
             }
 
             for (String stage : bottomStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = menuElement.createStageButton(stage, stageImage);
+                Button stageButton = menuFrontElement.createStageButton(stage, stageImage);
                 bottomRow.getChildren().add(stageButton);
             }
         }
-        stageSelectionBox = new VBox(20, topRow, bottomRow);
+        stageSelectionBox = new VBox(100, topRow, bottomRow);
         stageSelectionBox.setAlignment(Pos.CENTER);
+        main.gameModeBox.setVisible(false);
+        main.root.getChildren().removeAll(buttonBox, gameModeBox);
+        main.root.getChildren().add(stageSelectionBox);
 
-        gameModeBox.setVisible(false);
-        root.getChildren().removeAll(buttonBox, gameModeBox);
-        root.getChildren().add(stageSelectionBox);
+
     }
     public ImageView createStageImage(String stageName) {
-        String imagePath;
-        switch (stageName) {
-            case "Seoul":
-                imagePath = "/images/seoul.jpg"; // 서울 이미지 경로
-                break;
-            case "Athens":
-                imagePath = "/images/athens.png"; // 아테네 이미지 경로
-                break;
-            case "Dublin":
-                imagePath = "/images/dublin.png"; // 더블린 이미지 경로
-                break;
-            case "Vilnius":
-                imagePath = "/images/vilnius.png"; // 더블린 이미지 경로
-                break;
-            case "Istanbul":
-                imagePath = "/images/istanbul.png"; // 더블린 이미지 경로
-                break;
-            case "Home":
-                imagePath = "/images/home.png"; // 더블린 이미지 경로
-                break;
-            default:
+        String imagePath = switch (stageName) {
+            case "Seoul" -> "/images/seoul.jpg"; // 서울 이미지 경로
+            case "Athens" -> "/images/athens.png"; // 아테네 이미지 경로
+            case "Dublin" -> "/images/dublin.png"; // 더블린 이미지 경로
+            case "Vilnius" -> "/images/vilnius.png"; // 더블린 이미지 경로
+            case "Istanbul" -> "/images/istanbul.png"; // 더블린 이미지 경로
+            case "Home" -> "/images/home.png"; // 더블린 이미지 경로
+            case "Back" -> "/images/home.png";
+            default ->
                 // 기본 이미지 또는 에러 처리
-                imagePath = "/images/Way_Back_Home.png.png";
-                break;
-        }
+                    "/images/Way_Back_Home.png.png";
+        };
         InputStream is = getClass().getResourceAsStream(imagePath);
+
         if (is == null) {
             throw new IllegalStateException("Cannot find image for stage: " + stageName);
         }
         Image image = new Image(is);
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(100); // 이미지 높이를 설정
-        imageView.setFitWidth(150);  // 이미지 너비를 설정
+        imageView.setFitHeight(200); // 이미지 높이를 설정
+        imageView.setFitWidth(230);  // 이미지 너비를 설정
         return imageView;
     }
     public void loadGameScreen(String stageName) {

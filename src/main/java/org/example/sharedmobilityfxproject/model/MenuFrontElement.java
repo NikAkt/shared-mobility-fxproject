@@ -7,7 +7,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.ImageView;
 import org.example.sharedmobilityfxproject.view.GameView;
 
-public class MenuElement {
+public class MenuFrontElement {
     private GameView gameView;
     public static final double BUTTON_WIDTH = 200;
     public Button createButton(String text, EventHandler<ActionEvent> action) {
