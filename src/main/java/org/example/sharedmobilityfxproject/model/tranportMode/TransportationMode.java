@@ -10,6 +10,9 @@ public abstract class TransportationMode {
         this.speed = speed;
     }
 
+    public TransportationMode(int x, int y, int stamina, int i, int i1, int gemCount) {
+    }
+
 
     public String getModeName() {
         return modeName;
