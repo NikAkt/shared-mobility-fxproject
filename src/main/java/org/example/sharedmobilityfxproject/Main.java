@@ -2,6 +2,7 @@ package org.example.sharedmobilityfxproject;
 import org.example.sharedmobilityfxproject.model.Grid;
 import org.example.sharedmobilityfxproject.model.Cell;
 import org.example.sharedmobilityfxproject.model.Obstacle;
+import org.example.sharedmobilityfxproject.model.Gem;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -139,7 +140,7 @@ public class Main extends Application {
             grid.add(finishCell, finishColumn, finishRow);
 
             // Initialise currentCell after the grid has been filled
-            // Initialize Player
+            // Initialise Player
             Player playerUno = new Player(25,25,10,1,10,0);
             ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
 
@@ -163,32 +164,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    // Gem class representing a gem in the grid
-    private class Gem extends Cell {
-        public boolean isCollected = false; // Flag to track if the gem has been collected
-        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected.mp3"; // Path to the gem collect sound file
-
-        // Constructor to initialise gem coordinates
-        public Gem(int column, int row) {
-            super(column, row);
-            getStyleClass().add("gem");
-            setUserData("gem"); // Set a custom attribute to identify the gem cell
-        }
-
-        // Override the highlight method to play the gem collect sound and increment the gem count
-        @Override
-        public void highlight() {
-            super.highlight();
-            if (!isCollected) {
-                System.out.println("Gem collected"); //debug
-                playGemCollectSound(); // Play the gem collect sound
-                gemCount++; // Increment the gem count
-                updateGemCountLabel(); // Update the gem count label
-                isCollected = true; // Set the flag to true after the gem is collected
-            }
-        }
     }
 
     /**
