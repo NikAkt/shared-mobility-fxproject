@@ -1,9 +1,7 @@
 package org.example.sharedmobilityfxproject.model.tranportMode;
 
 
-import org.example.sharedmobilityfxproject.model.Player;
-
-public class Bus extends Player {
+public class Bus extends TransportationMode {
     private int speed;
     private double carbonFootprintAmount;
     private final double carbonFootprintPerKm = 97; // Specific rate for a bus
@@ -23,7 +21,7 @@ public class Bus extends Player {
     }
 
     // Getter and Setter for speed
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 

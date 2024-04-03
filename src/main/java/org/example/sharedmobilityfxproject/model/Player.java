@@ -1,6 +1,6 @@
 package org.example.sharedmobilityfxproject.model;
 
-public class Player {
+public class Player implements motion {
     private int x; // x position
     private int y; // y position
     private int stamina; // stamina
@@ -40,18 +40,26 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
     public void setStamina(int stamina) {
         this.stamina=stamina;
     }
-    public void moveUp(){
-        y=y-speed;
+    @Override
+    public void moveUp() {
+        y -= speed;
     }
-    public void moveDown(){
-        y=y+speed;
+
+    @Override
+    public void moveDown() {
+        y += speed;
     }
-    public void moveLeft(){
-        x=x-speed;
+
+    @Override
+    public void moveLeft() {
+        x -= speed;
     }
-    public void moveRight(){
-        x=x+speed;
+
+    @Override
+    public void moveRight() {
+        x += speed;
     }
+
     public void decreaseStamina(){ //alternatively we could have each item change the stamina
         stamina=stamina-10;
     }

@@ -1,8 +1,8 @@
 package org.example.sharedmobilityfxproject.model.tranportMode;
 
-import org.example.sharedmobilityfxproject.model.Player;
+import org.example.sharedmobilityfxproject.model.motion;
 
-public class Taxi extends Player {
+public class Taxi extends TransportationMode implements motion {
     private int speed;
     private double carbonFootprintAmount;
     private final double carbonFootprintPerKm = 170; // Assuming this is the rate for a petrol car
@@ -22,7 +22,7 @@ public class Taxi extends Player {
     }
 
     // Getter and Setter for speed
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -37,5 +37,25 @@ public class Taxi extends Player {
 
     public void setCarbonFootprintAmount(double carbonFootprintAmount) {
         this.carbonFootprintAmount = carbonFootprintAmount;
+    }
+
+    @Override
+    public void moveUp() {
+
+    }
+
+    @Override
+    public void moveDown() {
+
+    }
+
+    @Override
+    public void moveLeft() {
+
+    }
+
+    @Override
+    public void moveRight() {
+
     }
 }

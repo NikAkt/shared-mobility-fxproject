@@ -2,8 +2,9 @@ package org.example.sharedmobilityfxproject.model.tranportMode;
 
 
 import org.example.sharedmobilityfxproject.model.Player;
+import org.example.sharedmobilityfxproject.model.motion;
 
-public class Bicycle extends Player {
+public class Bicycle extends Player implements motion {
     private int speed;
 
     public Bicycle(int x, int y, int stamina, int GemCount, int speed) {
