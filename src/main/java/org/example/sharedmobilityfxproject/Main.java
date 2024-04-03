@@ -112,15 +112,6 @@ public class Main extends Application {
             VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
             vbox.setAlignment(Pos.TOP_LEFT);
 
-            // Place the gem after the grid is filled and the player's position is initialized
-            int gemColumn;
-            int gemRow;
-            do {
-                gemColumn = (int) (Math.random() * COLUMNS);
-                gemRow = (int) (Math.random() * ROWS);
-            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
-            Gem gem = new Gem(gemColumn, gemRow);
-            grid.add(gem, gemColumn, gemRow);
 
             // Initialise Obstacles
             obstacles = new ArrayList<>();
@@ -128,13 +119,15 @@ public class Main extends Application {
             obstacles.add(new Obstacle(grid, 10, 5));
             obstacles.add(new Obstacle(grid, 5, 10));
 
+            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
+
             // Place the finish cell after the grid is filled and the player's position is initialised
             int finishColumn;
             int finishRow;
             do {
                 finishColumn = (int) (Math.random() * COLUMNS);
                 finishRow = (int) (Math.random() * ROWS);
-            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
+            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
             finishCell = new Cell(finishColumn, finishRow);
             finishCell.getStyleClass().add("finish");
             grid.add(finishCell, finishColumn, finishRow);
@@ -298,6 +291,22 @@ public class Main extends Application {
             // If there is an obstacle, don't move and possibly add some feedback
         }
     }
+
+    // Place the gem after the grid is filled and the player's position is initialized
+    public void generateGems(Grid grid, int numberOfGems) {
+        for (int i = 0; i < numberOfGems; i++) {
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+
+            Gem gem = new Gem(gemColumn, gemRow);
+            grid.add(gem, gemColumn, gemRow);
+        }
+    }
+
 
     // Method to update the gem count label
     private void updateGemCountLabel() {
