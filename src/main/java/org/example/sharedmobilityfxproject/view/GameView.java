@@ -230,36 +230,4 @@ public class GameView {
         }
     }
 
-
-//    public EventHandler<ActionEvent> showPlayerModeSelection() { if (topRow == null && bottomRow == null) {
-//        topRow = new HBox(10);
-//        bottomRow = new HBox(10);
-//        topRow.setAlignment(Pos.CENTER);
-//        bottomRow.setAlignment(Pos.CENTER);
-//
-//        String[] topStages = {"Seoul", "Athens", "Dublin", "Istanbul"};
-//        String[] bottomStages = {"Vilnius", "Back"};
-//
-//        for (String stage : topStages) {
-//            ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-//            Button stageButton = createStageButton(stage, stageImage);
-//            topRow.getChildren().add(stageButton);
-//        }
-//
-//        for (String stage : bottomStages) {
-//            ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-//            Button stageButton = createStageButton(stage, stageImage);
-//            bottomRow.getChildren().add(stageButton);
-//        }
-//    }
-//
-//        stageSelectionBox = new VBox(20, topRow, bottomRow);
-//        stageSelectionBox.setAlignment(Pos.CENTER);
-//
-//        gameModeBox.setVisible(false);
-//        root.getChildren().removeAll(buttonBox, gameModeBox);
-//        root.getChildren().add(stageSelectionBox);
-//
-//
-//    }
 }
