@@ -1,10 +1,9 @@
 package org.example.sharedmobilityfxproject.model.tranportMode;
 
 
-import org.example.sharedmobilityfxproject.model.Player;
 import org.example.sharedmobilityfxproject.model.motion;
 
-public class Bicycle extends Player implements motion {
+public class Bicycle extends TransportationMode implements motion {
     private int speed;
 
     public Bicycle(int x, int y, int stamina, int GemCount, int speed) {
@@ -19,7 +18,7 @@ public class Bicycle extends Player implements motion {
     }
 
     // Getter and Setter for speed
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -27,8 +26,27 @@ public class Bicycle extends Player implements motion {
         this.speed = speed;
     }
     public void increase_Speed() {
-        int currentSpeed = getSpeed(); // bring currentSpeed
+        double currentSpeed = getSpeed(); // bring currentSpeed
         setSpeed(currentSpeed + 20); // 현재 속도에 20을 더해 새 속도를 설정
     }
 
+    @Override
+    public void moveUp() {
+
+    }
+
+    @Override
+    public void moveDown() {
+
+    }
+
+    @Override
+    public void moveLeft() {
+
+    }
+
+    @Override
+    public void moveRight() {
+
+    }
 }
