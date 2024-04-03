@@ -153,7 +153,7 @@ public class Main extends Application {
             root.getChildren().addAll(grid, vbox);
 
             // create scene and set to stage
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/application.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
 
