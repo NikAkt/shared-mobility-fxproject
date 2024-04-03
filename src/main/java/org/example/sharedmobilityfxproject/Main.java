@@ -1,4 +1,7 @@
 package org.example.sharedmobilityfxproject;
+import org.example.sharedmobilityfxproject.model.Grid;
+import org.example.sharedmobilityfxproject.model.Cell;
+import org.example.sharedmobilityfxproject.model.Obstacle;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -13,6 +16,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.sharedmobilityfxproject.model.Player;
+
 import java.awt.Point;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
@@ -46,13 +51,9 @@ public class Main extends Application {
     // Player (will be implemented)
 //    private Point player;
 
-    // Obstacles (will be implemented)
+    // Obstacles
     // List to keep track of all obstacles
     private List<Obstacle> obstacles;
-//    private int obstacleX;
-//    private int obstacleY;
-//    private boolean gameOver;
-//    private int facingDirection;
 
 //    removed from scene
 //    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
@@ -141,200 +142,31 @@ public class Main extends Application {
             grid.add(finishCell, finishColumn, finishRow);
 
             // Initialise currentCell after the grid has been filled
+            // Initialize Player
+            Player playerUno = new Player(25,25,10,1,10,0);
+            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+
+            // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid, vbox);
 
-            // Create scene and set to stage
+            // create scene and set to stage
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Main method to launch the JavaFX application
     public static void main(String[] args) {
         launch(args);
     }
-
-    /**
-     * Grid class represents a two-dimensional grid of cells.
-     * It is responsible for managing the cells and their layout within the grid.
-     */
-    private class Grid extends Pane {
-
-        int rows;
-        int columns;
-
-        double width;
-        double height;
-
-        Cell[][] cells;
-
-        // Constructor to initialise grid dimensions and cell array
-        public Grid( int columns, int rows, double width, double height) {
-            this.columns = columns;
-            this.rows = rows;
-            this.width = width;
-            this.height = height;
-            cells = new Cell[rows][columns];
-        }
-
-        /**
-         * Add cell to array and to the UI.
-         */
-        public void add(Cell cell, int column, int row) {
-            cells[row][column] = cell;
-            double w = width / columns;
-            double h = height / rows;
-            double x = w * column;
-            double y = h * row;
-            cell.setLayoutX(x);
-            cell.setLayoutY(y);
-            cell.setPrefWidth(w);
-            cell.setPrefHeight(h);
-            getChildren().add(cell);
-        }
-
-        // Get cell at given coordinates
-        public Cell getCell(int column, int row) {
-            return cells[row][column];
-        }
-
-        /**
-         * Unhighlight all cells
-         */
-        public void unhighlight() {
-            for(int row = 0; row < rows; row++) {
-                for(int col = 0; col < columns; col++) {
-                    cells[row][col].unhighlight();
-                }
-            }
-        }
-    }
-
-    /**
-     * Cell class represents a single cell within a grid.
-     * It manages the visual representation and state of the cell, such as highlighting.
-     */
-    private class Cell extends StackPane {
-
-        int column;
-        int row;
-
-        // Constructor to initialise cell coordinates
-        public Cell(int column, int row) {
-            this.column = column;
-            this.row = row;
-            getStyleClass().add("cell");
-            // Label label = new Label(this.toString());
-            // getChildren().add(label);
-            setOpacity(0.9);
-        }
-
-        // Highlight the cell
-        public void highlight() {
-            // Ensure the style is only coded once in the style list
-            getStyleClass().remove("cell-highlight");
-            // Add style
-            getStyleClass().add("cell-highlight");
-        }
-
-        // Unhighlight the cell
-        public void unhighlight() {
-            getStyleClass().remove("cell-highlight");
-        }
-
-        // Highlight the cell when hovering over it
-        public void hoverHighlight() {
-            // Ensure the style is only coded once in the style list
-            getStyleClass().remove("cell-hover-highlight");
-            // Add style
-            getStyleClass().add("cell-hover-highlight");
-        }
-
-        // Unhighlight the cell when hovering over it
-        public void hoverUnhighlight() {
-            getStyleClass().remove("cell-hover-highlight");
-        }
-
-        // Override toString method to provide coordinates
-        public String toString() {
-            return this.column + "/" + this.row;
-        }
-    }
-
-    // Gem class representing a gem in the grid
-    private class Gem extends Cell {
-        public boolean isCollected = false; // Flag to track if the gem has been collected
-        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected.mp3"; // Path to the gem collect sound file
-
-        // Constructor to initialise gem coordinates
-        public Gem(int column, int row) {
-            super(column, row);
-            getStyleClass().add("gem");
-            setUserData("gem"); // Set a custom attribute to identify the gem cell
-        }
-
-        // Override the highlight method to play the gem collect sound and increment the gem count
-        @Override
-        public void highlight() {
-            super.highlight();
-            if (!isCollected) {
-                System.out.println("Gem collected"); //debug
-                playGemCollectSound(); // Play the gem collect sound
-                gemCount++; // Increment the gem count
-                updateGemCountLabel(); // Update the gem count label
-                isCollected = true; // Set the flag to true after the gem is collected
-            }
-        }
-    }
-    /**
-     * Obstacle class represents an obstacle on the grid.
-     * It is responsible for managing the state of the cells that form the obstacle.
-     */
-    public class Obstacle {
-
-        private Grid grid;
-        private int column;
-        private int row;
-
-        /**
-         * Constructs an obstacle located at the specified column and row.
-         *
-         * @param grid   The grid on which the obstacle is placed.
-         * @param column The column index of the obstacle's location on the grid.
-         * @param row    The row index of the obstacle's location on the grid.
-         */
-        public Obstacle(Grid grid, int column, int row) {
-            this.grid = grid;
-            this.column = column;
-            this.row = row;
-            createObstacle();
-        }
-
-        /**
-         * Marks the cell at the obstacle's location as an obstacle by changing its color to red.
-         */
-        private void createObstacle() {
-            Cell obstacleCell = grid.getCell(column, row);
-            obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
-        }
-
-        // Methods to get the column and row of the obstacle
-        public int getColumn() {
-            return column;
-        }
-
-        public int getRow() {
-            return row;
-        }
-    }
-
 
     /**
      * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
@@ -344,13 +176,14 @@ public class Main extends Application {
 
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
+        public Cell playerUnosCell; // Made public for access in start method
         private int currentRow = 0;
         private int currentColumn = 0;
 
         // Constructor to initialise grid
         public KeyboardActions(Grid grid) {
             this.grid = grid;
-            // Don't initialise currentCell here
+            // Don't initialize currentCell here
         }
 
         public void setupKeyboardActions(Scene scene) {
@@ -362,6 +195,11 @@ public class Main extends Application {
                     case DOWN -> moveSelection(0, 1);
                     case H -> currentCell.highlight();
                     case U -> currentCell.unhighlight();
+                    // Player
+                    case D -> movePLayer(1, 0);
+                    case A -> movePLayer(-1, 0);
+                    case W -> movePLayer(0, -1);
+                    case S -> movePLayer(0, 1);
                     case T -> hailTaxi();
                     // Add more cases as needed
                 }
@@ -387,15 +225,6 @@ public class Main extends Application {
         }
 
         /**
-         * Checks whether the specified cell position coincides with any of the obstacles in the grid.
-         *
-         * @return true if there is an obstacle at the specified location, otherwise false.
-         */
-        private boolean isNextCellObstacle(int column, int row) {
-            return obstacles.stream().anyMatch(obstacle -> obstacle.getColumn() == column && obstacle.getRow() == row);
-        }
-
-        /**
          * Attempts to move the current selection by a specified number of columns and rows.
          * The movement is performed if the destination cell is not an obstacle.
          *
@@ -408,25 +237,45 @@ public class Main extends Application {
                 return;
             }
 
-            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.rows - 1);
-            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.columns - 1);
-            Cell newCell = grid.getCell(newColumn, newRow);
+            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
 
             // Check if the next cell is an obstacle
-            if (!isNextCellObstacle(newColumn, newRow)) {
+            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
                 // Optionally unhighlight the old cell
                 currentCell.unhighlight();
+
                 currentCell = nextCell;
                 currentRow = newRow;
                 currentColumn = newColumn;
 
                 // Optionally highlight the new cell
                 currentCell.highlight();
-                // If there is an obstacle, don't move and possibly add some feedback
             }
+            // If there is an obstacle, don't move and possibly add some feedback
+        }
+        private void movePLayer(int dx, int dy) {
+            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
+
+            // Check if the next cell is an obstacle
+            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+                // Move the player to the new cell because there is no obstacle
+                Cell nextCell = grid.getCell(newColumn, newRow);
+
+                // Optionally unhighlight the old cell
+                playerUnosCell.unhighlight();
+
+                playerUnosCell = nextCell;
+
+                // Optionally highlight the new cell
+                playerUnosCell.highlight();
+            }
+            // If there is an obstacle, don't move and possibly add some feedback
+        }
 
             if (newCell == finishCell) {
                 // Player reached the finish cell
