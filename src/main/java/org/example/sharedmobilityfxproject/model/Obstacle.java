@@ -10,6 +10,7 @@ public class Obstacle {
     private Grid grid;
     private int column;
     private int row;
+    private boolean isManhattanBuilding;
 
     /**
      * Constructs an obstacle located at the specified column and row.
@@ -29,8 +30,18 @@ public class Obstacle {
      * Marks the cell at the obstacle's location as an obstacle by changing its color to red.
      */
     private void createObstacle() {
-        Cell obstacleCell = grid.getCell(column, row);
-        obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
+        int[] columns;
+        int[] rows;
+        columns = new int[]{column};
+        rows = new int[]{row};
+        for (int col : columns) {
+            for (int r : rows) {
+                if (col >= 0 && col < grid.getColumns() && r >= 0 && r < grid.getRows()) {
+                    Cell obstacleCell = grid.getCell(col, r);
+                    obstacleCell.getStyleClass().add("cell-obstacle");
+                }
+            }
+        }
     }
 
     // Methods to get the column and row of the obstacle
