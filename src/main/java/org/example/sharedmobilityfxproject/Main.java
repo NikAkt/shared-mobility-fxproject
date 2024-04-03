@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -32,6 +33,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import org.example.sharedmobilityfxproject.model.Timer;
+
 public class Main extends Application {
     private Button btnStartGame;
     private Button btnExit;
@@ -45,25 +48,26 @@ public class Main extends Application {
     private StackPane root;
     private HBox topRow;
     private HBox bottomRow;
+    private VBox imgBox;
+
+
     @Override
     public void start(Stage primaryStage) {
         try {
             // Load the image
             this.primaryStage = primaryStage;
-            InputStream is = getClass().getResourceAsStream("/images/waybackHome.png");
-            if (is == null) {
+            Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
+            Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
+            MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
+            MediaView mediaView = new MediaView(bgmediaPlayer);
+            ImageView imageView = new ImageView(logoImage);
+            imageView.setPreserveRatio(true);
+            imageView.setFitHeight(100); // You can adjust this value as needed
+            if (bgv == null) {
                 System.err.println("Cannot find image file");
                 return; // Exit the method if the image file can't be found
             }
-            Image backgroundImage = new Image(is);
 
-            // Create an ImageView that is a node for displaying the Image
-            ImageView backgroundImageView = new ImageView(backgroundImage);
-
-            // Make the ImageView the size of the image
-            backgroundImageView.setPreserveRatio(false);
-            backgroundImageView.setFitWidth(primaryStage.getWidth());
-            backgroundImageView.setFitHeight(primaryStage.getHeight());
 
             // Initialize the Media and MediaPlayer for background music
             Media media = new Media(new File("src/main/resources/music/waybackHome.mp3").toURI().toString());
@@ -71,6 +75,9 @@ public class Main extends Application {
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Play the BGM in a loop
             mediaPlayer.play(); // Start playing the BGM
 
+
+            bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            bgmediaPlayer.play();
             // Create and configure the "Game Start" button
             btnStartGame = createButton("Game Start", this::showPlayerModeSelection);
 
@@ -78,19 +85,26 @@ public class Main extends Application {
             btnExit = createButton("Exit", event -> primaryStage.close());
 
             // Create a VBox for buttons
-            buttonBox = new VBox(20, this.btnStartGame, this.btnExit);
+            buttonBox = new VBox(20, this.btnStartGame, this.btnExit, imageView);
+            imgBox = new VBox(20, imageView);
             buttonBox.setAlignment(Pos.CENTER); // Align buttons to center
+            imgBox.setAlignment(Pos.TOP_CENTER);
 
             // Center the VBox in the StackPane
             StackPane.setAlignment(buttonBox, Pos.CENTER);
+            StackPane.setAlignment(imgBox, Pos.CENTER);
 
-            this.root = new StackPane(backgroundImageView,buttonBox);
+
+            this.root = new StackPane();
+            this.root.getChildren().add(mediaView);
 
             // Set up the scene with the StackPane and show the stage
             Scene scene = new Scene(root, 1496, 1117); // Use the same size as the image for a full background
             setupKeyControls(scene);
 
-            primaryStage.setTitle("WayBack Home");
+            this.root.getChildren().add(buttonBox);
+            this.root.getChildren().add(imgBox);
+            primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -157,7 +171,7 @@ public class Main extends Application {
             bottomRow.setAlignment(Pos.CENTER);
 
             String[] topStages = {"Seoul", "Athens", "Dublin", "Istanbul"};
-            String[] bottomStages = {"London", "Vilnius", "Back"};
+            String[] bottomStages = {"Vilnius", "Back"};
 
             for (String stage : topStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
@@ -180,16 +194,39 @@ public class Main extends Application {
         root.getChildren().add(stageSelectionBox);
     }
     private ImageView createStageImage(String stageName) {
-        // ramdom image load method
-        InputStream stageImage = getClass().getResourceAsStream("/images/waybackHome.png");
-        if (stageImage == null) {
-            System.err.println("Cannot find image file");
+        String imagePath;
+        switch (stageName) {
+            case "Seoul":
+                imagePath = "/images/seoul.jpg"; // 서울 이미지 경로
+                break;
+            case "Athens":
+                imagePath = "/images/athens.png"; // 아테네 이미지 경로
+                break;
+            case "Dublin":
+                imagePath = "/images/dublin.png"; // 더블린 이미지 경로
+                break;
+            case "Vilnius":
+                imagePath = "/images/vilnius.png"; // 더블린 이미지 경로
+                break;
+            case "Istanbul":
+                imagePath = "/images/istanbul.png"; // 더블린 이미지 경로
+                break;
+            case "Home":
+                imagePath = "/images/home.png"; // 더블린 이미지 경로
+                break;
+            default:
+                // 기본 이미지 또는 에러 처리
+                imagePath = "/images/Way_Back_Home.png.png";
+                break;
         }
-        Image backgroundImage = new Image(stageImage);
-
-        ImageView imageView = new ImageView(backgroundImage);
-        imageView.setFitHeight(170); //
-        imageView.setFitWidth(270);  //
+        InputStream is = getClass().getResourceAsStream(imagePath);
+        if (is == null) {
+            throw new IllegalStateException("Cannot find image for stage: " + stageName);
+        }
+        Image image = new Image(is);
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(100); // 이미지 높이를 설정
+        imageView.setFitWidth(150);  // 이미지 너비를 설정
         return imageView;
     }
     private void loadGameScreen(String stageName) {
@@ -291,9 +328,6 @@ public class Main extends Application {
                 break;
             case "Istanbul":
                 // Load Istanbul stage
-                break;
-            case "London":
-                // Load London stage
                 break;
             case "Vilnius":
                 // Load Vilnius stage
