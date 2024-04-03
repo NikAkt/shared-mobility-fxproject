@@ -88,8 +88,8 @@ public class Main extends Application {
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
             primaryStage.setResizable(false);
-//            primaryStage.setFullScreen(true);
-//            primaryStage.setFullScreenExitHint("Press esc to minimize !");
+            //primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
             // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
@@ -153,7 +153,7 @@ public class Main extends Application {
             root.getChildren().addAll(grid, vbox);
 
             // create scene and set to stage
-            scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -246,7 +246,7 @@ public class Main extends Application {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
-                // Optionally unhighlight the old cell
+                // Optionally un-highlight the old cell
                 currentCell.unhighlight();
 
                 currentCell = nextCell;
@@ -274,7 +274,7 @@ public class Main extends Application {
 
             if ("gem".equals(newCell.getUserData())) {
                 grid.getChildren().remove(newCell);
-                newCell.unhighlight(); // Unhighlight only the gem cell
+                newCell.unhighlight(); // Un-highlight only the gem cell
                 grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
                 updateGemCountLabel(); // Update gem count label
             }
@@ -289,7 +289,7 @@ public class Main extends Application {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
-                // Optionally unhighlight the old cell
+                // Optionally Un-highlight the old cell
                 playerUnosCell.unhighlight();
 
                 playerUnosCell = nextCell;
