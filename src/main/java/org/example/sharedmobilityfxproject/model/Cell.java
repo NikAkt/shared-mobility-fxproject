@@ -2,48 +2,61 @@ package org.example.sharedmobilityfxproject.model;
 
 import javafx.scene.layout.StackPane;
 
+/**
+ * Cell class represents a single cell within a grid.
+ * It manages the visual representation and state of the cell, such as highlighting.
+ */
 public class Cell extends StackPane {
 
     int column;
     int row;
 
-    // Constructor to initialise cell coordinates
     public Cell(int column, int row) {
+
         this.column = column;
         this.row = row;
+
         getStyleClass().add("cell");
-        // Label label = new Label(this.toString());
-        // getChildren().add(label);
+
+//          Label label = new Label(this.toString());
+//
+//          getChildren().add(label);
+
         setOpacity(0.9);
     }
 
-    // Highlight the cell
     public void highlight() {
-        // Ensure the style is only coded once in the style list
+        // ensure the style is only once in the style list
         getStyleClass().remove("cell-highlight");
-        // Add style
+
+        // add style
         getStyleClass().add("cell-highlight");
     }
 
-    // Unhighlight the cell
     public void unhighlight() {
         getStyleClass().remove("cell-highlight");
     }
 
-    // Highlight the cell when hovering over it
     public void hoverHighlight() {
-        // Ensure the style is only coded once in the style list
+        // ensure the style is only once in the style list
         getStyleClass().remove("cell-hover-highlight");
-        // Add style
+
+        // add style
         getStyleClass().add("cell-hover-highlight");
     }
 
-    // Unhighlight the cell when hovering over it
     public void hoverUnhighlight() {
         getStyleClass().remove("cell-hover-highlight");
     }
 
-    // Override toString method to provide coordinates
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
     public String toString() {
         return this.column + "/" + this.row;
     }
