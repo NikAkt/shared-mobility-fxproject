@@ -35,13 +35,13 @@ public class Main extends Application {
     private static final double HEIGHT = 600;
 
     // Gem count
-    int gemCount = 0;
+    static int gemCount = 0;
 
     // Carbon footprint
     int carbonFootprint = 0;
 
     // Label to keep track of gem count
-    Label gemCountLabel; // Label to display gem count
+    static Label gemCountLabel; // Label to display gem count
 
     // Label to keep track of total carbon footprint
     Label carbonFootprintLabel; // Label to display carbon footprint
@@ -64,6 +64,15 @@ public class Main extends Application {
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
+    @FunctionalInterface
+    public interface GemCollector {
+        void collectGem();
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -302,14 +311,14 @@ public class Main extends Application {
                 gemRow = (int) (Math.random() * ROWS);
             } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
-            Gem gem = new Gem(gemColumn, gemRow);
+            Gem gem = new Gem(gemColumn, gemRow,this);
             grid.add(gem, gemColumn, gemRow);
         }
     }
 
 
     // Method to update the gem count label
-    private void updateGemCountLabel() {
+    private static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
         }
 
