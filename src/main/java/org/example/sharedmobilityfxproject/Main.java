@@ -165,6 +165,32 @@ public class Main extends Application {
         launch(args);
     }
 
+    // Gem class representing a gem in the grid
+    private class Gem extends Cell {
+        public boolean isCollected = false; // Flag to track if the gem has been collected
+        private static final String GEM_COLLECT_SOUND = "/resources/music/gem_collected.mp3"; // Path to the gem collect sound file
+
+        // Constructor to initialise gem coordinates
+        public Gem(int column, int row) {
+            super(column, row);
+            getStyleClass().add("gem");
+            setUserData("gem"); // Set a custom attribute to identify the gem cell
+        }
+
+        // Override the highlight method to play the gem collect sound and increment the gem count
+        @Override
+        public void highlight() {
+            super.highlight();
+            if (!isCollected) {
+                System.out.println("Gem collected"); //debug
+                playGemCollectSound(); // Play the gem collect sound
+                gemCount++; // Increment the gem count
+                updateGemCountLabel(); // Update the gem count label
+                isCollected = true; // Set the flag to true after the gem is collected
+            }
+        }
+    }
+
     /**
      * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
      * It manages the current cell selection and applies keyboard actions to it.
@@ -236,6 +262,7 @@ public class Main extends Application {
 
             int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
             int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
+            Cell newCell = grid.getCell(newColumn, newRow);
 
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
@@ -253,27 +280,6 @@ public class Main extends Application {
                 currentCell.highlight();
             }
             // If there is an obstacle, don't move and possibly add some feedback
-        }
-        private void movePLayer(int dx, int dy) {
-            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
-            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
-
-            // Check if the next cell is an obstacle
-            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
-                // Move the player to the new cell because there is no obstacle
-                Cell nextCell = grid.getCell(newColumn, newRow);
-
-                // Optionally unhighlight the old cell
-                playerUnosCell.unhighlight();
-
-                playerUnosCell = nextCell;
-
-                // Optionally highlight the new cell
-                playerUnosCell.highlight();
-            }
-            // If there is an obstacle, don't move and possibly add some feedback
-        }
-
             if (newCell == finishCell) {
                 // Player reached the finish cell
                 gameFinished = true; // Set game as finished
@@ -295,6 +301,26 @@ public class Main extends Application {
                 grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
                 updateGemCountLabel(); // Update gem count label
             }
+        }
+
+        private void movePLayer(int dx, int dy) {
+            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
+
+            // Check if the next cell is an obstacle
+            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+                // Move the player to the new cell because there is no obstacle
+                Cell nextCell = grid.getCell(newColumn, newRow);
+
+                // Optionally unhighlight the old cell
+                playerUnosCell.unhighlight();
+
+                playerUnosCell = nextCell;
+
+                // Optionally highlight the new cell
+                playerUnosCell.highlight();
+            }
+            // If there is an obstacle, don't move and possibly add some feedback
         }
     }
 
