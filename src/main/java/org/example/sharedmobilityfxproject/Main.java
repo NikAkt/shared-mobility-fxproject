@@ -109,7 +109,10 @@ public class Main extends Application {
             busStops.add(busS1);
             busStops.add(busS2);
             busman = new Bus(busStops,15, 15);
-
+            for (int i = 0; i < busman.list().size(); i++){
+                busStop stop = busman.list().get(i);
+                grid.add(stop,stop.getX(), stop.getY());
+            }
 
             grid.add(busman,busman.getX(), busman.getY());// Example starting position
 
