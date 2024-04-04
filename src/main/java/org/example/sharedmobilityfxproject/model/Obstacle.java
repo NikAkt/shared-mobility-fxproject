@@ -1,6 +1,5 @@
 package org.example.sharedmobilityfxproject.model;
 
-
 /**
  * Obstacle class represents an obstacle on the grid.
  * It is responsible for managing the state of the cells that form the obstacle.
@@ -10,7 +9,6 @@ public class Obstacle {
     private Grid grid;
     private int column;
     private int row;
-    private boolean isManhattanBuilding;
 
     /**
      * Constructs an obstacle located at the specified column and row.

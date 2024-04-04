@@ -48,6 +48,9 @@ public class Main extends Application {
     // Player (will be implemented)
 //    private Point player;
 
+    // Declare the grid variable at the class level
+    private Grid grid;
+
     // Obstacles
     // List to keep track of all obstacles
     private List<Obstacle> obstacles;
@@ -63,6 +66,11 @@ public class Main extends Application {
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+
+    private void colorCell(int column, int row, String color) {
+        Cell cell = grid.getCell(column, row);
+        cell.colorCell(color);
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -82,10 +90,11 @@ public class Main extends Application {
 //            primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
             // Create grid for the game
-            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+            this.grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
             // Create keyboard actions handler
             KeyboardActions ka = new KeyboardActions(grid);
+
             // Fill grid with cells
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
@@ -121,13 +130,11 @@ public class Main extends Application {
             Gem gem = new Gem(gemColumn, gemRow);
             grid.add(gem, gemColumn, gemRow);
 
-            // Initialise Obstacles for x = 0
+            // Initialise Obstacles for x = 0 only
             obstacles = new ArrayList<>();
-            obstacles.add(new Obstacle(grid, 0, 3));
-            obstacles.add(new Obstacle(grid, 0, 4));
-            obstacles.add(new Obstacle(grid, 0, 5));
 
-            int positionX0 = 8;
+            // Start at row index 3 and create groups of three obstacles with a space of two
+            int positionX0 = 3;
             int countX0 = 0;
             while (countX0 < 67) {
                 obstacles.add(new Obstacle(grid, 0, positionX0));
@@ -137,19 +144,13 @@ public class Main extends Application {
                 countX0 += 3;
             }
 
-            // Initialise Obstacles
-            obstacles = new ArrayList<>();
-
-// Define x positions
+            // Define x positions for 5 x 3 obstacles
             int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
 
-// For each x position
+            // For each x position
             for (int x : xPositions) {
-                obstacles.add(new Obstacle(grid, x, 3));
-                obstacles.add(new Obstacle(grid, x, 4));
-                obstacles.add(new Obstacle(grid, x, 5));
 
-                int positionX = 8;
+                int positionX = 3;
                 int countX = 0;
                 while (countX < 67) {
                     obstacles.add(new Obstacle(grid, x, positionX));
@@ -182,7 +183,12 @@ public class Main extends Application {
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid, vbox);
 
-            // create scene and set to stage
+            // Colour cells
+            // Define cells with coordinates and colors
+            colorCell(70, 70, "red");
+            colorCell(75, 75, "yellow");
+
+            // Create scene and set to stage
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
