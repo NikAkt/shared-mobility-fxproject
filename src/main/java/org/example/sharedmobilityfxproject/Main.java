@@ -1,8 +1,11 @@
 package org.example.sharedmobilityfxproject;
-import org.example.sharedmobilityfxproject.model.Grid;
-import org.example.sharedmobilityfxproject.model.Cell;
-import org.example.sharedmobilityfxproject.model.Obstacle;
-import org.example.sharedmobilityfxproject.model.Gem;
+import org.example.sharedmobilityfxproject.model.*;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.Animation;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -15,10 +18,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.sharedmobilityfxproject.model.Player;
 
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -58,13 +62,15 @@ public class Main extends Application {
 
     // Finish cell
     private Cell finishCell;
-
+    private Bus busman;
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
-
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -95,6 +101,20 @@ public class Main extends Application {
                     grid.add(cell, column, row);
                 }
             }
+            //bus SHITE
+
+            busStop busS1 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
+            busStop busS2 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
+            ArrayList busStops  = new ArrayList<>();
+            busStops.add(busS1);
+            busStops.add(busS2);
+            busman = new Bus(busStops,15, 15);
+            for ()
+            grid.add(busS1,30,70);
+            grid.add(busman,busman.getX(), busman.getY());// Example starting position
+
+            // Schedule the bus to move every second
+
 
             // Create label for gem count
             gemCountLabel = new Label("Gem Count: " + gemCount);
@@ -182,17 +202,81 @@ public class Main extends Application {
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid, vbox);
-
+            System.out.println(busS1.getX());
             // create scene and set to stage
             scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
+            Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.15), event -> {
+                // Assuming 'busman' is your Bus instance and 'busS1' is the target bus stop
+                // You might need logic here to select the appropriate bus stop from a list if you have multiple
+                busStop targetBusStop = busman.nextStop(); // For example purposes, using a direct reference
 
+                // Call your method to move the bus towards the bus stop
+                moveBusTowardsBusStop(grid,busman, targetBusStop);
 
+                // Your existing code might already handle updating the bus position on the grid
+                // through the moveBus method called within moveBusTowardsBusStop
+            }));
+            busMovementTimeline.setCycleCount(Animation.INDEFINITE);
+            busMovementTimeline.play();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void moveBusTowardsBusStop(Grid grid,Bus bus, busStop stop) {
+        // Calculate the Manhattan distance for both possible next steps
+        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
+        int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
+        System.out.println("--------------------");
+        System.out.println(stop.getX()+"   "+ stop.getY());
+
+        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+        if (bus.getX()<stop.getX()||bus.getX()>stop.getX() ) {
+            System.out.println("----------- moving x ---------");
+            // Move horizontally towards the bus stop, if not blocked
+            int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
+            if (canMoveBusTo(newX, bus.getY())) {
+                moveBus(grid ,bus, newX, bus.getY());
+            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1))) {
+                // Move vertically as a fallback
+                moveBus(grid ,bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
+            }
+        }
+
+        else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
+            System.out.println("----------- moving y ---------");
+            // Move vertically towards the bus stop, if not blocked
+            int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
+            if (canMoveBusTo(bus.getX(), newY)) {
+                System.out.println("1");
+                moveBus(grid,bus, bus.getX(), newY);
+            }
+            else if (canMoveBusTo(bus.getX() + (bus.getX() < stop.getX() ? 1 : -1), bus.getY())) {
+                // Move horizontally as a fallback
+                System.out.println("2");
+                moveBus(grid,bus, bus.getX() + (bus.getX() < stop.getX() ? 1 : -1), bus.getY());
+            }
+        }else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
+            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+            bus.list().add(bus.list().remove(0));
+        }
+    }
+
+    private boolean canMoveBusTo(int x, int y) {
+        // Implement logic to check if the bus can move to (x, y) considering obstacles
+        // Return true if it can move, false if there's an obstacle
+        return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+    }
+
+    private void moveBus(Grid grid,Bus bus, int newX, int newY) {
+        // Move the bus to the new position (newX, newY) on the grid
+        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
+        grid.moveCell(bus, newX, newY);
+        bus.setX(newX);
+        bus.setY(newY);
+
     }
 
     public static void main(String[] args) {
@@ -203,6 +287,7 @@ public class Main extends Application {
      * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
      * It manages the current cell selection and applies keyboard actions to it.
      */
+
     public class KeyboardActions {
 
         private Grid grid;
@@ -240,6 +325,7 @@ public class Main extends Application {
         /**
          * Hail a taxi and change the player's appearance to yellow.
          */
+
         private void hailTaxi() {
             if (!hailTaxi) {
                 hailTaxi = true;

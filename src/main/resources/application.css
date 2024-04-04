@@ -8,7 +8,14 @@
 
 .cell-hover-highlight {
 }
-
+.busStop {
+    -fx-background-radius: 0%;
+    -fx-background-color: orange;
+}
+.bus {
+    -fx-background-radius: 0%;
+    -fx-background-color: black;
+}
 .gem {
     -fx-background-color: purple;
 }
