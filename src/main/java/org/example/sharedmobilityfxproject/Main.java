@@ -109,8 +109,8 @@ public class Main extends Application {
             busStops.add(busS1);
             busStops.add(busS2);
             busman = new Bus(busStops,15, 15);
-            for ()
-            grid.add(busS1,30,70);
+
+
             grid.add(busman,busman.getX(), busman.getY());// Example starting position
 
             // Schedule the bus to move every second
