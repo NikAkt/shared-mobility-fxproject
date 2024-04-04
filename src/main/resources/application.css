@@ -14,7 +14,8 @@
 }
 
 .cell-obstacle {
-    -fx-background-color: red;
+    -fx-background-color: #808080;
+    -fx-background-radius: 0%;
 }
 
 .cell.finish {

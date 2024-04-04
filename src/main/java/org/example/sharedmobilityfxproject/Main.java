@@ -29,10 +29,10 @@ public class Main extends Application {
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    private static final int ROWS = 30;
-    private static final int COLUMNS = 60;
-    private static final double WIDTH = 800;
-    private static final double HEIGHT = 600;
+    private static final int ROWS = 80;
+    private static final int COLUMNS = 120;
+    private static final double WIDTH = 1300;
+    private static final double HEIGHT = 680;
 
     // Gem count
     int gemCount = 0;
@@ -122,11 +122,44 @@ public class Main extends Application {
             Gem gem = new Gem(gemColumn, gemRow);
             grid.add(gem, gemColumn, gemRow);
 
+            // Initialise Obstacles for x = 0
+            obstacles = new ArrayList<>();
+            obstacles.add(new Obstacle(grid, 0, 3));
+            obstacles.add(new Obstacle(grid, 0, 4));
+            obstacles.add(new Obstacle(grid, 0, 5));
+
+            int positionX0 = 8;
+            int countX0 = 0;
+            while (countX0 < 67) {
+                obstacles.add(new Obstacle(grid, 0, positionX0));
+                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
+                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
+                positionX0 += 5;
+                countX0 += 3;
+            }
+
             // Initialise Obstacles
             obstacles = new ArrayList<>();
-            obstacles.add(new Obstacle(grid, 5, 5));
-            obstacles.add(new Obstacle(grid, 10, 5));
-            obstacles.add(new Obstacle(grid, 5, 10));
+
+// Define x positions
+            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
+
+// For each x position
+            for (int x : xPositions) {
+                obstacles.add(new Obstacle(grid, x, 3));
+                obstacles.add(new Obstacle(grid, x, 4));
+                obstacles.add(new Obstacle(grid, x, 5));
+
+                int positionX = 8;
+                int countX = 0;
+                while (countX < 67) {
+                    obstacles.add(new Obstacle(grid, x, positionX));
+                    obstacles.add(new Obstacle(grid, x, positionX + 1));
+                    obstacles.add(new Obstacle(grid, x, positionX + 2));
+                    positionX += 5;
+                    countX += 3;
+                }
+            }
 
             // Place the finish cell after the grid is filled and the player's position is initialised
             int finishColumn;
