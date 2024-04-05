@@ -211,25 +211,29 @@ public class Main extends Application {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
-            Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.15), event -> {
-                // Assuming 'busman' is your Bus instance and 'busS1' is the target bus stop
-                // You might need logic here to select the appropriate bus stop from a list if you have multiple
-                busStop targetBusStop = busman.nextStop(); // For example purposes, using a direct reference
+            Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
+                busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
 
-                // Call your method to move the bus towards the bus stop
-                moveBusTowardsBusStop(grid,busman, targetBusStop);
-                //if (playerUno.)
-                // Your existing code might already handle updating the bus position on the grid
-                // through the moveBus method called within moveBusTowardsBusStop
+                moveBusTowardsBusStop(grid, busman, targetBusStop, ka);
+
+                // Here's the updated part
+                if (ka.onBus) {
+                    // Update player's coordinates to match the bus when the player is on the bus
+                    ka.playerUnosCell.setColumn(busman.getX());
+                    ka.playerUnosCell.setColumn(busman.getY());
+                    System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
+                }
             }));
+
             busMovementTimeline.setCycleCount(Animation.INDEFINITE);
             busMovementTimeline.play();
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void moveBusTowardsBusStop(Grid grid,Bus bus, busStop stop) {
+    public void moveBusTowardsBusStop(Grid grid,Bus bus, busStop stop,KeyboardActions ka) {
         // Calculate the Manhattan distance for both possible next steps
         int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
         int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
@@ -268,7 +272,10 @@ public class Main extends Application {
             System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
-        }
+            if(!ka.playerMovementEnabled){
+                System.out.println("----------- You just got on the bus ---------");
+            ka.onBus = true;
+        }}
         else if (bus.getY()==stop.getY()) {
          bus.flagMove=0;
         }
@@ -307,13 +314,24 @@ public class Main extends Application {
 
     public class KeyboardActions {
         private boolean playerMovementEnabled = true;
-        private boolean onBus = true;
+        private boolean onBus = false;
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
         public Cell playerUnosCell; // Made public for access in start method
         private int currentRow = 0;
         private int currentColumn = 0;
-
+        public void setX(int i ){
+            this.playerUnosCell.setRow(i);
+        }
+        public void setY(int j ){
+            this.playerUnosCell.setColumn(j);
+        }
+        public int getX(){
+            return this.currentColumn;
+        }
+        public int getY(){
+            return this.currentRow;
+        }
         // Constructor to initialise grid
         public KeyboardActions(Grid grid) {
             this.grid = grid;
@@ -363,12 +381,12 @@ public class Main extends Application {
             playerMovementEnabled = !playerMovementEnabled;
             if (!playerMovementEnabled) {
                 // Player decides to wait at a bus stop
-
+                System.out.println("----------- Waiting for bus ---------"+playerMovementEnabled);
                     ((busStop) playerUnosCell).setPlayerHere(true); // Mark the player as waiting at the bus stop
 
             } else {
                 // Player decides to continue moving
-
+                System.out.println("----------- Impatient fuck ---------");
                     ((busStop) playerUnosCell).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
 
             }}
