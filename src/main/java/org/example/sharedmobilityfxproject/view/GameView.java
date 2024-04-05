@@ -270,8 +270,6 @@ public class GameView {
 
         // Create the gameplay pane and layout
         // Overall layout container
-
-
     }
 
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent) {
