@@ -300,7 +300,7 @@ public class Main extends Application {
      */
 
     public class KeyboardActions {
-
+        private boolean playerMovementEnabled = true;
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
         public Cell playerUnosCell; // Made public for access in start method
@@ -342,6 +342,7 @@ public class Main extends Application {
                     case W -> movePLayer(0, -1);
                     case S -> movePLayer(0, 1);
                     case T -> hailTaxi();
+                    case E ->togglePlayerMovement();
                     case C -> System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
 
                     // Add more cases as needed
@@ -352,6 +353,21 @@ public class Main extends Application {
         /**
          * Hail a taxi and change the player's appearance to yellow.
          */
+        private void togglePlayerMovement() {
+            if (playerUnosCell instanceof busStop) {
+            playerMovementEnabled = !playerMovementEnabled;
+            if (!playerMovementEnabled) {
+                // Player decides to wait at a bus stop
+                    System.out.println("1");
+                    ((busStop) playerUnosCell).setPlayerHere(true); // Mark the player as waiting at the bus stop
+
+            } else {
+                // Player decides to continue moving
+                System.out.println("2");
+                    ((busStop) playerUnosCell).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
+
+            }}
+        }
         private void hailTaxi() {
             if (!hailTaxi) {
                 hailTaxi = true;

@@ -9,7 +9,7 @@ public class busStop extends Cell {
     private int x;
     private int y;
     private boolean flagIsPlayerHere; // Change this to boolean
-
+    private boolean isBusPresent;
     public busStop(int i, int j) {
         super(i, j);
         this.x = i;
@@ -29,4 +29,15 @@ public class busStop extends Cell {
     public boolean isPlayerHere() {
         return this.flagIsPlayerHere;
     }
+    public void setBusPresent(boolean isBusPresent) {
+        this.isBusPresent = isBusPresent;
+    }
+
+    public boolean isBusPresent() {
+        return this.isBusPresent;
+    }
+    public void setPlayerHere(boolean isPlayerHere) {
+        this.flagIsPlayerHere = isPlayerHere;
+    }
+
 }
