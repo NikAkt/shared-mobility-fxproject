@@ -116,8 +116,12 @@ public class Main extends Application {
 
             busStop busS1 = new busStop(4,4);
             busStop busS2 = new busStop(110,4);
-            busStop busS3 = new busStop(110,64);
-            busStop busS4 = new busStop(4,64);
+            busStop busS3 = new busStop(57,25);
+            busStop busS4 = new busStop(110,64);
+            busStop busS5 = new busStop(57,64);
+            busStop busS6 = new busStop(4,64);
+            busStop busS7 = new busStop(4,34);
+
 
 
             ArrayList busStops  = new ArrayList<>();
@@ -125,6 +129,10 @@ public class Main extends Application {
             busStops.add(busS2);
             busStops.add(busS3);
             busStops.add(busS4);
+            busStops.add(busS5);
+            busStops.add(busS6);
+            busStops.add(busS7);
+
             busman = new Bus(busStops,4, 4);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
