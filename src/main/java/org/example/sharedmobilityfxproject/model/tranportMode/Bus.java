@@ -14,6 +14,7 @@ public class Bus extends Cell {
     private final double carbonFootprintPerKm = 97; // Specific rate for a bus
     private int x;
     private int y;
+    public int flagMove = 0;
     private ArrayList stopList;
     public Bus(ArrayList<busStop> stops,int x, int y) {
         super(x, y); // Assuming default speed is 10 and CO2 is 0 for initialization

@@ -236,7 +236,7 @@ public class Main extends Application {
         System.out.println(stop.getX()+"   "+ stop.getY());
 
         System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
-        if (bus.getX()<stop.getX()||bus.getX()>stop.getX() ) {
+        if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
             System.out.println("----------- moving x ---------");
             // Move horizontally towards the bus stop, if not blocked
             int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
@@ -253,18 +253,25 @@ public class Main extends Application {
             // Move vertically towards the bus stop, if not blocked
             int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
             if (canMoveBusTo(bus.getX(), newY)) {
-                System.out.println("1");
+
                 moveBus(grid,bus, bus.getX(), newY);
             }
-            else if (canMoveBusTo(bus.getX() + (bus.getX() < stop.getX() ? 1 : -1), bus.getY())) {
+            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
                 // Move horizontally as a fallback
-                System.out.println("2");
-                moveBus(grid,bus, bus.getX() + (bus.getX() < stop.getX() ? 1 : -1), bus.getY());
+                if (bus.flagMove == 0){
+                    bus.flagMove =1;
+                }
+                moveBus(grid,bus, bus.getX() + +1, bus.getY());
             }
         }else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
             System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
             bus.list().add(bus.list().remove(0));
+            System.out.println("now going towards :"+bus.nextStop());
         }
+        else if (bus.getY()==stop.getY()) {
+         bus.flagMove=0;
+        }
+
     }
 
     private boolean canMoveBusTo(int x, int y) {
