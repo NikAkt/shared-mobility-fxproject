@@ -114,12 +114,17 @@ public class Main extends Application {
             }
             //bus SHITE
 
-            busStop busS1 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
-            busStop busS2 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
+            busStop busS1 = new busStop(4,4);
+            busStop busS2 = new busStop(110,4);
+            busStop busS3 = new busStop(110,64);
+            busStop busS4 = new busStop(4,64);
+
 
             ArrayList busStops  = new ArrayList<>();
             busStops.add(busS1);
             busStops.add(busS2);
+            busStops.add(busS3);
+            busStops.add(busS4);
             busman = new Bus(busStops,15, 15);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
@@ -149,41 +154,32 @@ public class Main extends Application {
 
 
             // Initialise Obstacles for x = 0
-            obstacles = new ArrayList<>();
-            obstacles.add(new Obstacle(grid, 0, 3));
-            obstacles.add(new Obstacle(grid, 0, 4));
-            obstacles.add(new Obstacle(grid, 0, 5));
-
-            int positionX0 = 8;
-            int countX0 = 0;
-            while (countX0 < 67) {
-                obstacles.add(new Obstacle(grid, 0, positionX0));
-                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
-                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
-                positionX0 += 5;
-                countX0 += 3;
-            }
-
+            // Initialise Obstacles
             // Initialise Obstacles
             obstacles = new ArrayList<>();
 
-// Define x positions
-            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
+            // Define the size of the obstacle blocks and the gap between them
+            int obstacleWidth = 5;
+            int obstacleHeight = 3;
+            int gap = 5;
 
-// For each x position
-            for (int x : xPositions) {
-                obstacles.add(new Obstacle(grid, x, 3));
-                obstacles.add(new Obstacle(grid, x, 4));
-                obstacles.add(new Obstacle(grid, x, 5));
+            // Calculate the number of obstacle blocks in each direction
+            int numBlocksX = (COLUMNS - 2 * gap) / (obstacleWidth + gap);
+            int numBlocksY = (ROWS - 2 * gap) / (obstacleHeight + gap);
 
-                int positionX = 8;
-                int countX = 0;
-                while (countX < 67) {
-                    obstacles.add(new Obstacle(grid, x, positionX));
-                    obstacles.add(new Obstacle(grid, x, positionX + 1));
-                    obstacles.add(new Obstacle(grid, x, positionX + 2));
-                    positionX += 5;
-                    countX += 3;
+            // For each block position
+            for (int bx = 0; bx < numBlocksX; bx++) {
+                for (int by = 0; by < numBlocksY; by++) {
+                    // Calculate the top-left corner of the block
+                    int x = gap + bx * (obstacleWidth + gap);
+                    int y = gap + by * (obstacleHeight + gap);
+
+                    // Create the obstacle block
+                    for (int i = 0; i < obstacleWidth; i++) {
+                        for (int j = 0; j < obstacleHeight; j++) {
+                            obstacles.add(new Obstacle(grid, x + i, y + j));
+                        }
+                    }
                 }
             }
 
@@ -210,7 +206,7 @@ public class Main extends Application {
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid, vbox);
-            System.out.println(busS1.getX());
+//            System.out.println(busS1.getX());
             // create scene and set to stage
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
@@ -237,12 +233,12 @@ public class Main extends Application {
         // Calculate the Manhattan distance for both possible next steps
         int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
         int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
-        System.out.println("--------------------");
-        System.out.println(stop.getX()+"   "+ stop.getY());
+//        System.out.println("--------------------");
+//        System.out.println(stop.getX()+"   "+ stop.getY());
 
-        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+//        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
         if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
-            System.out.println("----------- moving x ---------");
+//            System.out.println("----------- moving x ---------");
             // Move horizontally towards the bus stop, if not blocked
             int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
             if (canMoveBusTo(newX, bus.getY())) {
@@ -254,7 +250,7 @@ public class Main extends Application {
         }
 
         else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
-            System.out.println("----------- moving y ---------");
+//            System.out.println("----------- moving y ---------");
             // Move vertically towards the bus stop, if not blocked
             int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
             if (canMoveBusTo(bus.getX(), newY)) {
@@ -287,7 +283,7 @@ public class Main extends Application {
 
     private void moveBus(Grid grid,Bus bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
-        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
+//        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
         grid.moveCell(bus, newX, newY);
         bus.setX(newX);
         bus.setY(newY);
@@ -346,6 +342,8 @@ public class Main extends Application {
                     case W -> movePLayer(0, -1);
                     case S -> movePLayer(0, 1);
                     case T -> hailTaxi();
+                    case C -> System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
+
                     // Add more cases as needed
                 }
             });
