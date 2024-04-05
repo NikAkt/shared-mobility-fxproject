@@ -40,8 +40,8 @@ public class Grid extends Pane {
     }
 
     public void moveCell(Cell cell, int newColumn, int newRow) {
-        cells[cell.getRow()][cell.getColumn()] = null; // Remove from old position
-        cells[newRow][newColumn] = cell; // Place in new position
+         // Remove from old position
+
         updateCellPosition(cell, newColumn, newRow); // Update visual position
     }
 

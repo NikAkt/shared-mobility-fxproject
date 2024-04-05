@@ -284,9 +284,15 @@ public class Main extends Application {
     private void moveBus(Grid grid,Bus bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
 //        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
+//        int x = bus.getX();
+//        int y = bus.getY();
+        //Cell cell = grid.getCell(x,y);
+
         grid.moveCell(bus, newX, newY);
+
         bus.setX(newX);
         bus.setY(newY);
+        //grid.add(cell,cell.getColumn(),cell.getRow());
 
     }
 
