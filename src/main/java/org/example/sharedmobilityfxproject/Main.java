@@ -315,6 +315,20 @@ public class Main extends Application {
             this.grid = grid;
             // Don't initialize currentCell here
         }
+        private void collectGem(Cell gemCell) {
+            grid.getChildren().remove(gemCell);
+            gemCell.unhighlight(); // Unhighlight only the gem cell
+            grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow()); // Replace the gem cell with a normal cell
+            Main.increaseGemCount(); // Update gem count label
+            playGemCollectSound();
+        }
+
+        private void interactWithBusStop(busStop stop) {
+            // Implement what happens when interacting with a bus stop
+            // For example, showing a UI prompt to board a bus, or automatically boarding
+            System.out.println("Interacted with Bus Stop at: " + stop.getX() + ", " + stop.getY());
+            // Additional logic for boarding the bus, updating stats, etc.
+        }
 
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
@@ -424,11 +438,24 @@ public class Main extends Application {
 
                 playerUnosCell = nextCell;
 
+                // Check for interaction with a gem
+                if ("gem".equals(playerUnosCell.getUserData())) {
+                    collectGem(playerUnosCell);
+                    System.out.println("PLayer has entered busstop");
+                }
+
+                // Check for interaction with a bus stop
+                if (playerUnosCell instanceof busStop) {
+                    interactWithBusStop((busStop) playerUnosCell);
+                    System.out.println("player jas entered stop");
+                }
+
                 // Optionally highlight the new cell
                 playerUnosCell.highlight();
             }
             // If there is an obstacle, don't move and possibly add some feedback
         }
+
     }
 
     // Place the gem after the grid is filled and the player's position is initialized

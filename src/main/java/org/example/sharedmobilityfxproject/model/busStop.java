@@ -8,10 +8,13 @@ import java.util.Objects;
 public class busStop extends Cell{
     private int x;
     private int y;
+    private int flagIsPlayerHere;
+
     public busStop(int i,int j ){
         super(i, j);
         this.x = i;
         this.y = j;
+        this.flagIsPlayerHere = 0;
         getStyleClass().add("busStop");
     }
     public int getX(){
@@ -19,5 +22,8 @@ public class busStop extends Cell{
     }
     public int getY(){
         return this.y;
-    }
+    };}
+public int isPlayerHere() {
+    return this.flagIsPlayerHere;
 }
+
