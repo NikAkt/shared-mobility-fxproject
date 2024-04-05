@@ -23,5 +23,11 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
+     * It manages the current cell selection and applies keyboard actions to it.
+     */
+
+    // Method to update the gem count label
 
 }
