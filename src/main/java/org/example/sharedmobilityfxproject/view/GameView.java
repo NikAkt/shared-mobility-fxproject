@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.control.Button;
@@ -45,10 +46,9 @@ public class GameView {
     public HBox bottomRow;
     public Stage primaryStage;
     public VBox stageSelectionBox;
-
+    private Label gemCountLabel;
     // **** Variables Setting ****
     // Label to keep track of gem count
-    Label gemCountLabel; // Label to display gem count
 
     //**** Cell ****
     //Finish cell
@@ -155,7 +155,7 @@ public class GameView {
     }
 
     public void showStageSelectionScreen(Stage actionEvent,MediaPlayer mdv) {
-        System.out.println("I am in the ShowStageSelectionScreen1");
+
         if (topRow == null && bottomRow == null) {
             topRow = new HBox(10);
             bottomRow = new HBox(10);
@@ -164,20 +164,20 @@ public class GameView {
 
             String[] topStages = {"Seoul", "Athens", "Dublin", "Istanbul"};
             String[] bottomStages = {"Vilnius", "Back"};
-            System.out.println("I am in the ShowStageSelectionScreen2");
+
             for (String stage : topStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
                 Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox,root,actionEvent,mdv);
                 topRow.getChildren().add(stageButton);
             }
-            System.out.println("I am in the ShowStageSelectionScreen3");
+
             for (String stage : bottomStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
                 Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox, root, actionEvent, mdv);
                 bottomRow.getChildren().add(stageButton);
             }
         }
-        System.out.println("I am in the ShowStageSelectionScreen4");
+
         stageSelectionBox = new VBox(100, topRow, bottomRow);
         stageSelectionBox.setAlignment(Pos.CENTER);
         gameModeBox.setVisible(false);
@@ -185,7 +185,7 @@ public class GameView {
         root.getChildren().removeAll(buttonBox, gameModeBox);
         root.getChildren().add(stageSelectionBox);
 
-        System.out.println("I am in the ShowStageSelectionScreen5");
+
 
     }
     public ImageView createStageImage(String stageName) {
@@ -317,9 +317,22 @@ public class GameView {
         }
 
 
+    }
+
+    // Place the gem after the grid is filled and the player's position is initialized
+    private void generateGems(Grid grid, int numberOfGems) {
+        for (int i = 0; i < numberOfGems; i++) {
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
 
-
+            Gem gem = new Gem(gemColumn, gemRow, GameController.GemCollector);
+            grid.add(gem, gemColumn, gemRow);
+        }
     }
 
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
@@ -372,6 +385,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
+        gameController = new GameController();
         root.getChildren().removeAll(buttonBox );
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent,mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent,mdv));
@@ -392,27 +406,55 @@ public class GameView {
 
         // Make the game mode selection box visible
         gameModeBox.setVisible(true);
+        // Create and configure the scene
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DOWN:
+                    if (btnOnePlayer.isFocused()) {
+                        btnTwoPlayer.requestFocus();
+                    } else if (btnTwoPlayer.isFocused()) {
+                        backToMenu.requestFocus();
+                    } else {
+                        btnOnePlayer.requestFocus(); // Wrap around to the first button
+                    }
 
+                    break;
+                case UP:
+                    if (btnOnePlayer.isFocused()) {
+                        btnTwoPlayer.requestFocus();
+                    } else if (btnTwoPlayer.isFocused()) {
+                        backToMenu.requestFocus();
+                    } else {
+                        btnOnePlayer.requestFocus(); // Wrap around to the first button
+                    }
+
+                    break;
+                case ENTER:
+                    if (btnOnePlayer.isFocused()) {
+                        btnOnePlayer.fire();
+                    } else if (btnTwoPlayer.isFocused()) {
+                        btnTwoPlayer.fire();
+                    } else if (backToMenu.isFocused()) {
+                        backToMenu.fire();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
         return null;
-    }
-    // Place the gem after the grid is filled and the player's position is initialized
-    public void generateGems(Grid grid, int numberOfGems) {
-        for (int i = 0; i < numberOfGems; i++) {
-            int gemColumn;
-            int gemRow;
-            do {
-                gemColumn = (int) (Math.random() * COLUMNS);
-                gemRow = (int) (Math.random() * ROWS);
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+        };
 
 
-            Gem gem = new Gem(gemColumn, gemRow, GameController.GemCollector);
-            grid.add(gem, gemColumn, gemRow);
-        }
+
+    public void updateGemCountLabel() {
+        gemCountLabel.setText("Gem Count: " + gemCount);
     }
     private void initializeObstacles(Grid grid) {
         obstacles.add(new Obstacle(grid, 5, 5));
         obstacles.add(new Obstacle(grid, 10, 5));
         obstacles.add(new Obstacle(grid, 5, 10));
     }
+
+
 }

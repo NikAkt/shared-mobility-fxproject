@@ -133,16 +133,6 @@ public class GameController {
         // Release resources after sound finishes playing3211
         mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
     }
-    /// ****Related Gem****
-    public static void increaseGemCount() {
-        gemCount++;
-        updateGemCountLabel();
-    }
-    // Method to update the gem count label
-    public static void updateGemCountLabel() {
-        gemCountLabel.setText("Gem Count: " + gemCount);
-    }
-
 ///Transportation
     /**
      * Hail a taxi and change the player's appearance to yellow.
@@ -154,6 +144,15 @@ public class GameController {
         carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
     }
 
+    public static void increaseGemCount() {
+        gemCountLabel = new Label();
+        updateGemCountLabel();
+        gemCount++;
+        gemCountLabel.setText("Gem Count: " + gemCount);
+    }
+    public static void updateGemCountLabel() {
+        gemCountLabel.setText("Gem Count: " + gemCount);
+    }
 
 }
 
