@@ -17,21 +17,16 @@ public class Grid extends Pane {
     double width;
     double height;
 
-
-    Cell[][] cells;
+    private Cell[][] cells;
 
 
     public Grid(int columns, int rows, double width, double height) {
-
-
         this.columns = columns;
         this.rows = rows;
         this.width = width;
         this.height = height;
-
-
         cells = new Cell[rows][columns];
-
+        initializeCells();
 
     }
 
@@ -40,31 +35,30 @@ public class Grid extends Pane {
      * Add cell to array and to the UI.
      */
     public void add(Cell cell, int column, int row) {
-
-
         cells[row][column] = cell;
-
-
         double w = width / columns;
         double h = height / rows;
         double x = w * column;
         double y = h * row;
 
-
         cell.setLayoutX(x);
         cell.setLayoutY(y);
         cell.setPrefWidth(w);
         cell.setPrefHeight(h);
-
-
         getChildren().add(cell);
-
 
     }
 
+    private void initializeCells() {
+
+    }
 
     public Cell getCell(int column, int row) {
-        return cells[row][column];
+        if (cells != null && row >= 0 && row < rows && column >= 0 && column < columns) {
+            return cells[row][column];
+        } else {
+            return null; // 셀이 없을 경우 null 반환
+        }
     }
 
 

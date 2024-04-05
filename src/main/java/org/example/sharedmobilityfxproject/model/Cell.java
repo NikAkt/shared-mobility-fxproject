@@ -7,7 +7,6 @@ import javafx.scene.layout.StackPane;
  * It manages the visual representation and state of the cell, such as highlighting.
  */
 public class Cell extends StackPane {
-
     int column;
     int row;
 

@@ -1,0 +1,22 @@
+.cell {
+    -fx-background-radius: 50%;
+}
+
+.cell-highlight {
+    -fx-background-color:blue;
+}
+
+.cell-hover-highlight {
+}
+
+.gem {
+    -fx-background-color: purple;
+}
+
+.cell-obstacle {
+    -fx-background-color: red;
+}
+
+.cell.finish {
+    -fx-background-color: green;
+}

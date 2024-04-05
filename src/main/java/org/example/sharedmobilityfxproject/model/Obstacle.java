@@ -6,12 +6,11 @@ package org.example.sharedmobilityfxproject.model;
  * It is responsible for managing the state of the cells that form the obstacle.
  */
 public class Obstacle {
-
-
-    private Grid grid;
-    private int column;
-    private int row;
-
+    public Cell cell;
+    public Grid grid;
+    public int column;
+    public int row;
+    public Cell obstacleCell;
 
     /**
      * Constructs an obstacle located at the specified column and row.
@@ -24,16 +23,23 @@ public class Obstacle {
         this.grid = grid;
         this.column = column;
         this.row = row;
-        createObstacle();
+        createObstacle(column,row,grid);
     }
-
 
     /**
      * Marks the cell at the obstacle's location as an obstacle by changing its color to red.
      */
-    private void createObstacle() {
-        Cell obstacleCell = grid.getCell(column, row);
-        obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
+    public void createObstacle(int column, int row, Grid grid) {
+        if (grid != null) {
+            Cell obstacleCell = grid.getCell(column, row);
+            if (obstacleCell != null) {
+                obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
+            } else {
+                System.err.println("Cell at column " + column + ", row " + row + " is null.");
+            }
+        } else {
+            System.err.println("Grid is null.");
+        }
     }
 
 
@@ -46,5 +52,4 @@ public class Obstacle {
     public int getRow() {
         return row;
     }
-
 }

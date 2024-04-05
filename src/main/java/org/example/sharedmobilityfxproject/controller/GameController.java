@@ -23,8 +23,10 @@ public class GameController {
 
     public static Main GemCollector;
     public Map gameMap;
+    public Grid grid;
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
+
     public static final double BUTTON_WIDTH = 200;
     public GameView gameView;
 
@@ -36,9 +38,6 @@ public class GameController {
     public MediaPlayer mediaPlayer;
     public VBox stageSelectionBox;
 
-    // ****Obstacles****
-    // List to keep track of all obstacles
-    public List<Obstacle> obstacles;
 
     // Boolean flag to track if the game has finished
     static boolean gameFinished = false;
@@ -72,7 +71,8 @@ public class GameController {
     public void startGame(Stage primaryStage) {
         // Start game logic here
         System.out.println("Game Started");
-        gameView = new GameView();
+        Grid grid = new Grid(COLUMNS,ROWS,WIDTH,HEIGHT); // Grid 객체 생성
+        gameView = new GameView(grid);
         gameView.showInitialScreen(primaryStage);
         //gameMap.render();
     }
@@ -90,7 +90,7 @@ public class GameController {
         });
     }
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        gameView = new GameView();
+        gameView = new GameView(grid);
         Button stageButton = new Button(stage);
         stageButton.setGraphic(stageImage);
         stageButton.setContentDisplay(ContentDisplay.TOP);

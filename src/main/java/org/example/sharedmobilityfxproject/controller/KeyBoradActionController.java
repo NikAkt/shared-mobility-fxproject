@@ -16,15 +16,16 @@ public class KeyBoradActionController {
     //class call
     public GameController gameController;
     public GameView gameView;
-    private Grid grid;
+    public Grid grid;
     public Cell currentCell; // Made public for access in start method
     public Cell playerUnosCell; // Made public for access in start method
-    private int currentRow = 0;
-    private int currentColumn = 0;
+    public int currentRow = 0;
+    public int currentColumn = 0;
 
     // Constructor to initialise grid
-    public KeyBoradActionController(Grid grid) {
-        this.grid = this.grid;
+    public KeyBoradActionController(GameView gameView,Grid grid) {
+        this.gameView = gameView;
+        this.grid = grid;
         // Don't initialize currentCell here
     }
 
@@ -51,7 +52,7 @@ public class KeyBoradActionController {
     /**
      * Hail a taxi and change the player's appearance to yellow.
      */
-    private void hailTaxi() {
+    public void hailTaxi() {
         if (!gameController.hailTaxi) {
             gameController.hailTaxi = true;
             // Increase carbon footprint
@@ -73,24 +74,43 @@ public class KeyBoradActionController {
      * @param dx The number of columns to move. A positive number moves right, a negative number moves left.
      * @param dy The number of rows to move. A positive number moves down, a negative number moves up.
      */
-    private void moveSelection(int dx, int dy) {
+    public void moveSelection(int dx, int dy) {
+        System.err.println(gameView.obstacles);
+
+        if (gameView != null && gameView.obstacles != null) { // gameView가 null이 아닌지 확인
+            if (gameView.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == dx && obstacle.getRow() == dy)) {
+                // Move the player to the new cell because there is no obstacle
+                Cell nextCell = this.grid.getCell(dx, dy);
+
+                // Optionally un-highlight the old cell
+                currentCell.unhighlight();
+                currentCell = nextCell;
+                currentRow = dy;
+                currentColumn = dx;
+
+                // Optionally highlight the new cell
+                currentCell.highlight();
+            }
+        }else {
+            System.err.println("GameView or obstacles are null.");
+        }
+
         // Check if the game is finished, if so, return without allowing movement
         if (GameController.gameFinished) {
             return;
         }
+        int newRow = Math.min(Math.max(currentRow + dy, 0), this.grid.getRows() - 1);
+        int newColumn = Math.min(Math.max(currentColumn + dx, 0), this.grid.getColumns() - 1);
+        Cell newCell = this.grid.getCell(newColumn, newRow);
 
-        int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
-        int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
-        Cell newCell = grid.getCell(newColumn, newRow);
 
         // Check if the next cell is an obstacle
-        if (gameController.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+        if (gameView.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
             // Move the player to the new cell because there is no obstacle
-            Cell nextCell = grid.getCell(newColumn, newRow);
+            Cell nextCell = this.grid.getCell(newColumn, newRow);
 
             // Optionally un-highlight the old cell
             currentCell.unhighlight();
-
             currentCell = nextCell;
             currentRow = newRow;
             currentColumn = newColumn;
@@ -113,7 +133,6 @@ public class KeyBoradActionController {
             pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
             pause.play();
         }
-
         if ("gem".equals(newCell.getUserData())) {
             grid.getChildren().remove(newCell);
             newCell.unhighlight(); // Un-highlight only the gem cell
@@ -122,12 +141,12 @@ public class KeyBoradActionController {
         }
     }
 
-    private void movePLayer(int dx, int dy) {
+    public void movePLayer(int dx, int dy) {
         int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
 
         // Check if the next cell is an obstacle
-        if (gameController.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+        if (gameView.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
             // Move the player to the new cell because there is no obstacle
             Cell nextCell = grid.getCell(newColumn, newRow);
 

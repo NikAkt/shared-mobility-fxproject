@@ -34,6 +34,7 @@ public class GameView {
     public GameView gameView;
     public GameController gameController;
     public Gem gem;
+    public Obstacle obstacle;
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
@@ -74,6 +75,12 @@ public class GameView {
     private static final int COLUMNS = 60;
     private static final double WIDTH = 800;
     private static final double HEIGHT = 600;
+
+
+    public GameView(Grid grid) {
+        this.obstacles = new ArrayList<>();
+        initializeObstacles(grid);
+    }
 
     public void showInitialScreen(Stage primaryStage) {
         gameController = new GameController();
@@ -119,6 +126,7 @@ public class GameView {
 
         primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
         primaryStage.setScene(scene);
+        primaryStage.setFullScreen(true); // Set the stage to full screen
         primaryStage.show();
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -217,7 +225,7 @@ public class GameView {
             primaryStage.setTitle("Shared Mobility Application");
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
-            primaryStage.setResizable(false);
+            primaryStage.setFullScreen(true); // Set the stage to full screen
             //primaryStage.setFullScreen(true);
             //primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
@@ -225,11 +233,15 @@ public class GameView {
             // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
+            // Initialise Obstacles Setting
 
+            obstacles = new ArrayList<>();
+            obstacles.add(new Obstacle(grid, 5, 5));
+            obstacles.add(new Obstacle(grid, 10, 5));
+            obstacles.add(new Obstacle(grid, 5, 10));
             // Create keyboard actions handler
 
-
-            KeyBoradActionController ka = new KeyBoradActionController(grid);
+            KeyBoradActionController ka = new KeyBoradActionController(gameView,grid);
             // Fill grid with cells
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
@@ -238,7 +250,6 @@ public class GameView {
                     grid.add(cell, column, row);
                 }
             }
-
 
             // Create label for gem count
             gemCountLabel = new Label("Gem Count: " + gemCount);
@@ -399,5 +410,9 @@ public class GameView {
             grid.add(gem, gemColumn, gemRow);
         }
     }
-
+    private void initializeObstacles(Grid grid) {
+        obstacles.add(new Obstacle(grid, 5, 5));
+        obstacles.add(new Obstacle(grid, 10, 5));
+        obstacles.add(new Obstacle(grid, 5, 10));
+    }
 }
