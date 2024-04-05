@@ -448,7 +448,7 @@ public class Main extends Application {
                 // Check for interaction with a bus stop
                 if (playerUnosCell instanceof busStop) {
                     interactWithBusStop((busStop) playerUnosCell);
-                    System.out.println("player jas entered stop");
+                    System.out.println("player has entered stop");
                 }
 
                 // Optionally highlight the new cell
