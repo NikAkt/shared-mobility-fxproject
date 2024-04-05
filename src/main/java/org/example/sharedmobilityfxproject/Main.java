@@ -125,7 +125,7 @@ public class Main extends Application {
             busStops.add(busS2);
             busStops.add(busS3);
             busStops.add(busS4);
-            busman = new Bus(busStops,15, 15);
+            busman = new Bus(busStops,4, 4);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
                 grid.add(stop,stop.getX(), stop.getY());
@@ -218,7 +218,7 @@ public class Main extends Application {
 
                 // Call your method to move the bus towards the bus stop
                 moveBusTowardsBusStop(grid,busman, targetBusStop);
-
+                //if (playerUno.)
                 // Your existing code might already handle updating the bus position on the grid
                 // through the moveBus method called within moveBusTowardsBusStop
             }));
@@ -307,6 +307,7 @@ public class Main extends Application {
 
     public class KeyboardActions {
         private boolean playerMovementEnabled = true;
+        private boolean onBus = true;
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
         public Cell playerUnosCell; // Made public for access in start method
@@ -335,24 +336,22 @@ public class Main extends Application {
 
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
+                        if (playerMovementEnabled) {
                 switch (event.getCode()) {
-                    case RIGHT -> moveSelection(1, 0);
-                    case LEFT -> moveSelection(-1, 0);
-                    case UP -> moveSelection(0, -1);
-                    case DOWN -> moveSelection(0, 1);
-                    case H -> currentCell.highlight();
-                    case U -> currentCell.unhighlight();
+
                     // Player
                     case D -> movePLayer(1, 0);
                     case A -> movePLayer(-1, 0);
                     case W -> movePLayer(0, -1);
                     case S -> movePLayer(0, 1);
                     case T -> hailTaxi();
-                    case E ->togglePlayerMovement();
-                    case C -> System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
+                    case E -> togglePlayerMovement();
+                    case C ->
+                            System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
+                }
 
                     // Add more cases as needed
-                }
+                }else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
             });
         }
 
@@ -364,12 +363,12 @@ public class Main extends Application {
             playerMovementEnabled = !playerMovementEnabled;
             if (!playerMovementEnabled) {
                 // Player decides to wait at a bus stop
-                    System.out.println("1");
+
                     ((busStop) playerUnosCell).setPlayerHere(true); // Mark the player as waiting at the bus stop
 
             } else {
                 // Player decides to continue moving
-                System.out.println("2");
+
                     ((busStop) playerUnosCell).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
 
             }}

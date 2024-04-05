@@ -16,8 +16,10 @@ public class Bus extends Cell {
     private int y;
     public int flagMove = 0;
     private ArrayList stopList;
-    public Bus(ArrayList<busStop> stops,int x, int y) {
-        super(x, y); // Assuming default speed is 10 and CO2 is 0 for initialization
+    public Bus(ArrayList<busStop> stops,int i, int j) {
+        super(i, j); // Assuming default speed is 10 and CO2 is 0 for initialization
+        this.x = i;
+        this.y = j;
         this.getStyleClass().add("bus");
         stopList  = stops;
 
