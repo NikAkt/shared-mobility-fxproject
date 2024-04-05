@@ -2,14 +2,15 @@ package org.example.sharedmobilityfxproject.view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-
+import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
+import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -19,16 +20,21 @@ import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.GameController;
-import org.example.sharedmobilityfxproject.model.*;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-import static org.example.sharedmobilityfxproject.controller.GameController.*;
 
 public class GameView {
+
+    // **** Class call ****
+    public GameView gameView;
     public GameController gameController;
+    public Gem gem;
+    // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
     public VBox buttonBox;
@@ -36,17 +42,39 @@ public class GameView {
     public MediaPlayer mediaPlayer;
     public HBox topRow;
     public HBox bottomRow;
-    public GameView gameView;
-
     public Stage primaryStage;
     public VBox stageSelectionBox;
 
-    private boolean isStageSelectionScreenShown = false;
+    // **** Variables Setting ****
     // Label to keep track of gem count
     Label gemCountLabel; // Label to display gem count
 
+    //**** Cell ****
+    //Finish cell
+    public Cell finishCell;
+
+    // **** Obstacles ****
+    // List to keep track of all obstacles
+    public List<Obstacle> obstacles;
+
+    // Gem count
+    static int gemCount = 0;
+
+    // Carbon footprint
+    int carbonFootprint = 0;
+
     // Label to keep track of total carbon footprint
     Label carbonFootprintLabel; // Label to display carbon footprint
+
+    //Grid setting
+    // Boolean flag to control hover cursor visibility
+    boolean showHoverCursor = true;
+    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    private static final int ROWS = 30;
+    private static final int COLUMNS = 60;
+    private static final double WIDTH = 800;
+    private static final double HEIGHT = 600;
+
     public void showInitialScreen(Stage primaryStage) {
         gameController = new GameController();
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
@@ -56,15 +84,13 @@ public class GameView {
         ImageView imageView = new ImageView(logoImage);
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(100); // You can adjust this value as needed
-        if (bgv == null) {
-            System.err.println("Cannot find image file");
-            return; // Exit the method if the image file can't be found
-        }
 
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
+
+        this.root = new StackPane();
         // Create and configure the "Game Start" button
-        Button btnStartGame = gameController.createButton("Game Start", showPlayerModeSelection(primaryStage));
+        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage,buttonBox,root, bgmediaPlayer));
 
         // Create and configure the "Exit" button
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
@@ -79,7 +105,6 @@ public class GameView {
         StackPane.setAlignment(buttonBox, Pos.CENTER);
         StackPane.setAlignment(imgBox, Pos.CENTER);
 
-        this.root = new StackPane();
         this.root.getChildren().add(mediaView);
 
         // Set up the scene with the StackPane and show the stage
@@ -89,8 +114,10 @@ public class GameView {
         this.root.getChildren().add(buttonBox);
         this.root.getChildren().add(imgBox);
 
-        primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
+        // Set focus on the "Game Start" button initially
+        btnStartGame.requestFocus();
 
+        primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.setOnKeyPressed(event -> {
@@ -117,98 +144,9 @@ public class GameView {
             }
         });
 
-
-//
-//            // Create a StackPane to hold all elements
-//            StackPane root = new StackPane();
-//            Scene scene = new Scene(root);
-//
-//            // Settings
-//            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
-//            primaryStage.getIcons().add(icon);
-//            primaryStage.setTitle("Shared Mobility Application");
-//            primaryStage.setWidth(WIDTH);
-//            primaryStage.setHeight(HEIGHT);
-//            primaryStage.setResizable(false);
-////            primaryStage.setFullScreen(true);
-////            primaryStage.setFullScreenExitHint("Press esc to minimize !");
-//
-//            // Create grid for the game
-//            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
-//
-//            // Create keyboard actions handler
-//            KeyboardActions ka = new KeyboardActions(grid);
-//            // Fill grid with cells
-//            for (int row = 0; row < ROWS; row++) {
-//                for (int column = 0; column < COLUMNS; column++) {
-//                    Cell cell = new Cell(column, row);
-//                    ka.setupKeyboardActions(scene);
-//                    grid.add(cell, column, row);
-//                }
-//            }
-//
-//            // Create label for gem count
-//            gemCountLabel = new Label("Gem Count: " + gemCount);
-//            gemCountLabel.setStyle("-fx-font-size: 16px;");
-//            gemCountLabel.setAlignment(Pos.TOP_LEFT);
-//            gemCountLabel.setPadding(new Insets(10));
-//
-//            // Create label for carbon footprint
-//            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-//            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
-//            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-//            carbonFootprintLabel.setPadding(new Insets(10));
-//
-//            // Create a VBox to hold the gem count label
-//            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
-//            vbox.setAlignment(Pos.TOP_LEFT);
-//
-//            // Place the gem after the grid is filled and the player's position is initialized
-//            int gemColumn;
-//            int gemRow;
-//            do {
-//                gemColumn = (int) (Math.random() * COLUMNS);
-//                gemRow = (int) (Math.random() * ROWS);
-//            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
-//            Gem gem = new Gem(gemColumn, gemRow);
-//            grid.add(gem, gemColumn, gemRow);
-//
-//            // Initialise Obstacles
-//            obstacles = new ArrayList<>();
-//            obstacles.add(new Obstacle(grid, 5, 5));
-//            obstacles.add(new Obstacle(grid, 10, 5));
-//            obstacles.add(new Obstacle(grid, 5, 10));
-//
-//            // Place the finish cell after the grid is filled and the player's position is initialised
-//            int finishColumn;
-//            int finishRow;
-//            do {
-//                finishColumn = (int) (Math.random() * COLUMNS);
-//                finishRow = (int) (Math.random() * ROWS);
-//            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
-//            finishCell = new Cell(finishColumn, finishRow);
-//            finishCell.getStyleClass().add("finish");
-//            grid.add(finishCell, finishColumn, finishRow);
-//
-//            // Initialise currentCell after the grid has been filled
-//            // Initialise Player
-//            Player playerUno = new Player(25,25,10,1,10,0);
-//            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
-//
-//            // Initialize currentCell after the grid has been filled
-//            ka.currentCell = grid.getCell(0, 0);
-//
-//            // Add background image, grid, and gem count label to the root StackPane
-//            root.getChildren().addAll(grid, vbox);
-//
-//            // create scene and set to stage
-//            scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
-//            primaryStage.setScene(scene);
-//            primaryStage.show();
-
     }
 
-    public void showStageSelectionScreen(Stage actionEvent) {
+    public void showStageSelectionScreen(Stage actionEvent,MediaPlayer mdv) {
         System.out.println("I am in the ShowStageSelectionScreen1");
         if (topRow == null && bottomRow == null) {
             topRow = new HBox(10);
@@ -221,13 +159,13 @@ public class GameView {
             System.out.println("I am in the ShowStageSelectionScreen2");
             for (String stage : topStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox,root,actionEvent);
+                Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox,root,actionEvent,mdv);
                 topRow.getChildren().add(stageButton);
             }
             System.out.println("I am in the ShowStageSelectionScreen3");
             for (String stage : bottomStages) {
                 ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox, root, actionEvent);
+                Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox, root, actionEvent, mdv);
                 bottomRow.getChildren().add(stageButton);
             }
         }
@@ -267,12 +205,115 @@ public class GameView {
         return imageView;
     }
     public void loadGameScreen(String stageName, Stage actionEvent) {
+             primaryStage= actionEvent;
+        try {
+            // Create a StackPane to hold all elements
+            StackPane root = new StackPane();
+            Scene scene = new Scene(root);
 
-        // Create the gameplay pane and layout
-        // Overall layout container
+            // Settings
+            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+            primaryStage.getIcons().add(icon);
+            primaryStage.setTitle("Shared Mobility Application");
+            primaryStage.setWidth(WIDTH);
+            primaryStage.setHeight(HEIGHT);
+            primaryStage.setResizable(false);
+            //primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreenExitHint("Press esc to minimize !");
+
+
+            // Create grid for the game
+            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+
+
+            // Create keyboard actions handler
+
+
+            KeyBoradActionController ka = new KeyBoradActionController(grid);
+            // Fill grid with cells
+            for (int row = 0; row < ROWS; row++) {
+                for (int column = 0; column < COLUMNS; column++) {
+                    Cell cell = new Cell(column, row);
+                    ka.setupKeyboardActions(scene);
+                    grid.add(cell, column, row);
+                }
+            }
+
+
+            // Create label for gem count
+            gemCountLabel = new Label("Gem Count: " + gemCount);
+            gemCountLabel.setStyle("-fx-font-size: 16px;");
+            gemCountLabel.setAlignment(Pos.TOP_LEFT);
+            gemCountLabel.setPadding(new Insets(10));
+
+
+            // Create label for carbon footprint
+            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
+            carbonFootprintLabel.setPadding(new Insets(10));
+
+
+            // Create a VBox to hold the gem count label
+            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
+            vbox.setAlignment(Pos.TOP_LEFT);
+
+
+            // Initialise Obstacles
+            obstacles = new ArrayList<>();
+            obstacles.add(new Obstacle(grid, 5, 5));
+            obstacles.add(new Obstacle(grid, 10, 5));
+            obstacles.add(new Obstacle(grid, 5, 10));
+
+
+            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
+
+
+            // Place the finish cell after the grid is filled and the player's position is initialised
+            int finishColumn;
+            int finishRow;
+            do {
+                finishColumn = (int) (Math.random() * COLUMNS);
+                finishRow = (int) (Math.random() * ROWS);
+            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
+            finishCell = new Cell(finishColumn, finishRow);
+            finishCell.getStyleClass().add("finish");
+            grid.add(finishCell, finishColumn, finishRow);
+
+
+            // Initialise currentCell after the grid has been filled
+            // Initialise Player
+            Player playerUno = new Player(25,25,10,1,10,0);
+            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+
+
+            // Initialize currentCell after the grid has been filled
+            ka.currentCell = grid.getCell(0, 0);
+
+
+            // Add background image, grid, and gem count label to the root StackPane
+            root.getChildren().addAll(grid, vbox);
+
+
+            // create scene and set to stage
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+        }catch(Exception e){
+            e.printStackTrace();
+
+        }
+
+
+
+
+
     }
 
-    public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent) {
+    public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
+        //
+        mdv.stop();
         //스테이지를 실제 눌렀을때 벌어지는일
         System.out.println("I am in the selectStage Class");
         root.getChildren().remove(stageSelectionBox);
@@ -300,10 +341,7 @@ public class GameView {
             case "Vilnius":
                 musicFilePath = "/music/pokemon.mp3";
                 break;
-            case "Back":
-                // Go back to the previous screen
-                this.showPlayerModeSelection(null);
-                break;
+
             default:
                 // Handle default case if necessary
                 break;
@@ -322,10 +360,10 @@ public class GameView {
         loadGameScreen(stageName,actionEvent);
     }
 
-    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent) {
-        buttonBox.setVisible(false);
-        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent));
-        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent));
+    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
+        root.getChildren().removeAll(buttonBox );
+        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent,mdv));
+        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent,mdv));
         Button backToMenu = gameController.createButton("Back", event -> this.gameView.showInitialScreen(primaryStage));
         backToMenu.setMinWidth(gameController.BUTTON_WIDTH);
         backToMenu.setMaxWidth(gameController.BUTTON_WIDTH);
@@ -345,6 +383,21 @@ public class GameView {
         gameModeBox.setVisible(true);
 
         return null;
+    }
+    // Place the gem after the grid is filled and the player's position is initialized
+    public void generateGems(Grid grid, int numberOfGems) {
+        for (int i = 0; i < numberOfGems; i++) {
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+
+
+            Gem gem = new Gem(gemColumn, gemRow, GameController.GemCollector);
+            grid.add(gem, gemColumn, gemRow);
+        }
     }
 
 }

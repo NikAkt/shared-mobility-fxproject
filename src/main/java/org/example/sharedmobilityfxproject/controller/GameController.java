@@ -1,5 +1,4 @@
 package org.example.sharedmobilityfxproject.controller;
-import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -13,15 +12,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 import java.util.List;
 import java.util.Objects;
-import org.example.sharedmobilityfxproject.model.Grid;
+
 public class GameController {
 
+    public static Main GemCollector;
     public Map gameMap;
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
@@ -35,15 +35,13 @@ public class GameController {
     public static final double HEIGHT = 600;
     public MediaPlayer mediaPlayer;
     public VBox stageSelectionBox;
-    // Obstacles
+
+    // ****Obstacles****
     // List to keep track of all obstacles
     public List<Obstacle> obstacles;
 
-    // Finish cell
-    public Cell finishCell;
-
     // Boolean flag to track if the game has finished
-    boolean gameFinished = false;
+    static boolean gameFinished = false;
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
@@ -55,16 +53,22 @@ public class GameController {
     public VBox imgBox;
     public StackPane root;
 
-    // Gem count
+    // ****Gem count****
     static int gemCount = 0;
     // Label to keep track of gem count
     static Label gemCountLabel; // Label to display gem count
 
+    @FunctionalInterface
+    public interface GemCollector {
+        void collectGem();
+    }
 
-
-    // Carbon footprint
+    // ****Carbon footprint****
     int carbonFootprint = 0;
+    Label carbonFootprintLabel; // Label to display carbon footprint
 
+
+    //Game Start initialise method
     public void startGame(Stage primaryStage) {
         // Start game logic here
         System.out.println("Game Started");
@@ -85,12 +89,12 @@ public class GameController {
             }
         });
     }
-    public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent) {
+    public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
         gameView = new GameView();
         Button stageButton = new Button(stage);
         stageButton.setGraphic(stageImage);
         stageButton.setContentDisplay(ContentDisplay.TOP);
-        stageButton.setOnAction(event -> gameView.selectStage(stage,stageSelectionBox,gameModeBox, root,actionEvent));
+        stageButton.setOnAction(event -> gameView.selectStage(stage,stageSelectionBox,gameModeBox, root,actionEvent,mdv));
         return stageButton;
     }
 
@@ -129,16 +133,11 @@ public class GameController {
         // Release resources after sound finishes playing3211
         mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
     }
-
-
-
-
-    /// Related Gem
+    /// ****Related Gem****
     public static void increaseGemCount() {
         gemCount++;
         updateGemCountLabel();
     }
-
     // Method to update the gem count label
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
@@ -150,7 +149,12 @@ public class GameController {
      */
 
 
-}
+    ///CO2
+    public void updateCarbonFootprintLabel() {
+        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
+    }
 
+
+}
 
 
