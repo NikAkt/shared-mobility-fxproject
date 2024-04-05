@@ -474,7 +474,7 @@ public class Main extends Application {
         private void movePLayer(int dx, int dy) {
             int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
             int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
-
+            Cell newCell = grid.getCell(newColumn, newRow);
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
                 // Move the player to the new cell because there is no obstacle
@@ -496,7 +496,20 @@ public class Main extends Application {
                     interactWithBusStop((busStop) playerUnosCell);
                     System.out.println("player has entered stop");
                 }
+                if (newCell == finishCell) {
+                    // Player reached the finish cell
+                    gameFinished = true; // Set game as finished
+                    // Display "Level Complete" text
+                    Label levelCompleteLabel = new Label("Level Complete");
+                    levelCompleteLabel.setStyle("-fx-font-size: 24px;");
+                    StackPane root = (StackPane) grid.getScene().getRoot();
+                    root.getChildren().add(levelCompleteLabel);
 
+                    // Exit the game after five seconds
+                    PauseTransition pause = new PauseTransition(Duration.seconds(5));
+                    pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
+                    pause.play();
+                }
                 // Optionally highlight the new cell
                 playerUnosCell.highlight();
             }
