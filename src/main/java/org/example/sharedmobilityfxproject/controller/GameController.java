@@ -19,15 +19,16 @@ import org.example.sharedmobilityfxproject.view.GameView;
 
 import java.util.List;
 import java.util.Objects;
-
+import org.example.sharedmobilityfxproject.model.Grid;
 public class GameController {
 
-    private Map gameMap;
+    public Map gameMap;
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
     public static final double BUTTON_WIDTH = 200;
     public GameView gameView;
-    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+
+    public static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
     public static final int ROWS = 30;
     public static final int COLUMNS = 60;
     public static final double WIDTH = 800;
@@ -55,7 +56,11 @@ public class GameController {
     public StackPane root;
 
     // Gem count
-    int gemCount = 0;
+    static int gemCount = 0;
+    // Label to keep track of gem count
+    static Label gemCountLabel; // Label to display gem count
+
+
 
     // Carbon footprint
     int carbonFootprint = 0;
@@ -116,9 +121,7 @@ public class GameController {
     public String focusedButtonStyle() {
         return "-fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white;";
     }
-
-
-    private void playGemCollectSound() {
+    public void playGemCollectSound() {
         Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
@@ -127,19 +130,31 @@ public class GameController {
         mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
     }
 
-    public static class KeyboardActions {
 
-        private Grid grid;
-        public Cell currentCell; // Made public for access in start method
-        public Cell playerUnosCell; // Made public for access in start method
-        private int currentRow = 0;
-        private int currentColumn = 0;
+    /// Move Player methods
+    public void movePLayer(int dx, int dy) {
+        int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
+        int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
 
-        // Constructor to initialise grid
-        public KeyboardActions(Grid grid) {
-            this.grid = grid;
-            // Don't initialize currentCell here
+
+        // Check if the next cell is an obstacle
+        if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
+            // Move the player to the new cell because there is no obstacle
+            Cell nextCell = grid.getCell(newColumn, newRow);
+
+            // Optionally Un-highlight the old cell
+            playerUnosCell.unhighlight();
+            playerUnosCell = nextCell;
+            // Optionally highlight the new cell
+            playerUnosCell.highlight();
         }
+        // If there is an obstacle, don't move and possibly add some feedback
+    }
+
+
+
+
+    //Keyboard Controlling methods
 
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
@@ -160,53 +175,26 @@ public class GameController {
                 }
             });
         }
-
-
-
-
-        /**
-         * Hail a taxi and change the player's appearance to yellow.
-         */
-        private void hailTaxi() {
-            if (!hailTaxi) {
-                hailTaxi = true;
-                // Increase carbon footprint
-                carbonFootprint += 75;
-//                updateCarbonFootprintLabel();
-                // Change the color of the player's cell to yellow
-                currentCell.setStyle("-fx-background-color: yellow;");
-            } else {
-                hailTaxi = false;
-                // Change the color of the player's cell back to blue
-                currentCell.setStyle("-fx-background-color: blue;");
-            }
-        }
-
-        /**
-         * Attempts to move the current selection by a specified number of columns and rows.
-         * The movement is performed if the destination cell is not an obstacle.
-         *
-         * @param dx The number of columns to move. A positive number moves right, a negative number moves left.
-         * @param dy The number of rows to move. A positive number moves down, a negative number moves up.
-         */
-        private void moveSelection(int dx, int dy) {
+        public void moveSelection(int dx, int dy) {
             // Check if the game is finished, if so, return without allowing movement
             if (gameFinished) {
                 return;
             }
 
+
             int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
             int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
+
 
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
-                // Optionally unhighlight the old cell
-                currentCell.unhighlight();
 
+                // Optionally un-highlight the old cell
+                currentCell.unhighlight();
                 currentCell = nextCell;
                 currentRow = newRow;
                 currentColumn = newColumn;
@@ -224,67 +212,54 @@ public class GameController {
                 StackPane root = (StackPane) grid.getScene().getRoot();
                 root.getChildren().add(levelCompleteLabel);
 
+
                 // Exit the game after five seconds
                 PauseTransition pause = new PauseTransition(Duration.seconds(5));
                 pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
                 pause.play();
             }
 
+
             if ("gem".equals(newCell.getUserData())) {
                 grid.getChildren().remove(newCell);
-                newCell.unhighlight(); // Unhighlight only the gem cell
+                newCell.unhighlight(); // Un-highlight only the gem cell
                 grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
-//                updateGemCountLabel(); // Update gem count label
+                updateGemCountLabel(); // Update gem count label
             }
         }
-        private void setupKeyControls(Scene scene) {
-            scene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.DOWN) {
-                    if (btnStartGame.isFocused()) {
-                        btnExit.requestFocus();
-                    }
-                } else if (event.getCode() == KeyCode.UP) {
-                    if (btnExit.isFocused()) {
-                        btnStartGame.requestFocus();
-                    }
-                }
-            });
-        }
 
-        private void movePLayer(int dx, int dy) {
-            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
-            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
 
-            // Check if the next cell is an obstacle
-            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
-                // Move the player to the new cell because there is no obstacle
-                Cell nextCell = grid.getCell(newColumn, newRow);
+    /// Related Gem
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
 
-                // Optionally unhighlight the old cell
-                playerUnosCell.unhighlight();
+    // Method to update the gem count label
+    public static void updateGemCountLabel() {
+        gemCountLabel.setText("Gem Count: " + gemCount);
+    }
 
-                playerUnosCell = nextCell;
-
-                // Optionally highlight the new cell
-                playerUnosCell.highlight();
-            }
-            // If there is an obstacle, don't move and possibly add some feedback
+///Transportation
+    /**
+     * Hail a taxi and change the player's appearance to yellow.
+     */
+    private void hailTaxi() {
+        if (!hailTaxi) {
+            hailTaxi = true;
+            // Increase carbon footprint
+            carbonFootprint += 75;
+            updateCarbonFootprintLabel();
+            // Change the color of the player's cell to yellow
+            currentCell.setStyle("-fx-background-color: yellow;");
+        } else {
+            hailTaxi = false;
+            // Change the color of the player's cell back to blue
+            currentCell.setStyle("-fx-background-color: blue;");
         }
     }
-//    private void updateGemCountLabel() {
-//        gemCountLabel.setText("Gem Count: " + gemCount);
-//    }
-//
-//    // Method to play the gem collect sound
-//
-//
-//    // Method to update the carbon footprint label
-//    private void updateCarbonFootprintLabel() {
-//        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
-//    }
 
 }
-
 
 
 

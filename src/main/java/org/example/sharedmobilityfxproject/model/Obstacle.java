@@ -7,9 +7,11 @@ package org.example.sharedmobilityfxproject.model;
  */
 public class Obstacle {
 
+
     private Grid grid;
     private int column;
     private int row;
+
 
     /**
      * Constructs an obstacle located at the specified column and row.
@@ -25,6 +27,7 @@ public class Obstacle {
         createObstacle();
     }
 
+
     /**
      * Marks the cell at the obstacle's location as an obstacle by changing its color to red.
      */
@@ -33,12 +36,15 @@ public class Obstacle {
         obstacleCell.getStyleClass().add("cell-obstacle"); // Assuming Cell extends a JavaFX Pane
     }
 
+
     // Methods to get the column and row of the obstacle
     public int getColumn() {
         return column;
     }
 
+
     public int getRow() {
         return row;
     }
+
 }

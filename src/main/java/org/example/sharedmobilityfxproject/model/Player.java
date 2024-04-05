@@ -8,13 +8,16 @@ public class Player implements motion {
     private double co2; // co2 produced
 
 
-public Player(int x, int y,int stamina,int speed,double co2,int gems) {
+
+
+    public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         this.x = x;
         this.y = y;
         this.stamina=100;
         this.speed=10;
         this.co2=0;
     }
+
 
     public int getCoordX() {
         return x;
@@ -26,7 +29,7 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         return stamina;
     }
     public void setSpeed(int speed) {
-    this.speed=speed;
+        this.speed=speed;
     }
     public int getSpeed() {
         return speed;
@@ -45,20 +48,24 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         y -= speed;
     }
 
+
     @Override
     public void moveDown() {
         y += speed;
     }
+
 
     @Override
     public void moveLeft() {
         x -= speed;
     }
 
+
     @Override
     public void moveRight() {
         x += speed;
     }
+
 
     public void decreaseStamina(){ //alternatively we could have each item change the stamina
         stamina=stamina-10;
