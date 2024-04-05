@@ -1,8 +1,11 @@
 package org.example.sharedmobilityfxproject;
-import org.example.sharedmobilityfxproject.model.Grid;
-import org.example.sharedmobilityfxproject.model.Cell;
-import org.example.sharedmobilityfxproject.model.Obstacle;
-import org.example.sharedmobilityfxproject.model.Gem;
+import org.example.sharedmobilityfxproject.model.*;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.Animation;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -19,6 +22,8 @@ import org.example.sharedmobilityfxproject.model.Player;
 
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,10 +34,10 @@ public class Main extends Application {
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    private static final int ROWS = 30;
-    private static final int COLUMNS = 60;
-    private static final double WIDTH = 800;
-    private static final double HEIGHT = 600;
+    private static final int ROWS = 80;
+    private static final int COLUMNS = 120;
+    private static final double WIDTH = 1300;
+    private static final double HEIGHT = 680;
 
     // Gem count
     static int gemCount = 0;
@@ -58,12 +63,15 @@ public class Main extends Application {
 
     // Finish cell
     private Cell finishCell;
-
+    private Bus busman;
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
 
     public static void increaseGemCount() {
         gemCount++;
@@ -88,8 +96,8 @@ public class Main extends Application {
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
             primaryStage.setResizable(false);
-            //primaryStage.setFullScreen(true);
-            //primaryStage.setFullScreenExitHint("Press esc to minimize !");
+//            primaryStage.setFullScreen(true);
+//            primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
             // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
@@ -104,6 +112,23 @@ public class Main extends Application {
                     grid.add(cell, column, row);
                 }
             }
+            //bus SHITE
+
+            busStop busS1 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
+            busStop busS2 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
+            ArrayList busStops  = new ArrayList<>();
+            busStops.add(busS1);
+            busStops.add(busS2);
+            busman = new Bus(busStops,15, 15);
+            for (int i = 0; i < busman.list().size(); i++){
+                busStop stop = busman.list().get(i);
+                grid.add(stop,stop.getX(), stop.getY());
+            }
+
+            grid.add(busman,busman.getX(), busman.getY());// Example starting position
+
+            // Schedule the bus to move every second
+
 
             // Create label for gem count
             gemCountLabel = new Label("Gem Count: " + gemCount);
@@ -122,11 +147,44 @@ public class Main extends Application {
             vbox.setAlignment(Pos.TOP_LEFT);
 
 
+            // Initialise Obstacles for x = 0
+            obstacles = new ArrayList<>();
+            obstacles.add(new Obstacle(grid, 0, 3));
+            obstacles.add(new Obstacle(grid, 0, 4));
+            obstacles.add(new Obstacle(grid, 0, 5));
+
+            int positionX0 = 8;
+            int countX0 = 0;
+            while (countX0 < 67) {
+                obstacles.add(new Obstacle(grid, 0, positionX0));
+                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
+                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
+                positionX0 += 5;
+                countX0 += 3;
+            }
+
             // Initialise Obstacles
             obstacles = new ArrayList<>();
-            obstacles.add(new Obstacle(grid, 5, 5));
-            obstacles.add(new Obstacle(grid, 10, 5));
-            obstacles.add(new Obstacle(grid, 5, 10));
+
+// Define x positions
+            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
+
+// For each x position
+            for (int x : xPositions) {
+                obstacles.add(new Obstacle(grid, x, 3));
+                obstacles.add(new Obstacle(grid, x, 4));
+                obstacles.add(new Obstacle(grid, x, 5));
+
+                int positionX = 8;
+                int countX = 0;
+                while (countX < 67) {
+                    obstacles.add(new Obstacle(grid, x, positionX));
+                    obstacles.add(new Obstacle(grid, x, positionX + 1));
+                    obstacles.add(new Obstacle(grid, x, positionX + 2));
+                    positionX += 5;
+                    countX += 3;
+                }
+            }
 
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
@@ -151,17 +209,88 @@ public class Main extends Application {
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid, vbox);
-
+            System.out.println(busS1.getX());
             // create scene and set to stage
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
+            Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.15), event -> {
+                // Assuming 'busman' is your Bus instance and 'busS1' is the target bus stop
+                // You might need logic here to select the appropriate bus stop from a list if you have multiple
+                busStop targetBusStop = busman.nextStop(); // For example purposes, using a direct reference
 
+                // Call your method to move the bus towards the bus stop
+                moveBusTowardsBusStop(grid,busman, targetBusStop);
 
+                // Your existing code might already handle updating the bus position on the grid
+                // through the moveBus method called within moveBusTowardsBusStop
+            }));
+            busMovementTimeline.setCycleCount(Animation.INDEFINITE);
+            busMovementTimeline.play();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void moveBusTowardsBusStop(Grid grid,Bus bus, busStop stop) {
+        // Calculate the Manhattan distance for both possible next steps
+        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
+        int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
+        System.out.println("--------------------");
+        System.out.println(stop.getX()+"   "+ stop.getY());
+
+        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+        if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
+            System.out.println("----------- moving x ---------");
+            // Move horizontally towards the bus stop, if not blocked
+            int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
+            if (canMoveBusTo(newX, bus.getY())) {
+                moveBus(grid ,bus, newX, bus.getY());
+            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1))) {
+                // Move vertically as a fallback
+                moveBus(grid ,bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
+            }
+        }
+
+        else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
+            System.out.println("----------- moving y ---------");
+            // Move vertically towards the bus stop, if not blocked
+            int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
+            if (canMoveBusTo(bus.getX(), newY)) {
+
+                moveBus(grid,bus, bus.getX(), newY);
+            }
+            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
+                // Move horizontally as a fallback
+                if (bus.flagMove == 0){
+                    bus.flagMove =1;
+                }
+                moveBus(grid,bus, bus.getX() + +1, bus.getY());
+            }
+        }else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
+            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+            bus.list().add(bus.list().remove(0));
+            System.out.println("now going towards :"+bus.nextStop());
+        }
+        else if (bus.getY()==stop.getY()) {
+         bus.flagMove=0;
+        }
+
+    }
+
+    private boolean canMoveBusTo(int x, int y) {
+        // Implement logic to check if the bus can move to (x, y) considering obstacles
+        // Return true if it can move, false if there's an obstacle
+        return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+    }
+
+    private void moveBus(Grid grid,Bus bus, int newX, int newY) {
+        // Move the bus to the new position (newX, newY) on the grid
+        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
+        grid.moveCell(bus, newX, newY);
+        bus.setX(newX);
+        bus.setY(newY);
+
     }
 
     public static void main(String[] args) {
@@ -172,6 +301,7 @@ public class Main extends Application {
      * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
      * It manages the current cell selection and applies keyboard actions to it.
      */
+
     public class KeyboardActions {
 
         private Grid grid;
@@ -246,7 +376,7 @@ public class Main extends Application {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
-                // Optionally un-highlight the old cell
+                // Optionally unhighlight the old cell
                 currentCell.unhighlight();
 
                 currentCell = nextCell;
@@ -274,7 +404,7 @@ public class Main extends Application {
 
             if ("gem".equals(newCell.getUserData())) {
                 grid.getChildren().remove(newCell);
-                newCell.unhighlight(); // Un-highlight only the gem cell
+                newCell.unhighlight(); // Unhighlight only the gem cell
                 grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
                 updateGemCountLabel(); // Update gem count label
             }
@@ -289,7 +419,7 @@ public class Main extends Application {
                 // Move the player to the new cell because there is no obstacle
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
-                // Optionally Un-highlight the old cell
+                // Optionally unhighlight the old cell
                 playerUnosCell.unhighlight();
 
                 playerUnosCell = nextCell;
