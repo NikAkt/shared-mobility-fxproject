@@ -116,6 +116,7 @@ public class Main extends Application {
 
             busStop busS1 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
             busStop busS2 = new busStop(getRandomNumber(20,100),getRandomNumber(20,60));
+
             ArrayList busStops  = new ArrayList<>();
             busStops.add(busS1);
             busStops.add(busS2);
