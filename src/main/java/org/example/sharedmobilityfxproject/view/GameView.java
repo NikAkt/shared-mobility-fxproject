@@ -212,8 +212,8 @@ public class GameView {
         return imageView;
     }
     public void loadGameScreen(String stageName, Stage actionEvent) {
-             primaryStage= actionEvent;
         try {
+            primaryStage= actionEvent;
             // Create a StackPane to hold all elements
             StackPane root = new StackPane();
             Scene scene = new Scene(root);
@@ -226,9 +226,6 @@ public class GameView {
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
             primaryStage.setFullScreen(true); // Set the stage to full screen
-            //primaryStage.setFullScreen(true);
-            //primaryStage.setFullScreenExitHint("Press esc to minimize !");
-
 
             // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
@@ -264,6 +261,20 @@ public class GameView {
             VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
             vbox.setAlignment(Pos.TOP_LEFT);
 
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
+            Gem gem = new Gem(gemColumn, gemRow);
+            grid.add(gem, gemColumn, gemRow);
+
+
+            // Initialise Obstacles for x = 0 only
+            obstacles = new ArrayList<>();
+
+
 
             // Initialise Obstacles
             obstacles = new ArrayList<>();
@@ -274,17 +285,6 @@ public class GameView {
 
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
-
-            // Place the finish cell after the grid is filled and the player's position is initialised
-            int finishColumn;
-            int finishRow;
-            do {
-                finishColumn = (int) (Math.random() * COLUMNS);
-                finishRow = (int) (Math.random() * ROWS);
-            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
-            finishCell = new Cell(finishColumn, finishRow);
-            finishCell.getStyleClass().add("finish");
-            grid.add(finishCell, finishColumn, finishRow);
 
 
             // Initialise currentCell after the grid has been filled
@@ -332,7 +332,6 @@ public class GameView {
     }
 
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        //
         mdv.stop();
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);

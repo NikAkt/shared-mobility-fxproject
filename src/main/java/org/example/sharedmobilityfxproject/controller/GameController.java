@@ -25,27 +25,8 @@ public class GameController {
     public static Main GemCollector;
     public Map gameMap;
     public Grid grid;
-    // Boolean flag to control hover cursor visibility
-    boolean showHoverCursor = true;
 
-    public static final double BUTTON_WIDTH = 200;
-    public GameView gameView;
-
-    public static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    public static final int ROWS = 30;
-    public static final int COLUMNS = 60;
-    public static final double WIDTH = 800;
-    public static final double HEIGHT = 600;
-    public MediaPlayer mediaPlayer;
-    public VBox stageSelectionBox;
-
-    public List<Obstacle> obstacles;
-
-    // Boolean flag to track if the game has finished
-    static boolean gameFinished = false;
-
-    // Boolean flag to track if the player is in a taxi
-    boolean hailTaxi = false;
+    // ****JavaElement****
     public Stage primaryStage;
     public Button btnStartGame;
     public VBox gameModeBox;
@@ -53,6 +34,31 @@ public class GameController {
     public VBox buttonBox;
     public VBox imgBox;
     public StackPane root;
+
+    // Boolean flag to control hover cursor visibility
+    boolean showHoverCursor = true;
+
+    public static final double BUTTON_WIDTH = 200;
+    public GameView gameView;
+
+    public static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    public static final int ROWS = 80;
+    public static final int COLUMNS = 120;
+    public static final double WIDTH = 1300;
+    public static final double HEIGHT = 680;
+    public MediaPlayer mediaPlayer;
+    public VBox stageSelectionBox;
+
+    public List<Obstacle> obstacles;
+
+    // Finish cell
+    private Cell finishCell;
+    // Boolean flag to track if the game has finished
+    static boolean gameFinished = false;
+
+    // Boolean flag to track if the player is in a taxi
+    boolean hailTaxi = false;
+
 
     // ****Gem count****
     static int gemCount = 0;
@@ -67,6 +73,18 @@ public class GameController {
     // ****Carbon footprint****
     int carbonFootprint = 0;
     Label carbonFootprintLabel; // Label to display carbon footprint
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     //Game Start initialise method

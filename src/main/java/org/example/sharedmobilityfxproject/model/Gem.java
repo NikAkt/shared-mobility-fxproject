@@ -19,6 +19,7 @@ public class Gem extends Cell {
     public final Main main;
     public GameController gameController;
     // Constructor to initialise gem coordinates
+
     public Gem(int column, int row, Main gemCollector) {
         super(column, row);
         this.main = gemCollector; // Corrected here
