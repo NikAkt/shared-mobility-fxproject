@@ -10,6 +10,7 @@ public class Taxi extends Cell {
     private int x;
     private int y;
     public int flagMove = 0;
+    public boolean arrived = false;
     public boolean hailed = false;
     public Taxi(int x, int y) {
         super(x, y); // Assuming default speed is 10 and CO2 is 0 for initialization

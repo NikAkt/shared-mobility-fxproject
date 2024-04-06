@@ -245,8 +245,8 @@ public class Main extends Application {
             primaryStage.show();
             Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
                 busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
-                if(taximan.hailed){
-                    moveTaxiTowardsPlayer(grid, taximan, targetBusStop, ka);
+                if(taximan.hailed&&!taximan.arrived){
+                    moveTaxiTowardsPlayer(grid, taximan, ka);
                 }
                 if (!busman.isWaiting){
 
@@ -278,59 +278,59 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-    public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, busStop stop, KeyboardActions ka) {
+    public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, KeyboardActions ka) {
 
+        if (bus.getX()==ka.playerUnosCell.getColumn()&&bus.getY()==ka.playerUnosCell.getRow()&&taximan.arrived&&!ka.inTaxi){
+          ka.inTaxi = true;
 
+        }
 //        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
-        if ((bus.getX()<ka.playerUnosCell.getColumn()||bus.getX()>ka.playerUnosCell.getColumn())&&bus.flagMove==0 ) {
+        else {
+            if ((bus.getX() < ka.playerUnosCell.getColumn() || bus.getX() > ka.playerUnosCell.getColumn()) && bus.flagMove == 0) {
 //            System.out.println("----------- moving x ---------");
-            // Move horizontally towards the bus stop, if not blocked
-            int newX = bus.getX() + (bus.getX() < ka.playerUnosCell.getColumn() ? 1 : -1);
-            if (canMoveBusTo(newX, bus.getY())) {
-                moveTaxi(grid ,bus, newX, bus.getY());
-            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1))) {
-                // Move vertically as a fallback
-                moveTaxi(grid ,bus, bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1));
-            }
-        }
-
-        else if (bus.getY()<ka.playerUnosCell.getRow()||bus.getY()>ka.playerUnosCell.getRow()){
-//            System.out.println("----------- moving y ---------");
-            // Move vertically towards the bus stop, if not blocked
-            int newY = bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1);
-            if (canMoveBusTo(bus.getX(), newY)) {
-
-                moveTaxi(grid,bus, bus.getX(), newY);
-            }
-            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
-                // Move horizontally as a fallbackf
-                if (bus.flagMove == 0){
-                    bus.flagMove =1;
+                // Move horizontally towards the bus stop, if not blocked
+                int newX = bus.getX() + (bus.getX() < ka.playerUnosCell.getColumn() ? 1 : -1);
+                if (canMoveBusTo(newX, bus.getY())) {
+                    moveTaxi(grid, bus, newX, bus.getY());
+                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1))) {
+                    // Move vertically as a fallback
+                    moveTaxi(grid, bus, bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1));
                 }
-                moveTaxi(grid,bus, bus.getX() + +1, bus.getY());
+            } else if (bus.getY() < ka.playerUnosCell.getRow() || bus.getY() > ka.playerUnosCell.getRow()) {
+//            System.out.println("----------- moving y ---------");
+                // Move vertically towards the bus stop, if not blocked
+                int newY = bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1);
+                if (canMoveBusTo(bus.getX(), newY)) {
+
+                    moveTaxi(grid, bus, bus.getX(), newY);
+                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())) {
+                    // Move horizontally as a fallbackf
+                    if (bus.flagMove == 0) {
+                        bus.flagMove = 1;
+                    }
+                    moveTaxi(grid, bus, bus.getX() + +1, bus.getY());
+                }
             }
-        }
-        //arriving at stop logic
-        else if (bus.getX()==ka.playerUnosCell.getColumn()&&bus.getY()==ka.playerUnosCell.getRow()){
-            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+            //arriving at stop logic
+            else if (bus.getX() == ka.playerUnosCell.getColumn() && bus.getY() == ka.playerUnosCell.getRow()) {
+                System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+                bus.arrived = true;
 
+                if (!ka.playerMovementEnabled && ka.playerUnosCell.getColumn() == bus.getX() && ka.playerUnosCell.getRow() == bus.getY()) {
+                    System.out.println("----------- You just got on the bus ---------");
+                    ka.onBus = true;
 
-            if(!ka.playerMovementEnabled&&ka.playerUnosCell.getColumn()==bus.getX()&&ka.playerUnosCell.getRow()==bus.getY()){
-                System.out.println("----------- You just got on the bus ---------");
-                ka.onBus = true;
+                } else if (ka.onBus) {
 
-            }else if(ka.onBus){
-                System.out.println("----------- You arrived at  ---------"+stop);
-                System.out.println("----------- Press E to get off  ---------");
-                ka.onBus = true;
+                    System.out.println("----------- Press E to get off  ---------");
+                    ka.onBus = true;
 
+                }
+            } else if (bus.getY() == ka.playerUnosCell.getRow()) {
+                bus.flagMove = 0;
             }
-        }
-        else if (bus.getY()==stop.getY()) {
-            bus.flagMove=0;
-        }
 
-    }
+        }}
 
     public void moveBusTowardsBusStop(Grid grid,Bus bus, busStop stop,KeyboardActions ka) {
         // Calculate the Manhattan distance for both possible next steps
@@ -398,10 +398,6 @@ public class Main extends Application {
     }
     private void moveTaxi(Grid grid,Taxi bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
-//        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
-//        int x = bus.getX();
-//        int y = bus.getY();
-        //Cell cell = grid.getCell(x,y);
 
         grid.moveCell(bus, newX, newY);
 
@@ -438,6 +434,7 @@ public class Main extends Application {
     public class KeyboardActions {
         private boolean playerMovementEnabled = true;
         private boolean onBus = false;
+        public boolean inTaxi = false;
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
         public Cell playerUnosCell; // Made public for access in start method
@@ -477,10 +474,22 @@ public class Main extends Application {
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
                         if (playerMovementEnabled) {
-                switch (event.getCode()) {
+
+                    if(this.inTaxi){
+                        switch (event.getCode()) {
+                            case D -> movePLayer(1, 0);
+                            case A -> movePLayer(-1, 0);
+                            case W -> movePLayer(0, -1);
+                            case S -> movePLayer(0, 1);
+                            case T -> this.inTaxi =false;
+                            case E -> togglePlayerMovement();
+                            case C ->
+                                    System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
+                        }}
 
                     // Player
-                    case D -> movePLayer(1, 0);
+                    else{ switch (event.getCode()) {
+                        case D -> movePLayer(1, 0);
                     case A -> movePLayer(-1, 0);
                     case W -> movePLayer(0, -1);
                     case S -> movePLayer(0, 1);
@@ -488,7 +497,7 @@ public class Main extends Application {
                     case E -> togglePlayerMovement();
                     case C ->
                             System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
-                }
+                }}
 
                     // Add more cases as needed
                 }else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
@@ -613,7 +622,11 @@ public class Main extends Application {
                 playerUnosCell.unhighlight();
 
                 playerUnosCell = nextCell;
-
+                if (inTaxi) {
+                    // Assuming taximan is accessible from here, or find a way to access it
+                    moveTaxi(grid, taximan, newColumn, newRow);
+                    System.out.println("btich");
+                }
                 // Check for interaction with a gem
                 if ("gem".equals(playerUnosCell.getUserData())) {
                     collectGem(playerUnosCell);
