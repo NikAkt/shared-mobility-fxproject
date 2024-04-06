@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane;
  * It is responsible for managing the cells and their layout within the grid.
  */
 public class Grid extends Pane {
-
+//60 x 30
 
     int rows;
     int columns;

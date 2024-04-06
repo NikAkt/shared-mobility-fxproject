@@ -113,12 +113,13 @@ public class KeyBoradActionController {
             // Move the player to the new cell because there is no obstacle
 
             Cell nextCell = this.grid.getCell(newColumn, newRow);
-            if (currentCell != null) { // currentCell이 null이 아닌지 확인
+            if (this.currentCell != null) { // currentCell이 null이 아닌지 확인
                 // Optionally un-highlight the old cell
-                currentCell.unhighlight();
+                this.currentCell.unhighlight();
             }
 
             // Optionally un-highlight the old cell
+            assert currentCell != null;
             currentCell.unhighlight();
             currentCell = nextCell;
             currentRow = newRow;
