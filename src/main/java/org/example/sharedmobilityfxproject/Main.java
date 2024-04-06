@@ -213,6 +213,8 @@ public class Main extends Application {
             primaryStage.show();
             Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
                 busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
+                if (!busman.isWaiting){
+
 
                 moveBusTowardsBusStop(grid, busman, targetBusStop, ka);
 
@@ -222,6 +224,14 @@ public class Main extends Application {
                     ka.playerUnosCell.setColumn(busman.getX());
                     ka.playerUnosCell.setColumn(busman.getY());
                     //System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
+                }}
+                else{
+                    if(busman.waitTime ==0){
+                        busman.waitASec();
+                    }
+                    else{
+                        busman.waitTime--;
+                    }
                 }
             }));
 
@@ -268,9 +278,11 @@ public class Main extends Application {
                 }
                 moveBus(grid,bus, bus.getX() + +1, bus.getY());
             }
-        }else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
+        }
+        //arriving at stop logic
+        else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
             System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
-
+            bus.waitASec();
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
             if(!ka.playerMovementEnabled){

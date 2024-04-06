@@ -15,6 +15,7 @@ public class Bus extends Cell {
     private int x;
     private int y;
     public boolean isWaiting = false;
+    public int waitTime = 0;
     public int flagMove = 0;
     private ArrayList stopList;
     public Bus(ArrayList<busStop> stops,int i, int j) {
@@ -56,10 +57,10 @@ public class Bus extends Cell {
         // Implement logic here
         busStop stop = (busStop) stopList.get(0);
         // Check if the current X coordinate of the bus matches the X coordinate of the first bus stop
-        if(this.x == stop.getX() && this.y == stop.getY()) {
+        if(this.x == stop.getX() && this.y == stop.getY()&& !this.isWaiting) {
             // Bus is waiting at a stop
             this.isWaiting = true;
-            // Additional logic for waiting can be added here
+            this.waitTime = 10;            // Additional logic for waiting can be added here
         } else {
             this.isWaiting = false;
         }
