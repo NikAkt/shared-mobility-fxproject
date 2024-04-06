@@ -222,8 +222,8 @@ public class Main extends Application {
                 if (ka.onBus) {
                     // Update player's coordinates to match the bus when the player is on the bus
                     ka.playerUnosCell.setColumn(busman.getX());
-                    ka.playerUnosCell.setColumn(busman.getY());
-                    //System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
+                    ka.playerUnosCell.setRow(busman.getY());
+                    System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
                 }}
                 else{
                     if(busman.waitTime ==0){
