@@ -21,6 +21,7 @@ import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
+import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,7 @@ public class Main extends Application {
     private Cell finishCell;
     private Bus busman;
     // Boolean flag to track if the game has finished
+    private Taxi taximan;
     boolean gameFinished = false;
 
     // Boolean flag to track if the player is in a taxi
@@ -143,13 +145,14 @@ public class Main extends Application {
             busStops.add(busS7);
 
             busman = new Bus(busStops,4, 4);
+            taximan= new Taxi (58,28);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
                 grid.add(stop,stop.getX(), stop.getY());
             }
 
             grid.add(busman,busman.getX(), busman.getY());// Example starting position
-
+            grid.add(taximan, taximan.getX(), taximan.getY());
             // Schedule the bus to move every second
 
 
@@ -242,6 +245,9 @@ public class Main extends Application {
             primaryStage.show();
             Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
                 busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
+                if(taximan.hailed){
+                    moveTaxiTowardsPlayer(grid, taximan, targetBusStop, ka);
+                }
                 if (!busman.isWaiting){
 
 
@@ -272,6 +278,60 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+    public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, busStop stop, KeyboardActions ka) {
+
+
+//        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+        if ((bus.getX()<ka.playerUnosCell.getColumn()||bus.getX()>ka.playerUnosCell.getColumn())&&bus.flagMove==0 ) {
+//            System.out.println("----------- moving x ---------");
+            // Move horizontally towards the bus stop, if not blocked
+            int newX = bus.getX() + (bus.getX() < ka.playerUnosCell.getColumn() ? 1 : -1);
+            if (canMoveBusTo(newX, bus.getY())) {
+                moveTaxi(grid ,bus, newX, bus.getY());
+            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1))) {
+                // Move vertically as a fallback
+                moveTaxi(grid ,bus, bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1));
+            }
+        }
+
+        else if (bus.getY()<ka.playerUnosCell.getRow()||bus.getY()>ka.playerUnosCell.getRow()){
+//            System.out.println("----------- moving y ---------");
+            // Move vertically towards the bus stop, if not blocked
+            int newY = bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1);
+            if (canMoveBusTo(bus.getX(), newY)) {
+
+                moveTaxi(grid,bus, bus.getX(), newY);
+            }
+            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
+                // Move horizontally as a fallbackf
+                if (bus.flagMove == 0){
+                    bus.flagMove =1;
+                }
+                moveTaxi(grid,bus, bus.getX() + +1, bus.getY());
+            }
+        }
+        //arriving at stop logic
+        else if (bus.getX()==ka.playerUnosCell.getColumn()&&bus.getY()==ka.playerUnosCell.getRow()){
+            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+
+
+            if(!ka.playerMovementEnabled&&ka.playerUnosCell.getColumn()==bus.getX()&&ka.playerUnosCell.getRow()==bus.getY()){
+                System.out.println("----------- You just got on the bus ---------");
+                ka.onBus = true;
+
+            }else if(ka.onBus){
+                System.out.println("----------- You arrived at  ---------"+stop);
+                System.out.println("----------- Press E to get off  ---------");
+                ka.onBus = true;
+
+            }
+        }
+        else if (bus.getY()==stop.getY()) {
+            bus.flagMove=0;
+        }
+
+    }
+
     public void moveBusTowardsBusStop(Grid grid,Bus bus, busStop stop,KeyboardActions ka) {
         // Calculate the Manhattan distance for both possible next steps
         int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
@@ -335,6 +395,20 @@ public class Main extends Application {
         // Implement logic to check if the bus can move to (x, y) considering obstacles
         // Return true if it can move, false if there's an obstacle
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+    }
+    private void moveTaxi(Grid grid,Taxi bus, int newX, int newY) {
+        // Move the bus to the new position (newX, newY) on the grid
+//        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
+//        int x = bus.getX();
+//        int y = bus.getY();
+        //Cell cell = grid.getCell(x,y);
+
+        grid.moveCell(bus, newX, newY);
+
+        bus.setX(newX);
+        bus.setY(newY);
+        //grid.add(cell,cell.getColumn(),cell.getRow());
+
     }
 
     private void moveBus(Grid grid,Bus bus, int newX, int newY) {
@@ -462,17 +536,11 @@ public class Main extends Application {
             }}}
         }
         private void hailTaxi() {
-            if (!hailTaxi) {
-                hailTaxi = true;
-                // Increase carbon footprint
-                carbonFootprint += 75;
-                updateCarbonFootprintLabel();
-                // Change the color of the player's cell to yellow
-                currentCell.setStyle("-fx-background-color: yellow;");
-            } else {
-                hailTaxi = false;
-                // Change the color of the player's cell back to blue
-                currentCell.setStyle("-fx-background-color: blue;");
+            if (taximan.hailed) {
+                taximan.hailed = !taximan.hailed;
+            }
+            else{
+                taximan.hailed = true;
             }
         }
 

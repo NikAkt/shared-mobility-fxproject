@@ -28,3 +28,6 @@
 .cell.finish {
     -fx-background-color: green;
 }
+.taxi{
+    -fx-background-color: #ff0000;
+}
