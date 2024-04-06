@@ -208,8 +208,6 @@ public class Main extends Application {
                 obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
             }
 
-//            printArrayContents();
-
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
             // Place the finish cell after the grid is filled and the player's position is initialised
@@ -225,9 +223,8 @@ public class Main extends Application {
             finishCell.getStyleClass().add("finish");
             grid.add(finishCell, finishColumn, finishRow);
 
-            // Initialise currentCell after the grid has been filled
             // Initialise Player
-            Player playerUno = new Player(25,25,10,1,10,0);
+            Player playerUno = new Player(0,0,10,1,10,0);
             ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
 
             // Initialize currentCell after the grid has been filled
