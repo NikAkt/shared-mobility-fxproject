@@ -406,9 +406,15 @@ public class Main extends Application {
 
             } else {
                 // Player decides to continue moving
-                System.out.println("----------- Impatient fuck ---------");
+                if (!this.onBus) {
+                    System.out.println("----------- Impatient fuck ---------");
                     ((busStop) playerUnosCell).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
+                }
+                else{
+                    this.onBus = false;
+                    System.out.println("----------- you got off the bus  ---------");
 
+                }
             }}
         }
         private void hailTaxi() {
