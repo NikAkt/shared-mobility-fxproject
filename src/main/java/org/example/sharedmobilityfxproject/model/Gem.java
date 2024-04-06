@@ -1,6 +1,7 @@
 
 
 package org.example.sharedmobilityfxproject.model;
+import org.example.sharedmobilityfxproject.controller.GameController;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -15,14 +16,11 @@ import java.util.Objects;
 
 public class Gem extends Cell {
     public boolean isCollected = false; // Flag to track if the gem has been collected
-    public static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3"; // Path to the gem collect sound file
-    public final Main main;
     public GameController gameController;
     // Constructor to initialise gem coordinates
 
-    public Gem(int column, int row, Main gemCollector) {
+    public Gem(int column, int row) {
         super(column, row);
-        this.main = gemCollector; // Corrected here
         getStyleClass().add("gem");
         setUserData("gem"); // Set a custom attribute to identify the gem cell
     }
@@ -33,12 +31,12 @@ public class Gem extends Cell {
     public void highlight() {
         super.highlight();
         if (!isCollected) {
-            GameController.increaseGemCount(); // Corrected here
-            System.out.println("Gem collected!!"); //debug'
-            System.out.println();
-
+            System.out.println("Gem collected"); //debug
             playGemCollectSound(); // Play the gem collect sound
+            gameController.gemCount++; // Increment the gem count
+            gameController.updateGemCountLabel(); // Update the gem count label
             isCollected = true; // Set the flag to true after the gem is collected
+
         }
     }
 

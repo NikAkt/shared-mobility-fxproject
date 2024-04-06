@@ -35,6 +35,7 @@ public class GameController {
     public VBox imgBox;
     public StackPane root;
 
+
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
 
@@ -61,7 +62,7 @@ public class GameController {
 
 
     // ****Gem count****
-    static int gemCount = 0;
+    public int gemCount = 0;
     // Label to keep track of gem count
     static Label gemCountLabel; // Label to display gem count
 
