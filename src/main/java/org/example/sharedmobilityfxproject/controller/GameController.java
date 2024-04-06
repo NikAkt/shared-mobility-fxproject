@@ -38,6 +38,7 @@ public class GameController {
     public MediaPlayer mediaPlayer;
     public VBox stageSelectionBox;
 
+    public List<Obstacle> obstacles;
 
     // Boolean flag to track if the game has finished
     static boolean gameFinished = false;
@@ -154,6 +155,11 @@ public class GameController {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
+    public void initializeObstacles(Grid grid) {
+        obstacles.add(new Obstacle(grid, 5, 5));
+        obstacles.add(new Obstacle(grid, 10, 5));
+        obstacles.add(new Obstacle(grid, 5, 10));
+    }
 }
 
 

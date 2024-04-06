@@ -78,7 +78,7 @@ public class GameView {
 
     public GameView(Grid grid) {
         this.obstacles = new ArrayList<>();
-        initializeObstacles(grid);
+        gameController.initializeObstacles(grid);
     }
 
     public void showInitialScreen(Stage primaryStage) {
@@ -446,11 +446,4 @@ public class GameView {
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
-    private void initializeObstacles(Grid grid) {
-        obstacles.add(new Obstacle(grid, 5, 5));
-        obstacles.add(new Obstacle(grid, 10, 5));
-        obstacles.add(new Obstacle(grid, 5, 10));
-    }
-
-
 }
