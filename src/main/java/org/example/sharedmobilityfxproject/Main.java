@@ -25,6 +25,7 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Arrays;
 
 // Main class extends Application for JavaFX application
 public class Main extends Application {
@@ -313,11 +314,11 @@ public class Main extends Application {
             bus.waitASec();
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
-            if(!ka.playerMovementEnabled){
+            if(!ka.playerMovementEnabled&&ka.playerUnosCell.getColumn()==bus.getX()&&ka.playerUnosCell.getRow()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
             ka.onBus = true;
 
-        }if(ka.onBus){
+        }else if(ka.onBus){
                 System.out.println("----------- You arrived at  ---------"+stop);
                 System.out.println("----------- Press E to get off  ---------");
                 ka.onBus = true;
@@ -424,7 +425,27 @@ public class Main extends Application {
          * Hail a taxi and change the player's appearance to yellow.
          */
         private void togglePlayerMovement() {
-            if (playerUnosCell instanceof busStop) {
+            if (this.onBus) {
+                // Convert the player's current cell coordinates into a Point for easy comparison
+                int[] playerLocation = {playerUnosCell.getColumn(), playerUnosCell.getRow()};
+
+                // Check if the player's current location matches any bus stop location
+                boolean atBusStop = busStopCoordinates.stream()
+                        .anyMatch(location -> Arrays.equals(location, playerLocation));
+
+                if (atBusStop) {
+                    // Allow the player to get off the bus
+                    playerMovementEnabled = true;
+                    this.onBus = false;
+                    System.out.println("You got off the bus.");
+
+                    // Optionally, find the specific busStop instance and mark the player as not waiting
+                    // This might require keeping a reference to busStop objects alongside their coordinates
+                } else {
+                    System.out.println("You can only get off the bus at a bus stop.");
+                }
+            }
+            else{if (playerUnosCell instanceof busStop&&!this.onBus) {
             playerMovementEnabled = !playerMovementEnabled;
             if (!playerMovementEnabled) {
                 // Player decides to wait at a bus stop
@@ -437,12 +458,8 @@ public class Main extends Application {
                     System.out.println("----------- Impatient fuck ---------");
                     ((busStop) playerUnosCell).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
                 }
-                else{
-                    this.onBus = false;
-                    System.out.println("----------- you got off the bus  ---------");
 
-                }
-            }}
+            }}}
         }
         private void hailTaxi() {
             if (!hailTaxi) {
