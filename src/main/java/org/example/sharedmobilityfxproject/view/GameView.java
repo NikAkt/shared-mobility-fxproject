@@ -1,10 +1,18 @@
 package org.example.sharedmobilityfxproject.view;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
+import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.control.Button;
@@ -35,6 +43,7 @@ public class GameView {
     public GameController gameController;
     public Gem gem;
     public Obstacle obstacle;
+    public Timer timer;
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
@@ -217,7 +226,46 @@ public class GameView {
             StackPane root = new StackPane();
             Scene scene = new Scene(root);
 
-            // Settings
+            // CO2 Parameter Bar (Vertical)
+            ProgressBar co2Bar = new ProgressBar(2.0); // Example value, adjust as needed
+            co2Bar.setPrefWidth(60);
+            co2Bar.setPrefHeight(400); // Adjust the height as needed
+            co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
+
+            // Wrap CO2 bar in VBox to align it vertically
+
+            // Stamina Parameter
+            ProgressBar staminaParameter = new ProgressBar(1); // Set to full stamina
+            staminaParameter.setPrefHeight(40);
+            staminaParameter.setPrefWidth(600);
+            staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
+            // Wrap CO2 bar in VBox to align it vertically
+            VBox co2Container = new VBox(co2Bar);
+            co2Container.setAlignment(Pos.CENTER);
+
+            VBox staminaContainer = new VBox(staminaParameter);
+            staminaContainer.setAlignment(Pos.CENTER);
+
+
+            // Time countdown
+            Label timeLabel = new Label("Time left: 360s");
+            timeLabel.setAlignment(Pos.TOP_CENTER);
+
+            // Countdown logic
+            IntegerProperty timeSeconds = new SimpleIntegerProperty(5);
+            new Timeline(
+                    new KeyFrame(
+                            Duration.seconds(timeSeconds.get()),
+                            event -> gameOver(primaryStage),
+                            new KeyValue(timeSeconds, 0)
+                    )
+            ).play();
+
+            timeSeconds.addListener((obs, oldVal, newVal) -> {
+                timeLabel.setText("Time left: " + newVal + "s");
+            });
+            timeLabel.setAlignment(Pos.CENTER);
+
 
             Image icon = new Image(new File("src/main/resources/ico.png").toURI().toString());
             primaryStage.getIcons().add(icon);
@@ -258,8 +306,8 @@ public class GameView {
 
 
             // Create a VBox to hold the gem count label
-            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
-            vbox.setAlignment(Pos.TOP_LEFT);
+            VBox mapBox = new VBox((Node) gemCountLabel, (Node) carbonFootprintLabel, (Node) timeLabel, (Node) staminaParameter);
+            mapBox.setAlignment(Pos.CENTER);
 
             int gemColumn;
             int gemRow;
@@ -329,7 +377,7 @@ public class GameView {
 
 
             // Add background image, grid, and gem count label to the root StackPane
-            root.getChildren().addAll(grid, vbox);
+            root.getChildren().addAll(grid);
 
             // Colour cells
             // Define cells with coordinates and colors
@@ -342,6 +390,7 @@ public class GameView {
 
             scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
             primaryStage.setScene(scene);
+            primaryStage.setTitle("Welcome To "+ stageName);
             primaryStage.show();
 
         }catch(Exception e){
