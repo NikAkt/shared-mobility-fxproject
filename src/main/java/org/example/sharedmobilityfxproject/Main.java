@@ -1,8 +1,6 @@
 package org.example.sharedmobilityfxproject;
 import org.example.sharedmobilityfxproject.model.*;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.Animation;
@@ -57,6 +55,8 @@ public class Main extends Application {
     // Obstacles
     // List to keep track of all obstacles
     private List<Obstacle> obstacles;
+    public ArrayList<int[]> busStopCoordinates;
+    public ArrayList<int[]> obstacleCoordinates;
 
 //    removed from scene
 //    ImageView imageView = new ImageView( new Image( "https://upload.wikimedia.org/wikipedia/commons/c/c7/Pink_Cat_2.jpg"));
@@ -88,6 +88,8 @@ public class Main extends Application {
             // Create a StackPane to hold all elements
             StackPane root = new StackPane();
             Scene scene = new Scene(root);
+            busStopCoordinates = new ArrayList<>();
+            obstacleCoordinates = new ArrayList<>();
 
             // Settings
             Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
@@ -112,19 +114,33 @@ public class Main extends Application {
                     grid.add(cell, column, row);
                 }
             }
-            //bus SHITE
 
+            //bus SHITE
             busStop busS1 = new busStop(4,4);
             busStop busS2 = new busStop(110,4);
-            busStop busS3 = new busStop(110,64);
-            busStop busS4 = new busStop(4,64);
+            busStop busS3 = new busStop(57,25);
+            busStop busS4 = new busStop(110,64);
+            busStop busS5 = new busStop(57,64);
+            busStop busS6 = new busStop(4,64);
+            busStop busS7 = new busStop(4,34);
 
+            busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+            busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+            busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+            busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+            busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+            busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+            busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
 
             ArrayList busStops  = new ArrayList<>();
             busStops.add(busS1);
             busStops.add(busS2);
             busStops.add(busS3);
             busStops.add(busS4);
+            busStops.add(busS5);
+            busStops.add(busS6);
+            busStops.add(busS7);
+
             busman = new Bus(busStops,4, 4);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
@@ -167,6 +183,7 @@ public class Main extends Application {
             int numBlocksX = (COLUMNS - 2 * gap) / (obstacleWidth + gap);
             int numBlocksY = (ROWS - 2 * gap) / (obstacleHeight + gap);
 
+
             // For each block position
             for (int bx = 0; bx < numBlocksX; bx++) {
                 for (int by = 0; by < numBlocksY; by++) {
@@ -178,20 +195,31 @@ public class Main extends Application {
                     for (int i = 0; i < obstacleWidth; i++) {
                         for (int j = 0; j < obstacleHeight; j++) {
                             obstacles.add(new Obstacle(grid, x + i, y + j));
+                            List<Integer> coordinatePair = new ArrayList<>();
+
+                            coordinatePair.add(x + i);
+                            coordinatePair.add(y + j);
                         }
                     }
                 }
             }
+            for (Obstacle obstacle : obstacles) {
+                obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
+            }
+
+//            printArrayContents();
 
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
             // Place the finish cell after the grid is filled and the player's position is initialised
             int finishColumn;
             int finishRow;
-            do {
-                finishColumn = (int) (Math.random() * COLUMNS);
-                finishRow = (int) (Math.random() * ROWS);
-            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
+            finishColumn=102;
+            finishRow=58;
+//            do {
+//                finishColumn = (int) (Math.random() * COLUMNS);
+//                finishRow = (int) (Math.random() * ROWS);
+//            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
             finishCell = new Cell(finishColumn, finishRow);
             finishCell.getStyleClass().add("finish");
             grid.add(finishCell, finishColumn, finishRow);
@@ -361,7 +389,6 @@ public class Main extends Application {
             grid.getChildren().remove(gemCell);
             gemCell.unhighlight(); // Unhighlight only the gem cell
             grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow()); // Replace the gem cell with a normal cell
-            Main.increaseGemCount(); // Update gem count label
             playGemCollectSound();
         }
 
@@ -491,7 +518,7 @@ public class Main extends Application {
         private void movePLayer(int dx, int dy) {
             int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
             int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
-
+            Cell newCell = grid.getCell(newColumn, newRow);
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
                 // Move the player to the new cell because there is no obstacle
@@ -513,13 +540,38 @@ public class Main extends Application {
                     interactWithBusStop((busStop) playerUnosCell);
                     System.out.println("player has entered stop");
                 }
+                if (newCell == finishCell) {
+                    // Player reached the finish cell
+                    gameFinished = true; // Set game as finished
+                    // Display "Level Complete" text
+                    Label levelCompleteLabel = new Label("Level Complete");
+                    levelCompleteLabel.setStyle("-fx-font-size: 24px;");
+                    StackPane root = (StackPane) grid.getScene().getRoot();
+                    root.getChildren().add(levelCompleteLabel);
 
+                    // Exit the game after five seconds
+                    PauseTransition pause = new PauseTransition(Duration.seconds(5));
+                    pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
+                    pause.play();
+                }
                 // Optionally highlight the new cell
                 playerUnosCell.highlight();
             }
             // If there is an obstacle, don't move and possibly add some feedback
         }
 
+    }
+
+    public void printArrayContents() {
+        System.out.println("Obstacle Coordinates:");
+        for (int[] coordinates : obstacleCoordinates) {
+            System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
+        }
+
+        System.out.println("Bus Stop Coordinates:");
+        for (int[] coordinates : busStopCoordinates) {
+            System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
+        }
     }
 
     // Place the gem after the grid is filled and the player's position is initialized
@@ -530,11 +582,20 @@ public class Main extends Application {
             do {
                 gemColumn = (int) (Math.random() * COLUMNS);
                 gemRow = (int) (Math.random() * ROWS);
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+            } while (containsPointInArray(busStopCoordinates, gemColumn, gemRow) || containsPointInArray(obstacleCoordinates, gemColumn, gemRow));
 
             Gem gem = new Gem(gemColumn, gemRow,this);
             grid.add(gem, gemColumn, gemRow);
         }
+    }
+
+    public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
+        for (int[] coordinates : array) {
+            if (coordinates[0] == x && coordinates[1] == y) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
