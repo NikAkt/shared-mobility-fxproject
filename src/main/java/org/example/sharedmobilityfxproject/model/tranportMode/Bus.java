@@ -14,6 +14,7 @@ public class Bus extends Cell {
     private final double carbonFootprintPerKm = 97; // Specific rate for a bus
     private int x;
     private int y;
+    public boolean isWaiting = false;
     public int flagMove = 0;
     private ArrayList stopList;
     public Bus(ArrayList<busStop> stops,int i, int j) {
@@ -25,6 +26,7 @@ public class Bus extends Cell {
 
          // Initial carbon footprint amount for Bus
     }
+
     public void setX(int i ){
         this.x = i;
     }
@@ -50,7 +52,18 @@ public class Bus extends Cell {
         this.carbonFootprintAmount += journeyCarbonFootprint;
         return journeyCarbonFootprint;
     }
-
+    public void waitASec() {
+        // Implement logic here
+        busStop stop = (busStop) stopList.get(0);
+        // Check if the current X coordinate of the bus matches the X coordinate of the first bus stop
+        if(this.x == stop.getX() && this.y == stop.getY()) {
+            // Bus is waiting at a stop
+            this.isWaiting = true;
+            // Additional logic for waiting can be added here
+        } else {
+            this.isWaiting = false;
+        }
+    }
     // Getter and Setter for speed
     public double getSpeed() {
         return speed;

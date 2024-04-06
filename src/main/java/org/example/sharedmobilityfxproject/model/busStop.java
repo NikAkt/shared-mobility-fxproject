@@ -10,6 +10,7 @@ public class busStop extends Cell {
     private int y;
     private boolean flagIsPlayerHere; // Change this to boolean
     private boolean isBusPresent;
+    private boolean atStop;
     public busStop(int i, int j) {
         super(i, j);
         this.x = i;
@@ -39,5 +40,7 @@ public class busStop extends Cell {
     public void setPlayerHere(boolean isPlayerHere) {
         this.flagIsPlayerHere = isPlayerHere;
     }
+
+
 
 }

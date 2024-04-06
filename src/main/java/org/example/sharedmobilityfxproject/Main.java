@@ -221,7 +221,7 @@ public class Main extends Application {
                     // Update player's coordinates to match the bus when the player is on the bus
                     ka.playerUnosCell.setColumn(busman.getX());
                     ka.playerUnosCell.setColumn(busman.getY());
-                    System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
+                    //System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
                 }
             }));
 
@@ -270,12 +270,20 @@ public class Main extends Application {
             }
         }else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
             System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
             if(!ka.playerMovementEnabled){
                 System.out.println("----------- You just got on the bus ---------");
             ka.onBus = true;
-        }}
+
+        }if(ka.onBus){
+                System.out.println("----------- You arrived at  ---------"+stop);
+                System.out.println("----------- Press E to get off  ---------");
+                ka.onBus = true;
+
+            }
+        }
         else if (bus.getY()==stop.getY()) {
          bus.flagMove=0;
         }
