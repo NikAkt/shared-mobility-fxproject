@@ -53,14 +53,15 @@ public class Bus extends Cell {
         this.carbonFootprintAmount += journeyCarbonFootprint;
         return journeyCarbonFootprint;
     }
+    // bus waiting at stop method
     public void waitASec() {
-        // Implement logic here
+
         busStop stop = (busStop) stopList.get(0);
-        // Check if the current X coordinate of the bus matches the X coordinate of the first bus stop
+        // Check if the current X coordinate of the bus matches the X coordinate of the first bus stop and if bus is currently not waiting.
         if(this.x == stop.getX() && this.y == stop.getY()&& !this.isWaiting) {
             // Bus is waiting at a stop
             this.isWaiting = true;
-            this.waitTime = 10;            // Additional logic for waiting can be added here
+            this.waitTime = 10;
         } else {
             this.isWaiting = false;
         }
