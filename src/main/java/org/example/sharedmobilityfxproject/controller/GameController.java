@@ -22,10 +22,8 @@ import java.util.Objects;
 
 public class GameController {
 
-    public static Main GemCollector;
-    public Map gameMap;
     public Grid grid;
-
+    public static GameView gameView;
     // ****JavaElement****
     public Stage primaryStage;
     public Button btnStartGame;
@@ -34,13 +32,12 @@ public class GameController {
     public VBox buttonBox;
     public VBox imgBox;
     public StackPane root;
-
+    public static Label gemCountLabel;
 
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
 
     public static final double BUTTON_WIDTH = 200;
-    public GameView gameView;
 
     public static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
     public static final int ROWS = 80;
@@ -62,9 +59,9 @@ public class GameController {
 
 
     // ****Gem count****
-    public int gemCount = 0;
+    public static int gemCount = 0;
     // Label to keep track of gem count
-    static Label gemCountLabel; // Label to display gem count
+
 
     @FunctionalInterface
     public interface GemCollector {
@@ -166,13 +163,14 @@ public class GameController {
     }
 
     public static void increaseGemCount() {
-        gemCountLabel = new Label();
+        gameView.gemCountLabel = new Label();
         updateGemCountLabel();
         gemCount++;
-        gemCountLabel.setText("Gem Count: " + gemCount);
+        gameView.gemCountLabel.setText("Gem Count: " + gemCount);
     }
     public static void updateGemCountLabel() {
-        gemCountLabel.setText("Gem Count: " + gemCount);
+        System.out.print(gemCount);//works
+        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
     }
 
     public void initializeObstacles(Grid grid) {

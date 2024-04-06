@@ -33,8 +33,8 @@ public class Gem extends Cell {
         if (!isCollected) {
             System.out.println("Gem collected"); //debug
             playGemCollectSound(); // Play the gem collect sound
-            gameController.gemCount++; // Increment the gem count
-            gameController.updateGemCountLabel(); // Update the gem count label
+            GameController.gemCount++; // Increment the gem count
+            GameController.updateGemCountLabel(); // Update the gem count label
             isCollected = true; // Set the flag to true after the gem is collected
 
         }

@@ -16,7 +16,7 @@ public class Cell extends StackPane {
         getStyleClass().add("cell");
     }
 
-    public void colorCell(String color) {
+    public void colorCell(int column, int row,String color) {
         this.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 0;");
     }
 

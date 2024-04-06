@@ -45,7 +45,7 @@ public class GameView {
     public HBox bottomRow;
     public Stage primaryStage;
     public VBox stageSelectionBox;
-    private Label gemCountLabel;
+    public static Label gemCountLabel;
     // **** Variables Setting ****
     // Label to keep track of gem count
 
@@ -59,7 +59,6 @@ public class GameView {
 
     // Gem count
     static int gemCount = 0;
-
     // Carbon footprint
     int carbonFootprint = 0;
 
@@ -364,7 +363,7 @@ public class GameView {
             } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
 
-            Gem gem = new Gem(gemColumn, gemRow, GameController.GemCollector);
+            Gem gem = new Gem(gemColumn, gemRow);
             grid.add(gem, gemColumn, gemRow);
         }
     }
