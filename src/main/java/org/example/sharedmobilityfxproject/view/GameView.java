@@ -199,13 +199,14 @@ public class GameView {
                 // 기본 이미지 또는 에러 처리
                     "/images/Way_Back_Home.png.png";
         };
-        InputStream is = getClass().getResourceAsStream(imagePath);
+        System.out.println(imagePath);
+        Image is = new Image(new File("src/main/resources/"+imagePath).toURI().toString());
+        System.out.println(is);
 
         if (is == null) {
             throw new IllegalStateException("Cannot find image for stage: " + stageName);
         }
-        Image image = new Image(is);
-        ImageView imageView = new ImageView(image);
+        ImageView imageView = new ImageView(is);
         imageView.setFitHeight(200); // 이미지 높이를 설정
         imageView.setFitWidth(230);  // 이미지 너비를 설정
         return imageView;
@@ -218,7 +219,8 @@ public class GameView {
             Scene scene = new Scene(root);
 
             // Settings
-            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+
+            Image icon = new Image(new File("src/main/resources/ico.png").toURI().toString());
             primaryStage.getIcons().add(icon);
             primaryStage.setTitle("Shared Mobility Application");
             primaryStage.setWidth(WIDTH);
@@ -300,7 +302,8 @@ public class GameView {
 
 
             // create scene and set to stage
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+
+            scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -331,7 +334,6 @@ public class GameView {
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
         //
         mdv.stop();
-        //스테이지를 실제 눌렀을때 벌어지는일
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);
 
