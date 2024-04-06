@@ -42,7 +42,7 @@ public class Main extends Application {
     static int gemCount = 0;
 
     // Carbon footprint
-    int carbonFootprint = 0;
+    float carbonFootprint = 0;
 
     // Label to keep track of gem count
     static Label gemCountLabel; // Label to display gem count
@@ -160,8 +160,8 @@ public class Main extends Application {
             gemCountLabel.setPadding(new Insets(10));
 
             // Create label for carbon footprint
-            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
             carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
             carbonFootprintLabel.setPadding(new Insets(10));
 
@@ -253,6 +253,9 @@ public class Main extends Application {
                     ka.playerUnosCell.setColumn(busman.getX());
                     ka.playerUnosCell.setRow(busman.getY());
                     System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
+                    //Increase carbon footprint amount as long as player is on the bus
+                    carbonFootprint+=0.2; //subject to change
+                    updateCarbonFootprintLabel();
                 }}
                 else{
                     if(busman.waitTime ==0){
