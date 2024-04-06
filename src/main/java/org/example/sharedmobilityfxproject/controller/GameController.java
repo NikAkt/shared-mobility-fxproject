@@ -16,6 +16,7 @@ import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -156,9 +157,12 @@ public class GameController {
     }
 
     public void initializeObstacles(Grid grid) {
+        // Initialise Obstacles Setting
+        obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(grid, 5, 5));
         obstacles.add(new Obstacle(grid, 10, 5));
         obstacles.add(new Obstacle(grid, 5, 10));
+
     }
 }
 

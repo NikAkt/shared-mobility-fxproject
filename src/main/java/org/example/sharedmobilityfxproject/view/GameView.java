@@ -77,6 +77,7 @@ public class GameView {
 
 
     public GameView(Grid grid) {
+        gameController = new GameController();
         this.obstacles = new ArrayList<>();
         gameController.initializeObstacles(grid);
     }
@@ -230,12 +231,7 @@ public class GameView {
             // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
-            // Initialise Obstacles Setting
 
-            obstacles = new ArrayList<>();
-            obstacles.add(new Obstacle(grid, 5, 5));
-            obstacles.add(new Obstacle(grid, 10, 5));
-            obstacles.add(new Obstacle(grid, 5, 10));
             // Create keyboard actions handler
 
             KeyBoradActionController ka = new KeyBoradActionController(gameView,grid);
@@ -440,8 +436,6 @@ public class GameView {
         });
         return null;
         };
-
-
 
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
