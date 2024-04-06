@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.control.Button;
@@ -185,8 +184,6 @@ public class GameView {
         root.getChildren().removeAll(buttonBox, gameModeBox);
         root.getChildren().add(stageSelectionBox);
 
-
-
     }
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
@@ -339,7 +336,6 @@ public class GameView {
         //
         mdv.stop();
         //스테이지를 실제 눌렀을때 벌어지는일
-        System.out.println("I am in the selectStage Class");
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);
 
