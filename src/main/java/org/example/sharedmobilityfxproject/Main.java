@@ -225,7 +225,7 @@ public class Main extends Application {
 
             // Initialise Player
             Player playerUno = new Player(0,0,10,1,10,0);
-            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordX());
 
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
