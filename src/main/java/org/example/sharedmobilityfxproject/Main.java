@@ -318,7 +318,7 @@ public class Main extends Application {
             bus.waitASec();
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
-            if(!ka.playerMovementEnabled&&playerUno.getCoordY()==bus.getX()&&playerUno.getCoordX()==bus.getY()){
+            if(!ka.playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
             ka.onBus = true;
 
@@ -412,7 +412,10 @@ public class Main extends Application {
                     case T -> hailTaxi();
                     case E -> togglePlayerMovement();
                     case C ->
-                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")");
+                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
                 }
 
                     // Add more cases as needed
@@ -425,6 +428,7 @@ public class Main extends Application {
             if (this.onBus) {
                 // Convert the player's current cell coordinates into a Point for easy comparison
                 int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()}; // Ensure the order of coordinates is (x, y)
+                System.out.println(playerLocation[0] + "  " + playerLocation[1]);
 
                 // Check if the player's current location matches any bus stop location
                 boolean atBusStop = busStopCoordinates.stream()
@@ -531,8 +535,8 @@ public class Main extends Application {
         }
 
         private void movePLayer(int dx, int dy) {
-            int newRow = Math.min(Math.max(playerUno.getCoordX() + dy, 0), grid.getRows() - 1);
-            int newColumn = Math.min(Math.max(playerUno.getCoordY() + dx, 0), grid.getColumns() - 1);
+            int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), grid.getColumns() - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
