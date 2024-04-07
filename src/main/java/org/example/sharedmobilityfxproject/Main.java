@@ -420,26 +420,21 @@ public class Main extends Application {
             });
         }
 
-        /**
-         * Hail a taxi and change the player's appearance to yellow.
-         */
+
         private void togglePlayerMovement() {
             if (this.onBus) {
                 // Convert the player's current cell coordinates into a Point for easy comparison
-                int[] playerLocation = {playerUno.getCoordY(), playerUno.getCoordX()};
+                int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()}; // Ensure the order of coordinates is (x, y)
 
                 // Check if the player's current location matches any bus stop location
                 boolean atBusStop = busStopCoordinates.stream()
-                        .anyMatch(location -> Arrays.equals(location, playerLocation));
+                        .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]); // Compare coordinates individually
 
                 if (atBusStop) {
                     // Allow the player to get off the bus
                     playerMovementEnabled = true;
                     this.onBus = false;
                     System.out.println("You got off the bus.");
-
-                    // Optionally, find the specific busStop instance and mark the player as not waiting
-                    // This might require keeping a reference to busStop objects alongside their coordinates
                 } else {
                     System.out.println("You can only get off the bus at a bus stop.");
                 }
@@ -460,6 +455,10 @@ public class Main extends Application {
 
             }}}
         }
+
+        /**
+         * Hail a taxi and change the player's appearance to yellow.
+         */
         private void hailTaxi() {
             if (!hailTaxi) {
                 hailTaxi = true;
