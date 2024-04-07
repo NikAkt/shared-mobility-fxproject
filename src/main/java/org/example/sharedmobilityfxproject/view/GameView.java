@@ -89,6 +89,20 @@ public class GameView{
     // Carbon footprint
     int carbonFootprint = 0;
 
+
+    // **** Stamina ****
+    int staminagauge;
+
+    {
+        staminagauge = 0;
+    }
+
+    int co2Gauge;
+
+    {
+        co2Gauge = 0;
+    }
+
     // Label to keep track of total carbon footprint
     Label carbonFootprintLabel; // Label to display carbon footprint
 
@@ -271,32 +285,39 @@ public class GameView{
             BorderPane borderPane = new BorderPane();
 
             // CO2 Parameter Bar (Vertical)
-            ProgressBar co2Bar = new ProgressBar(2.0); // Example value, adjust as needed
+            ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
             co2Bar.setPrefWidth(60);
-            co2Bar.setPrefHeight(400); // Adjust the height as needed
+            co2Bar.setPrefHeight(600); // Adjust the height as needed
             co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
-
+            VBox.setMargin(co2Bar, new Insets(0, 0, 0, 80)); // 상단 마진 설정
             // Wrap CO2 bar in VBox to align it vertically
             VBox co2Container = new VBox(co2Bar);
             co2Container.setAlignment(Pos.CENTER);
 
-
             // Stamina Parameter
-            ProgressBar staminaParameter = new ProgressBar(1); // Set to full stamina
-            staminaParameter.setPrefHeight(40);
-            staminaParameter.setPrefWidth(600);
+            ProgressBar staminaParameter = new ProgressBar(staminagauge); // Set to full stamina
+            staminaParameter.setPrefHeight(60);
+            staminaParameter.setPrefWidth(1200);
             staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
 
+            // "Stamina" 텍스트 생성
+//            Text staminaText = new Text("Stamina");
+//            staminaText.setFont(javafx.scene.text.Font.font(14)); // 폰트 크기 설정
+
             // Wrap CO2 bar in VBox to align it vertically
-            VBox staminaContainer = new VBox(staminaParameter);
-            staminaContainer.setAlignment(Pos.CENTER);
+            VBox staminaContainer = new VBox();
+//            staminaContainer.getChildren().add(staminaText);
+            staminaContainer.getChildren().add(staminaParameter); // 상단에 텍스트 추가
+            VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
+            staminaContainer.setAlignment(Pos.CENTER); // 컨테이너 내의 항목을 중앙 정렬
+
 
             // Time countdown
-            Label timeLabel = new Label("Time left: 360s");
+            Label timeLabel = new Label();
             timeLabel.setAlignment(Pos.TOP_CENTER);
 
             // Countdown logic
-            IntegerProperty timeSeconds = new SimpleIntegerProperty(5);
+            IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
             new Timeline(
                     new KeyFrame(
                             Duration.seconds(timeSeconds.get()),
@@ -307,204 +328,149 @@ public class GameView{
 
             timeSeconds.addListener((obs, oldVal, newVal) -> {
                 timeLabel.setText("Time left: " + newVal + "s");
+                timeLabel.setFont(javafx.scene.text.Font.font(40));
             });
             timeLabel.setAlignment(Pos.CENTER);
 
-            // Placeholder for the map
-            Label mapPlaceholder = new Label("Make a map ,Eamonn you Lazy Ass");
-            mapPlaceholder.setPrefSize(1200, 800);
-            mapPlaceholder.setAlignment(Pos.CENTER);
-            mapPlaceholder.setStyle("-fx-background-color: lightgrey; -fx-border-color: black;");
+            // 지도 컨테이너에 추가할 컴포넌트 생성
+            Label locationLabel = new Label("Location : " + stageName );
+            // Create grid for the game
+            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
-            // Add all to the layout
+            // Create keyboard actions handler
+            KeyBoradActionController ka = new KeyBoradActionController(gameView, grid);
 
-            // Add Stage name and Time above and below the map
-            VBox mapBox = new VBox( timeLabel,mapPlaceholder,staminaParameter);
+
+
+            // Create label for gem count
+            gemCountLabel = new Label("Gem Count: " + gemCount);
+            gemCountLabel.setStyle("-fx-font-size: 16px;");
+            gemCountLabel.setAlignment(Pos.TOP_LEFT);
+            gemCountLabel.setPadding(new Insets(10));
+
+//            // Create label for carbon footprint
+            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
+            carbonFootprintLabel.setPadding(new Insets(10));
+//
+//
+            // Create a VBox to hold the gem count label
+            VBox mapBox = new VBox((Node) gemCountLabel, (Node) carbonFootprintLabel, (Node) timeLabel, (Node) staminaParameter);
             mapBox.setAlignment(Pos.CENTER);
 
-            // Add all to the layout
-            borderPane.setCenter(mapBox);
-            borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
+            Gem gem = new Gem(gemColumn, gemRow);
+            grid.add(gem, gemColumn, gemRow);
+
+            // Initialise Obstacles for x = 0 only
+            obstacles = new ArrayList<>();
+
+            // Start at row index 3 and create groups of three obstacles with a space of two
+            int positionX0 = 3;
+            int countX0 = 0;
+            while (countX0 < 67) {
+                obstacles.add(new Obstacle(grid, 0, positionX0));
+                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
+                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
+                positionX0 += 5;
+                countX0 += 3;
+            }
+
+
+//            // Initialise Obstacles
+//            obstacles = new ArrayList<>();
+//            obstacles.add(new Obstacle(grid, 5, 5));
+//            obstacles.add(new Obstacle(grid, 10, 5));
+//            obstacles.add(new Obstacle(grid, 5, 10));
+
+            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
+
+
+            // For each x position
+            for (int x : xPositions) {
+                int positionX = 3;
+                int countX = 0;
+                while (countX < 67) {
+                    obstacles.add(new Obstacle(grid, x, positionX));
+                    obstacles.add(new Obstacle(grid, x, positionX + 1));
+                    obstacles.add(new Obstacle(grid, x, positionX + 2));
+                    positionX += 5;
+                    countX += 3;
+                }
+            }
+
+            // Place the finish cell after the grid is filled and the player's position is initialised
+            int finishColumn;
+            int finishRow;
+            do {
+                finishColumn = (int) (Math.random() * COLUMNS);
+                finishRow = (int) (Math.random() * ROWS);
+            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
+            finishCell = new Cell(finishColumn, finishRow);
+            finishCell.getStyleClass().add("finish");
+            grid.add(finishCell, finishColumn, finishRow);
+
+            // Initialise currentCell after the grid has been filled
+            // Initialise Player
+            Player playerUno = new Player(25, 25, 10, 1, 10, 0);
+            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+
+
+            // Initialize currentCell after the grid has been filled
+            ka.currentCell = grid.getCell(0, 0);
+
+
+            // Add background image, grid, and gem count label to the root StackPane
+            mapBox.getChildren().addAll(grid);
+
+
+            // Placeholder for the map
+            VBox mapContainer = new VBox((Node)locationLabel,(Node) gemCountLabel, (Node) carbonFootprintLabel, (Node) timeLabel, (Node) staminaParameter);
+            mapContainer.setPrefSize(1200, 600);
+            mapContainer.setAlignment(Pos.CENTER);
+            mapContainer.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
 
             // Set this layout in the scene
             Scene scene = new Scene(borderPane, 1496, 1117);
+            scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Welcome To "+ stageName);
+            primaryStage.setFullScreen(true);
             primaryStage.show();
-//
-//            primaryStage = actionEvent;
-//            // Create a StackPane to hold all elements
-//            StackPane root = new StackPane();
-//            Scene scene = new Scene(root);
-//
-//            // CO2 Parameter Bar (Vertical)
-//            ProgressBar co2Bar = new ProgressBar(2.0); // Example value, adjust as needed
-//            co2Bar.setPrefWidth(60);
-//            co2Bar.setPrefHeight(400); // Adjust the height as needed
-//            co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
-//
-//            // Wrap CO2 bar in VBox to align it vertically
-//
-//            // Stamina Parameter
-//            ProgressBar staminaParameter = new ProgressBar(1); // Set to full stamina
-//            staminaParameter.setPrefHeight(40);
-//            staminaParameter.setPrefWidth(600);
-//            staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
-//            // Wrap CO2 bar in VBox to align it vertically
-//            VBox co2Container = new VBox(co2Bar);
-//            co2Container.setAlignment(Pos.CENTER);
-//
-//            VBox staminaContainer = new VBox(staminaParameter);
-//            staminaContainer.setAlignment(Pos.CENTER);
-//
-//
-//            // Time countdown
-//            Label timeLabel = new Label("Time left: 360s");
-//            timeLabel.setAlignment(Pos.TOP_CENTER);
-//
-//            // Countdown logic
-//            IntegerProperty timeSeconds = new SimpleIntegerProperty(5);
-//            new Timeline(
-//                    new KeyFrame(
-//                            Duration.seconds(timeSeconds.get()),
-////                            event -> gameOver(primaryStage),
-//                            new KeyValue(timeSeconds, 0)
-//                    )
-//            ).play();
-//
-//            timeSeconds.addListener((obs, oldVal, newVal) -> {
-//                timeLabel.setText("Time left: " + newVal + "s");
-//            });
-//            timeLabel.setAlignment(Pos.CENTER);
-//
-//
-//            Image icon = new Image(new File("src/main/resources/ico.png").toURI().toString());
-//            primaryStage.getIcons().add(icon);
-//            primaryStage.setTitle("Shared Mobility Application");
-//            primaryStage.setWidth(WIDTH);
-//            primaryStage.setHeight(HEIGHT);
-//            primaryStage.setFullScreen(true); // Set the stage to full screen
-//
-//            // Create grid for the game
-//            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
-//
-//
-//            // Create keyboard actions handler
-//
-//            KeyBoradActionController ka = new KeyBoradActionController(gameView, grid);
-//            // Fill grid with cells
-//            Cell cell = null;
-//            for (int row = 0; row < ROWS; row++) {
-//                for (int column = 0; column < COLUMNS; column++) {
-//                    cell = new Cell(column, row);
-//                    ka.setupKeyboardActions(scene);
-//                    grid.add(cell, column, row);
-//                }
-//            }
-//
-//            // Create label for gem count
-//            gemCountLabel = new Label("Gem Count: " + gemCount);
-//            gemCountLabel.setStyle("-fx-font-size: 16px;");
-//            gemCountLabel.setAlignment(Pos.TOP_LEFT);
-//            gemCountLabel.setPadding(new Insets(10));
-//
-//
-//            // Create label for carbon footprint
-//            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-//            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
-//            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-//            carbonFootprintLabel.setPadding(new Insets(10));
-//
-//
-//            // Create a VBox to hold the gem count label
-//            VBox mapBox = new VBox((Node) gemCountLabel, (Node) carbonFootprintLabel, (Node) timeLabel, (Node) staminaParameter);
-//            mapBox.setAlignment(Pos.CENTER);
-//
-//            int gemColumn;
-//            int gemRow;
-//            do {
-//                gemColumn = (int) (Math.random() * COLUMNS);
-//                gemRow = (int) (Math.random() * ROWS);
-//            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
-//            Gem gem = new Gem(gemColumn, gemRow);
-//            grid.add(gem, gemColumn, gemRow);
-//
-//            // Initialise Obstacles for x = 0 only
-//            obstacles = new ArrayList<>();
-//
-//            // Start at row index 3 and create groups of three obstacles with a space of two
-//            int positionX0 = 3;
-//            int countX0 = 0;
-//            while (countX0 < 67) {
-//                obstacles.add(new Obstacle(grid, 0, positionX0));
-//                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
-//                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
-//                positionX0 += 5;
-//                countX0 += 3;
-//            }
-//
-//
-////            // Initialise Obstacles
-////            obstacles = new ArrayList<>();
-////            obstacles.add(new Obstacle(grid, 5, 5));
-////            obstacles.add(new Obstacle(grid, 10, 5));
-////            obstacles.add(new Obstacle(grid, 5, 10));
-//
-//            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
-//
-//
-//            // For each x position
-//            for (int x : xPositions) {
-//                int positionX = 3;
-//                int countX = 0;
-//                while (countX < 67) {
-//                    obstacles.add(new Obstacle(grid, x, positionX));
-//                    obstacles.add(new Obstacle(grid, x, positionX + 1));
-//                    obstacles.add(new Obstacle(grid, x, positionX + 2));
-//                    positionX += 5;
-//                    countX += 3;
-//                }
-//            }
-//
-//            // Place the finish cell after the grid is filled and the player's position is initialised
-//            int finishColumn;
-//            int finishRow;
-//            do {
-//                finishColumn = (int) (Math.random() * COLUMNS);
-//                finishRow = (int) (Math.random() * ROWS);
-//            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
-//            finishCell = new Cell(finishColumn, finishRow);
-//            finishCell.getStyleClass().add("finish");
-//            grid.add(finishCell, finishColumn, finishRow);
-//
-//            // Initialise currentCell after the grid has been filled
-//            // Initialise Player
-//            Player playerUno = new Player(25, 25, 10, 1, 10, 0);
-//            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
-//
-//
-//            // Initialize currentCell after the grid has been filled
-//            ka.currentCell = grid.getCell(0, 0);
-//
-//
-//            // Add background image, grid, and gem count label to the root StackPane
-//            root.getChildren().addAll(grid);
-//
-//            // Colour cells
-//            // Define cells with coordinates and colors
-//            cell.colorCell(70, 70, "red");
-//            cell.colorCell(75, 75, "yellow");
-//
-//
-//            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
-//            // create scene and set to stage
-//
-//            scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
-//            primaryStage.setScene(scene);
-//            primaryStage.setTitle("Welcome To " + stageName);
-//            primaryStage.show();
 
+            // Fill grid with cells
+            Cell cell = null;
+
+            for (int row = 0; row < ROWS; row++) {
+                for (int column = 0; column < COLUMNS; column++) {
+                    cell = new Cell(column, row);
+                    ka.setupKeyboardActions(scene);
+                    grid.add(cell, column, row);
+                }
+            }
+            // Colour cells
+            // Define cells with coordinates and colors
+            cell.colorCell(70, 70, "red");
+            cell.colorCell(75, 75, "yellow");
+
+            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
+            // create scene and set to stage
+            // Add Stage name and Time above and below the map
+            VBox outlineBox = new VBox( timeLabel,mapContainer,staminaParameter);
+            outlineBox.setAlignment(Pos.CENTER);
+            VBox.setMargin(mapContainer, new Insets(0, 0, 70, 0));
+            VBox.setMargin(timeLabel, new Insets(0, 0, 60, 0));
+
+            // Add all to the layout
+            borderPane.setCenter(outlineBox);
+            borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -538,7 +504,7 @@ public class GameView{
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
-        System.out.println("Stage selected: " + stageName);
+
         Media gameMusic = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(gameMusic);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
@@ -546,7 +512,6 @@ public class GameView{
         // This is where you would transition to the actual game play scene
         // For now, just printing out the selection
         System.out.println("You have selected the stage: " + stageName);
-
         // You might want to hide the stage selection screen and display the game screen, like so:
         root.setVisible(false);
         root.getChildren().removeAll(buttonBox, this.gameModeBox);
