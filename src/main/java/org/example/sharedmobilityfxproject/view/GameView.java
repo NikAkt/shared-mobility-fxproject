@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.model.*;
@@ -105,7 +106,7 @@ public class GameView {
 
         this.root = new StackPane();
         // Create and configure the "Game Start" button
-        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage,buttonBox,root, bgmediaPlayer));
+        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, root, bgmediaPlayer));
 
         // Create and configure the "Exit" button
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
@@ -123,7 +124,7 @@ public class GameView {
         this.root.getChildren().add(mediaView);
 
         // Set up the scene with the StackPane and show the stage
-        Scene scene = new Scene(this.root , 1496, 1117); // Use the same size as the image for a full background
+        Scene scene = new Scene(this.root, 1496, 1117); // Use the same size as the image for a full background
         gameController.setupKeyControls(scene);
 
         this.root.getChildren().add(buttonBox);
@@ -162,38 +163,67 @@ public class GameView {
 
     }
 
-    public void showStageSelectionScreen(Stage actionEvent,MediaPlayer mdv) {
+    public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv) {
+        try {
+            List<Button> allButtons = new ArrayList<>();
+            if (topRow == null && bottomRow == null) {
+                topRow = new HBox(10);
+                bottomRow = new HBox(10);
+                topRow.setAlignment(Pos.CENTER);
+                bottomRow.setAlignment(Pos.CENTER);
 
-        if (topRow == null && bottomRow == null) {
-            topRow = new HBox(10);
-            bottomRow = new HBox(10);
-            topRow.setAlignment(Pos.CENTER);
-            bottomRow.setAlignment(Pos.CENTER);
+                String[] topStages = {"Seoul", "Athens", "Dublin", "Istanbul"};
+                String[] bottomStages = {"Vilnius", "Back"};
 
-            String[] topStages = {"Seoul", "Athens", "Dublin", "Istanbul"};
-            String[] bottomStages = {"Vilnius", "Back"};
+                for (String stage : topStages) {
+                    ImageView stageImage = createStageImage(stage);
+                    Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    topRow.getChildren().add(stageButton);
+                    allButtons.add(stageButton);
+                }
 
-            for (String stage : topStages) {
-                ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox,root,actionEvent,mdv);
-                topRow.getChildren().add(stageButton);
+                for (String stage : bottomStages) {
+                    ImageView stageImage = createStageImage(stage);
+                    Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    bottomRow.getChildren().add(stageButton);
+                    allButtons.add(stageButton);
+                }
             }
 
-            for (String stage : bottomStages) {
-                ImageView stageImage = createStageImage(stage); // 예시로 무작위 이미지 생성
-                Button stageButton = gameController.createStageButton(stage, stageImage,stageSelectionBox,gameModeBox, root, actionEvent, mdv);
-                bottomRow.getChildren().add(stageButton);
-            }
+            stageSelectionBox = new VBox(100, topRow, bottomRow);
+            stageSelectionBox.setAlignment(Pos.CENTER);
+            gameModeBox.setVisible(false);
+
+            stageSelectionBox.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    Node focusedNode = stageSelectionBox.getScene().getFocusOwner();
+                    if (focusedNode instanceof Button StageFocusedButton) {
+                        if (allButtons.contains(StageFocusedButton)) {
+                            StageFocusedButton.fire();
+                        }
+                    }
+                } else if (event.getCode() == KeyCode.DOWN) {
+                    System.out.println("move Down");
+                } else if (event.getCode() == KeyCode.UP) {
+                    System.out.println("move Up");
+                }
+            });
+
+            stageSelectionBox.requestFocus(); // 키 이벤트를 받을 수 있도록 포커스 설정
+
+            stageSelectionBox.setAlignment(Pos.CENTER);
+            gameModeBox.setVisible(false);
+
+            root.getChildren().removeAll(buttonBox, gameModeBox);
+            root.getChildren().add(stageSelectionBox);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        stageSelectionBox = new VBox(100, topRow, bottomRow);
-        stageSelectionBox.setAlignment(Pos.CENTER);
-        gameModeBox.setVisible(false);
-
-        root.getChildren().removeAll(buttonBox, gameModeBox);
-        root.getChildren().add(stageSelectionBox);
 
     }
+
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
             case "Seoul" -> "/images/seoul.jpg"; // 서울 이미지 경로
@@ -207,10 +237,7 @@ public class GameView {
                 // 기본 이미지 또는 에러 처리
                     "/images/Way_Back_Home.png.png";
         };
-        System.out.println(imagePath);
-        Image is = new Image(new File("src/main/resources/"+imagePath).toURI().toString());
-        System.out.println(is);
-
+        Image is = new Image(new File("src/main/resources/" + imagePath).toURI().toString());
         if (is == null) {
             throw new IllegalStateException("Cannot find image for stage: " + stageName);
         }
@@ -219,6 +246,7 @@ public class GameView {
         imageView.setFitWidth(230);  // 이미지 너비를 설정
         return imageView;
     }
+
     public void loadGameScreen(String stageName, Stage actionEvent) {
         try {
             primaryStage = actionEvent;
@@ -256,7 +284,7 @@ public class GameView {
             new Timeline(
                     new KeyFrame(
                             Duration.seconds(timeSeconds.get()),
-                            event -> gameOver(primaryStage),
+//                            event -> gameOver(primaryStage),
                             new KeyValue(timeSeconds, 0)
                     )
             ).play();
@@ -390,10 +418,10 @@ public class GameView {
 
             scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Welcome To "+ stageName);
+            primaryStage.setTitle("Welcome To " + stageName);
             primaryStage.show();
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
@@ -460,22 +488,22 @@ public class GameView {
         // You might want to hide the stage selection screen and display the game screen, like so:
         root.setVisible(false);
         root.getChildren().removeAll(buttonBox, this.gameModeBox);
-        loadGameScreen(stageName,actionEvent);
+        loadGameScreen(stageName, actionEvent);
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
         gameController = new GameController();
-        root.getChildren().removeAll(buttonBox );
-        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent,mdv));
-        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent,mdv));
-        Button backToMenu = gameController.createButton("Back", event -> this.gameView.showInitialScreen(primaryStage));
+        root.getChildren().removeAll(buttonBox);
+        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
+        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
+        Button backToMenu = gameController.createButton("Back", event -> showInitialScreen(primaryStage));
         backToMenu.setMinWidth(gameController.BUTTON_WIDTH);
         backToMenu.setMaxWidth(gameController.BUTTON_WIDTH);
         backToMenu.setStyle("-fx-font-size: 24px;");
 
         // Create the game mode selection box if not already created
         if (gameModeBox == null) {
-            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer,backToMenu);
+            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer, backToMenu);
             gameModeBox.setAlignment(Pos.CENTER);
         }
         // Add the game mode box to the root stack pane, making it visible
@@ -522,7 +550,9 @@ public class GameView {
             }
         });
         return null;
-        };
+    }
+
+    ;
 
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);

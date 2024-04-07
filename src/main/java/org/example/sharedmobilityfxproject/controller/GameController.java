@@ -72,19 +72,6 @@ public class GameController {
     int carbonFootprint = 0;
     Label carbonFootprintLabel; // Label to display carbon footprint
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     //Game Start initialise method
     public void startGame(Stage primaryStage) {
         // Start game logic here
