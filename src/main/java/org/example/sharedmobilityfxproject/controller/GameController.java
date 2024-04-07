@@ -1,4 +1,10 @@
 package org.example.sharedmobilityfxproject.controller;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.text.Text;
+import javafx.scene.control.ProgressBar;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -15,7 +21,6 @@ import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.view.GameView;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,12 +39,19 @@ public class GameController {
     public StackPane root;
     public static Label gemCountLabel;
 
+    //****FXML ****
+    @FXML
+    public ProgressBar progressBar;
+
+    int co2Points = 0;
+    int staminaPoints = 0;
+
+    @FXML
+    public Text text;
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
 
     public static final double BUTTON_WIDTH = 200;
-
-    public static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
     public static final int ROWS = 80;
     public static final int COLUMNS = 120;
     public static final double WIDTH = 1300;
@@ -76,11 +88,11 @@ public class GameController {
     public void startGame(Stage primaryStage) {
         // Start game logic here
         System.out.println("Game Started");
-        Grid grid = new Grid(COLUMNS,ROWS,WIDTH,HEIGHT); // Grid 객체 생성
+        Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT); // Grid 객체 생성
         gameView = new GameView(grid);
         gameView.showInitialScreen(primaryStage);
-        //gameMap.render();
     }
+
     public void setupKeyControls(Scene scene) {
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DOWN) {
@@ -94,12 +106,13 @@ public class GameController {
             }
         });
     }
+
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
         gameView = new GameView(grid);
         Button stageButton = new Button(stage);
         stageButton.setGraphic(stageImage);
         stageButton.setContentDisplay(ContentDisplay.TOP);
-        stageButton.setOnAction(event -> gameView.selectStage(stage,stageSelectionBox,gameModeBox, root,actionEvent,mdv));
+        stageButton.setOnAction(event -> gameView.selectStage(stage, stageSelectionBox, gameModeBox, root, actionEvent, mdv));
         return stageButton;
     }
 
@@ -130,15 +143,9 @@ public class GameController {
     public String focusedButtonStyle() {
         return "-fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white;";
     }
-    public void playGemCollectSound() {
-        Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
 
-        // Release resources after sound finishes playing3211
-        mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
-    }
 ///Transportation
+
     /**
      * Hail a taxi and change the player's appearance to yellow.
      */
@@ -155,6 +162,7 @@ public class GameController {
         gemCount++;
         gameView.gemCountLabel.setText("Gem Count: " + gemCount);
     }
+
     public static void updateGemCountLabel() {
         System.out.print(gemCount);//works
         gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null

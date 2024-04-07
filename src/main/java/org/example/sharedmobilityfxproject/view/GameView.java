@@ -1,5 +1,6 @@
 package org.example.sharedmobilityfxproject.view;
-
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -10,11 +11,22 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.Parent;
+
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
+import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,12 +44,15 @@ import org.example.sharedmobilityfxproject.controller.GameController;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 
-public class GameView {
+public class GameView extends Application {
 
     // **** Class call ****
     public GameView gameView;
@@ -56,6 +71,7 @@ public class GameView {
     public Stage primaryStage;
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
+    public SceneController sceneController;
     // **** Variables Setting ****
     // Label to keep track of gem count
 
@@ -248,7 +264,10 @@ public class GameView {
     }
 
     public void loadGameScreen(String stageName, Stage actionEvent) {
+
         try {
+
+
             primaryStage = actionEvent;
             // Create a StackPane to hold all elements
             StackPane root = new StackPane();
@@ -455,29 +474,7 @@ public class GameView {
             mediaPlayer.stop();
         }
         System.out.println("Stage selected: " + stageName);
-        String musicFilePath;
-        switch (stageName) {
-            case "Seoul":
-                musicFilePath = "/music/pokemon.mp3";
-                break;
-            case "Athens":
-                musicFilePath = "/music/pokemon.mp3";
-                break;
-            case "Dublin":
-                musicFilePath = "/music/pokemon.mp3";
-                break;
-            case "Istanbul":
-                musicFilePath = "/music/pokemon.mp3";
-                break;
-            case "Vilnius":
-                musicFilePath = "/music/pokemon.mp3";
-                break;
-
-            default:
-                // Handle default case if necessary
-                break;
-        }
-        Media gameMusic = new Media(new File("src/main/resources/music/pokemon.mp3").toURI().toString());
+        Media gameMusic = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(gameMusic);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
         mediaPlayer.play(); // Start playing the new background music
@@ -488,7 +485,8 @@ public class GameView {
         // You might want to hide the stage selection screen and display the game screen, like so:
         root.setVisible(false);
         root.getChildren().removeAll(buttonBox, this.gameModeBox);
-        loadGameScreen(stageName, actionEvent);
+      loadGameScreen(stageName, actionEvent);
+
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
@@ -556,5 +554,18 @@ public class GameView {
 
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        //fmxl has to be in the resources level
+        Parent root = FXMLLoader.load(getClass().getResource("/mainMap.fxml"));
+        Scene scene = new Scene(root,600,600, Color.LIGHTSKYBLUE);
+        Text text = new Text();
+        text.setText("Woooooo");
+        text.setX(50);
+        text.setY(50);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
