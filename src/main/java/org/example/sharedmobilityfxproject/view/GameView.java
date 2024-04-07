@@ -1,4 +1,5 @@
 package org.example.sharedmobilityfxproject.view;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.animation.KeyFrame;
@@ -24,6 +25,8 @@ import javafx.scene.text.Text;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.controller.SceneController;
@@ -49,7 +52,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class GameView extends Application {
+public class GameView{
 
     // **** Class call ****
     public GameView gameView;
@@ -57,6 +60,7 @@ public class GameView extends Application {
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
+
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
@@ -260,10 +264,9 @@ public class GameView extends Application {
         return imageView;
     }
 
-    public void loadGameScreen(String stageName, Stage actionEvent) {
+    public void loadGameScreen(String stageName, Stage primaryStage) {
 
         try {
-
 
             BorderPane borderPane = new BorderPane();
 
@@ -618,16 +621,32 @@ public class GameView extends Application {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        //fmxl has to be in the resources level
-        Parent root = FXMLLoader.load(getClass().getResource("/mainMap.fxml"));
-        Scene scene = new Scene(root,600,600, Color.LIGHTSKYBLUE);
-        Text text = new Text();
-        text.setText("Woooooo");
-        text.setX(50);
-        text.setY(50);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    private void gameOver(Stage primarOveryStage) {
+        // GameOver method
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(primaryStage);
+        dialog.initStyle(StageStyle.UNDECORATED); // 창 제목 표시줄 제거
+
+        Label gameOverLabel = new Label("GAME OVER, Life is not Easy, Let's Go to Code!");
+        gameOverLabel.setAlignment(Pos.CENTER);
+        gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
+
+        StackPane dialogPane = new StackPane(gameOverLabel);
+        dialogPane.setAlignment(Pos.CENTER);
+        dialogPane.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
+
+        Scene dialogScene = new Scene(dialogPane, 800, 400);
+
+        dialog.setScene(dialogScene);
+        dialog.show();
+
+        // 5초 후 팝업 닫기
+        PauseTransition delay = new PauseTransition(Duration.seconds(7));
+        delay.setOnFinished(e -> dialog.close());
+        delay.play();
+
+        // 아무곳이나 클릭하면 팝업 닫기
+        dialogScene.setOnMouseClicked(e -> dialog.close());
     }
 }
