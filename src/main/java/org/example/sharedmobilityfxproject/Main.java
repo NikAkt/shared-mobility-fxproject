@@ -43,7 +43,7 @@ public class Main extends Application {
     static int gemCount = 0;
 
     // Carbon footprint
-    int carbonFootprint = 0;
+    float carbonFootprint = 0;
 
     // Label to keep track of gem count
     static Label gemCountLabel; // Label to display gem count
@@ -163,8 +163,8 @@ public class Main extends Application {
             gemCountLabel.setPadding(new Insets(10));
 
             // Create label for carbon footprint
-            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
             carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
             carbonFootprintLabel.setPadding(new Insets(10));
 
@@ -211,8 +211,6 @@ public class Main extends Application {
                 obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
             }
 
-//            printArrayContents();
-
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
             // Place the finish cell after the grid is filled and the player's position is initialised
@@ -230,8 +228,9 @@ public class Main extends Application {
 
             // Initialise currentCell after the grid has been filled
             // Initialise Player
-            Player playerUno = new Player(25,25,10,1,10,0);
-            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
+            Player playerUno = new Player(0,0,10,1,10,0);
+            playerUno.initCell(grid);
+            ka.playerUno = playerUno;
 
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
@@ -251,14 +250,16 @@ public class Main extends Application {
                 if (!busman.isWaiting){
 
 
-                moveBusTowardsBusStop(grid, busman, targetBusStop, ka);
+                moveBusTowardsBusStop(grid, busman, targetBusStop, ka, playerUno);
 
                 // Here's the updated part
                 if (ka.onBus) {
                     // Update player's coordinates to match the bus when the player is on the bus
-                    ka.playerUnosCell.setColumn(busman.getX());
-                    ka.playerUnosCell.setRow(busman.getY());
-                    System.out.println("Player coordinates (on bus): " + ka.playerUnosCell.getColumn() + ", " + ka.playerUnosCell.getRow());
+                    playerUno.setCellByCoords(grid, busman.getX(), busman.getY());
+                    System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
+                    //Increase carbon footprint amount as long as player is on the bus
+                    carbonFootprint+=0.2; //subject to change
+                    updateCarbonFootprintLabel();
                 }}
                 else{
                     if(busman.waitTime ==0){
@@ -374,7 +375,7 @@ public class Main extends Application {
             bus.waitASec();
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
-            if(!ka.playerMovementEnabled&&ka.playerUnosCell.getColumn()==bus.getX()&&ka.playerUnosCell.getRow()==bus.getY()){
+            if(!ka.playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
             ka.onBus = true;
 
@@ -422,36 +423,31 @@ public class Main extends Application {
 
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     /**
      * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
      * It manages the current cell selection and applies keyboard actions to it.
      */
-
     public class KeyboardActions {
         private boolean playerMovementEnabled = true;
         private boolean onBus = false;
         public boolean inTaxi = false;
         private Grid grid;
         public Cell currentCell; // Made public for access in start method
-        public Cell playerUnosCell; // Made public for access in start method
+        public Player playerUno; // Made public for access in start method
         private int currentRow = 0;
         private int currentColumn = 0;
-        public void setX(int i ){
-            this.playerUnosCell.setRow(i);
-        }
-        public void setY(int j ){
-            this.playerUnosCell.setColumn(j);
-        }
-        public int getX(){
-            return this.currentColumn;
-        }
-        public int getY(){
-            return this.currentRow;
-        }
+//        public void setX(int i ){
+//            this.playerUnosCell.setRow(i);
+//        }
+//        public void setY(int j ){
+//            this.playerUnosCell.setColumn(j);
+//        }
+//        public int getX(){
+//            return this.currentColumn;
+//        }
+//        public int getY(){
+//            return this.currentRow;
+//        }
         // Constructor to initialise grid
         public KeyboardActions(Grid grid) {
             this.grid = grid;
@@ -498,52 +494,57 @@ public class Main extends Application {
                     case C ->
                             System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
                 }}
+                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+                }
 
                     // Add more cases as needed
                 }else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
             });
         }
 
-        /**
-         * Hail a taxi and change the player's appearance to yellow.
-         */
+
         private void togglePlayerMovement() {
             if (this.onBus) {
                 // Convert the player's current cell coordinates into a Point for easy comparison
-                int[] playerLocation = {playerUnosCell.getColumn(), playerUnosCell.getRow()};
+                int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()}; // Ensure the order of coordinates is (x, y)
+                System.out.println(playerLocation[0] + "  " + playerLocation[1]);
 
                 // Check if the player's current location matches any bus stop location
                 boolean atBusStop = busStopCoordinates.stream()
-                        .anyMatch(location -> Arrays.equals(location, playerLocation));
+                        .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]); // Compare coordinates individually
 
                 if (atBusStop) {
                     // Allow the player to get off the bus
                     playerMovementEnabled = true;
                     this.onBus = false;
                     System.out.println("You got off the bus.");
-
-                    // Optionally, find the specific busStop instance and mark the player as not waiting
-                    // This might require keeping a reference to busStop objects alongside their coordinates
                 } else {
                     System.out.println("You can only get off the bus at a bus stop.");
                 }
             }
-            else{if (playerUnosCell instanceof busStop&&!this.onBus) {
+            else{if (playerUno.getCell() instanceof busStop&&!this.onBus) {
             playerMovementEnabled = !playerMovementEnabled;
             if (!playerMovementEnabled) {
                 // Player decides to wait at a bus stop
                 System.out.println("----------- Waiting for bus ---------"+playerMovementEnabled);
-                    ((busStop) playerUnosCell).setPlayerHere(true); // Mark the player as waiting at the bus stop
+                    ((busStop) playerUno.getCell()).setPlayerHere(true); // Mark the player as waiting at the bus stop
 
             } else {
                 // Player decides to continue moving
                 if (!this.onBus) {
                     System.out.println("----------- Impatient fuck ---------");
-                    ((busStop) playerUnosCell).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
+                    ((busStop) playerUno.getCell()).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
                 }
 
             }}}
         }
+
+        /**
+         * Hail a taxi and change the player's appearance to yellow.
+         */
         private void hailTaxi() {
             if (taximan.hailed) {
                 taximan.hailed = !taximan.hailed;
@@ -610,8 +611,8 @@ public class Main extends Application {
         }
 
         private void movePLayer(int dx, int dy) {
-            int newRow = Math.min(Math.max(playerUnosCell.getRow() + dy, 0), grid.getRows() - 1);
-            int newColumn = Math.min(Math.max(playerUnosCell.getColumn() + dx, 0), grid.getColumns() - 1);
+            int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), grid.getColumns() - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
@@ -619,23 +620,26 @@ public class Main extends Application {
                 Cell nextCell = grid.getCell(newColumn, newRow);
 
                 // Optionally unhighlight the old cell
-                playerUnosCell.unhighlight();
+                playerUno.getCell().unhighlight();
 
-                playerUnosCell = nextCell;
+                playerUno.setCell(nextCell);
                 if (inTaxi) {
                     // Assuming taximan is accessible from here, or find a way to access it
                     moveTaxi(grid, taximan, newColumn, newRow);
                     System.out.println("btich");
                 }
+
+
+
                 // Check for interaction with a gem
-                if ("gem".equals(playerUnosCell.getUserData())) {
-                    collectGem(playerUnosCell);
+                if ("gem".equals(playerUno.getCell().getUserData())) {
+                    collectGem(playerUno.getCell());
                     System.out.println("PLayer has entered busstop");
                 }
 
                 // Check for interaction with a bus stop
-                if (playerUnosCell instanceof busStop) {
-                    interactWithBusStop((busStop) playerUnosCell);
+                if (playerUno.getCell() instanceof busStop) {
+                    interactWithBusStop((busStop) playerUno.getCell());
                     System.out.println("player has entered stop");
                 }
                 if (newCell == finishCell) {
@@ -653,7 +657,7 @@ public class Main extends Application {
                     pause.play();
                 }
                 // Optionally highlight the new cell
-                playerUnosCell.highlight();
+                playerUno.getCell().highlight();
             }
             // If there is an obstacle, don't move and possibly add some feedback
         }

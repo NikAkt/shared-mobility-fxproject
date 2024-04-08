@@ -6,9 +6,10 @@ public class Player implements motion {
     private int stamina; // stamina
     private int speed; // speed
     private double co2; // co2 produced
+    private Cell playerCell;
 
 
-public Player(int x, int y,int stamina,int speed,double co2,int gems) {
+    public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         this.x = x;
         this.y = y;
         this.stamina=100;
@@ -17,10 +18,10 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
     }
 
     public int getCoordX() {
-        return x;
+        return this.x;
     }
     public int getCoordY() {
-        return y;
+        return this.y;
     }
     public int getStamina() {
         return stamina;
@@ -65,6 +66,27 @@ public Player(int x, int y,int stamina,int speed,double co2,int gems) {
     }
     public void increaseStamina(){
         stamina=stamina+10;
+    }
+
+    public void initCell(Grid grid) {
+        this.playerCell = grid.getCell(this.getCoordY(), this.getCoordX());
+    }
+
+    public void setCell(Cell cell) {
+        this.playerCell = cell;
+        this.x = cell.getColumn();
+        this.y = cell.getRow();
+    }
+
+    public void setCellByCoords(Grid grid, int x, int y) {
+        this.playerCell.setColumn(x);
+        this.playerCell.setRow(y);
+        this.x = x;
+        this.y = y;
+    }
+
+    public Cell getCell() {
+        return this.playerCell;
     }
 
 }
