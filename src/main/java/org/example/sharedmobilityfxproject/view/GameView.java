@@ -17,7 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -31,8 +31,6 @@ import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
@@ -41,6 +39,7 @@ import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.GameController;
+import org.example.sharedmobilityfxproject.model.Cell;
 
 import java.io.File;
 import java.io.InputStream;
@@ -203,7 +202,7 @@ public class GameView{
                 topRow.setAlignment(Pos.CENTER);
                 bottomRow.setAlignment(Pos.CENTER);
 
-                String[] topStages = {"Seoul", "Athens", "Dublin", "Istanbul"};
+                String[] topStages = {"Dublin", "Athens", "Seoul", "Istanbul"};
                 String[] bottomStages = {"Vilnius", "Back"};
 
                 for (String stage : topStages) {
@@ -281,6 +280,43 @@ public class GameView{
     public void loadGameScreen(String stageName, Stage primaryStage) {
 
         try {
+            //Start Pop up
+            final Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(primaryStage);
+            dialog.initStyle(StageStyle.UNDECORATED);
+
+            Label startMessageLabel = new Label("Notice" +
+                    "Eco and Friendly, who cherish the environment, are roaming the city collecting Gems needed for their journey. " +
+                    "Try to gather the Gems in the most eco-friendly way possible, " +
+                    "Then Let's Rock!");
+            startMessageLabel.setWrapText(true);
+            startMessageLabel.setAlignment(Pos.CENTER);
+            startMessageLabel.setStyle("-fx-font-size: 20px;");
+
+            Button closeButton = new Button("Close");
+            StackPane dialogPane = new StackPane(startMessageLabel, closeButton);
+            StackPane.setAlignment(closeButton, Pos.BOTTOM_CENTER);
+            dialogPane.setAlignment(Pos.CENTER);
+            dialogPane.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.9);");
+            dialogPane.setPadding(new Insets(10, 50, 50, 50));
+            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
+
+            closeButton.setOnAction(e -> {
+
+                dialog.close(); // close Popup
+
+                // Timer will be started after close popup
+                PauseTransition wait = new PauseTransition(Duration.seconds(5));
+                wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+                wait.play();
+            });
+
+            Scene dialogScene = new Scene(dialogPane, 600, 300);
+            dialog.setScene(dialogScene);
+            dialog.showAndWait();
+
+
 
             BorderPane borderPane = new BorderPane();
 
@@ -615,4 +651,6 @@ public class GameView{
         // 아무곳이나 클릭하면 팝업 닫기
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
+
+
 }

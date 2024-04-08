@@ -3,6 +3,8 @@ package org.example.sharedmobilityfxproject.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.control.ProgressBar;
 import javafx.event.ActionEvent;
@@ -110,7 +112,23 @@ public class GameController {
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
         gameView = new GameView(grid);
         Button stageButton = new Button(stage);
-        stageButton.setGraphic(stageImage);
+        if (!stage.equals("Dublin")) {
+            ColorAdjust colorAdjust = new ColorAdjust();
+            colorAdjust.setSaturation(-1); // 채도를 -1로 설정하여 흑백으로 만듦
+            stageImage.setEffect(colorAdjust);
+
+            Label xMark = new Label("X");
+            xMark.setFont(new Font("Arial", 100)); // "X"의 폰트와 크기 설정
+            xMark.setStyle("-fx-text-fill: red;"); // "X"의 색상 설정
+
+            // 버튼의 그래픽을 스테이지 이미지와 "X" 마크로 설정
+            StackPane buttonGraphic = new StackPane();
+            buttonGraphic.getChildren().addAll(stageImage, xMark);
+            stageButton.setGraphic(buttonGraphic);
+        } else {
+            stageButton.setGraphic(stageImage);
+        }
+
         stageButton.setContentDisplay(ContentDisplay.TOP);
         stageButton.setOnAction(event -> gameView.selectStage(stage, stageSelectionBox, gameModeBox, root, actionEvent, mdv));
         return stageButton;
