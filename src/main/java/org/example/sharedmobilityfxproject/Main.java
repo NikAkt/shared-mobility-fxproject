@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.model.Player;
@@ -69,12 +70,11 @@ public class Main extends Application {
     // Boolean flag to track if the game has finished
     private Taxi taximan;
     boolean gameFinished = false;
-
+    private Pane metroLayer;
+    private Scene metroScene;
+    private StackPane root;
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
-    public int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
 
     public static void increaseGemCount() {
         gemCount++;
@@ -94,6 +94,7 @@ public class Main extends Application {
             busStopCoordinates = new ArrayList<>();
             obstacleCoordinates = new ArrayList<>();
 
+            initializeMetroSystem();
             // Settings
             Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
             primaryStage.getIcons().add(icon);
@@ -126,6 +127,7 @@ public class Main extends Application {
             busStop busS5 = new busStop(57,64);
             busStop busS6 = new busStop(4,64);
             busStop busS7 = new busStop(4,34);
+            metroStop metroEntrance1 = new metroStop(52,64);
 
             busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
             busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
@@ -150,7 +152,7 @@ public class Main extends Application {
                 busStop stop = busman.list().get(i);
                 grid.add(stop,stop.getX(), stop.getY());
             }
-
+            grid.add(metroEntrance1,metroEntrance1.getX(),metroEntrance1.getY());
             grid.add(busman,busman.getX(), busman.getY());// Example starting position
             grid.add(taximan, taximan.getX(), taximan.getY());
             // Schedule the bus to move every second
@@ -279,6 +281,15 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+    private void initializeMetroSystem() {
+        metroLayer = new StackPane();
+        // Populate your metroLayer with metro system visualization
+        // This could include drawing lines for tracks, adding station markers, etc.
+
+        // Initially, make the metro layer invisible
+        metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
+    }
+
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, KeyboardActions ka) {
 
         if (bus.getX()==ka.playerUno.getCoordX()&&bus.getY()==ka.playerUno.getCoordY()&&taximan.arrived&&!ka.inTaxi){
@@ -617,6 +628,12 @@ public class Main extends Application {
             int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
             int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), grid.getColumns() - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
+            if (playerUno.getCell() instanceof metroStop) {
+                System.out.println("Player has entered a metro entrance");
+                // Switch to the metro scene
+                Stage primaryStage = (Stage) grid.getScene().getWindow(); // Assuming 'grid' is part of the current scene
+                primaryStage.setScene(metroScene); // Switch to the metro scene
+            }
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
                 // Move the player to the new cell because there is no obstacle

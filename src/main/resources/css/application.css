@@ -16,6 +16,10 @@
     -fx-background-radius: 0%;
     -fx-background-color: black;
 }
+.metroStop{
+    -fx-background-radius: 0%;
+    -fx-background-color: #4f1d1d;
+}
 .gem {
     -fx-background-color: purple;
 }
