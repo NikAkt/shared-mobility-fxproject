@@ -250,7 +250,7 @@ public class Main extends Application {
                 if (!busman.isWaiting){
 
 
-                moveBusTowardsBusStop(grid, busman, targetBusStop, ka, playerUno);
+                moveBusTowardsBusStop(grid, busman, targetBusStop, ka);
 
                 // Here's the updated part
                 if (ka.onBus) {
@@ -281,26 +281,26 @@ public class Main extends Application {
     }
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, KeyboardActions ka) {
 
-        if (bus.getX()==ka.playerUnosCell.getColumn()&&bus.getY()==ka.playerUnosCell.getRow()&&taximan.arrived&&!ka.inTaxi){
+        if (bus.getX()==ka.playerUno.getCoordX()&&bus.getY()==ka.playerUno.getCoordY()&&taximan.arrived&&!ka.inTaxi){
           ka.inTaxi = true;
 
         }
 //        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
         else {
-            if ((bus.getX() < ka.playerUnosCell.getColumn() || bus.getX() > ka.playerUnosCell.getColumn()) && bus.flagMove == 0) {
+            if ((bus.getX() < ka.playerUno.getCoordX() || bus.getX() > ka.playerUno.getCoordX()) && bus.flagMove == 0) {
 //            System.out.println("----------- moving x ---------");
                 // Move horizontally towards the bus stop, if not blocked
-                int newX = bus.getX() + (bus.getX() < ka.playerUnosCell.getColumn() ? 1 : -1);
+                int newX = bus.getX() + (bus.getX() < ka.playerUno.getCoordX() ? 1 : -1);
                 if (canMoveBusTo(newX, bus.getY())) {
                     moveTaxi(grid, bus, newX, bus.getY());
-                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1))) {
+                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < ka.playerUno.getCoordY() ? 1 : -1))) {
                     // Move vertically as a fallback
-                    moveTaxi(grid, bus, bus.getX(), bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1));
+                    moveTaxi(grid, bus, bus.getX(), bus.getY() + (bus.getY() < ka.playerUno.getCoordY() ? 1 : -1));
                 }
-            } else if (bus.getY() < ka.playerUnosCell.getRow() || bus.getY() > ka.playerUnosCell.getRow()) {
+            } else if (bus.getY() < ka.playerUno.getCoordY() || bus.getY() > ka.playerUno.getCoordY()) {
 //            System.out.println("----------- moving y ---------");
                 // Move vertically towards the bus stop, if not blocked
-                int newY = bus.getY() + (bus.getY() < ka.playerUnosCell.getRow() ? 1 : -1);
+                int newY = bus.getY() + (bus.getY() < ka.playerUno.getCoordY() ? 1 : -1);
                 if (canMoveBusTo(bus.getX(), newY)) {
 
                     moveTaxi(grid, bus, bus.getX(), newY);
@@ -313,11 +313,11 @@ public class Main extends Application {
                 }
             }
             //arriving at stop logic
-            else if (bus.getX() == ka.playerUnosCell.getColumn() && bus.getY() == ka.playerUnosCell.getRow()) {
+            else if (bus.getX() == ka.playerUno.getCoordX() && bus.getY() == ka.playerUno.getCoordY()) {
                 System.out.println("----------- Taxi arrived ---------");
                 bus.arrived = true;
 
-                if (bus.hailed && ka.playerUnosCell.getColumn() == bus.getX() && ka.playerUnosCell.getRow() == bus.getY()) {
+                if (bus.hailed && ka.playerUno.getCoordX() == bus.getX() && ka.playerUno.getCoordY() == bus.getY()) {
                     System.out.println("----------- You just got in the taxia---------");
                     ka.inTaxi = true;
 
@@ -327,7 +327,7 @@ public class Main extends Application {
                     ka.inTaxi = true;
 
                 }
-            } else if (bus.getY() == ka.playerUnosCell.getRow()) {
+            } else if (bus.getY() == ka.playerUno.getCoordY()) {
                 bus.flagMove = 0;
             }
 
@@ -375,7 +375,7 @@ public class Main extends Application {
             bus.waitASec();
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :"+bus.nextStop());
-            if(!ka.playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
+            if(!ka.playerMovementEnabled&&ka.playerUno.getCoordX()==bus.getX()&&ka.playerUno.getCoordY()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
             ka.onBus = true;
 
@@ -480,7 +480,10 @@ public class Main extends Application {
                             case T -> this.inTaxi =false;
                             case E -> togglePlayerMovement();
                             case C ->
-                                    System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
+                                    System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                            "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                                            "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                            "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
                         }}
 
                     // Player
@@ -491,17 +494,17 @@ public class Main extends Application {
                     case S -> movePLayer(0, 1);
                     case T -> hailTaxi();
                     case E -> togglePlayerMovement();
-                    case C ->
-                            System.out.println("The player is located at coordinates: (" + playerUnosCell.getColumn() + ", " + playerUnosCell.getRow() + ")");
+                    case C ->System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                            "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                            "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                            "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+
                 }}
-                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+
                 }
 
                     // Add more cases as needed
-                }else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
+                else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
             });
         }
 
