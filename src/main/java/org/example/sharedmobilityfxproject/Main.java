@@ -313,17 +313,17 @@ public class Main extends Application {
             }
             //arriving at stop logic
             else if (bus.getX() == ka.playerUnosCell.getColumn() && bus.getY() == ka.playerUnosCell.getRow()) {
-                System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+                System.out.println("----------- Taxi arrived ---------");
                 bus.arrived = true;
 
-                if (!ka.playerMovementEnabled && ka.playerUnosCell.getColumn() == bus.getX() && ka.playerUnosCell.getRow() == bus.getY()) {
-                    System.out.println("----------- You just got on the bus ---------");
-                    ka.onBus = true;
+                if (bus.hailed && ka.playerUnosCell.getColumn() == bus.getX() && ka.playerUnosCell.getRow() == bus.getY()) {
+                    System.out.println("----------- You just got in the taxia---------");
+                    ka.inTaxi = true;
 
-                } else if (ka.onBus) {
+                } else if (ka.inTaxi) {
 
                     System.out.println("----------- Press E to get off  ---------");
-                    ka.onBus = true;
+                    ka.inTaxi = true;
 
                 }
             } else if (bus.getY() == ka.playerUnosCell.getRow()) {
