@@ -4,6 +4,7 @@ import org.example.sharedmobilityfxproject.model.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.Animation;
+import javafx.scene.input.KeyCode;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -238,6 +239,8 @@ public class Main extends Application {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
+
+            // Schedule the bus to move every second
             Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
                 busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
                 if (!busman.isWaiting){
@@ -267,6 +270,10 @@ public class Main extends Application {
             busMovementTimeline.setCycleCount(Animation.INDEFINITE);
             busMovementTimeline.play();
 
+            // Player animation
+            Timeline playerMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> {
+
+            }));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -356,176 +363,108 @@ public class Main extends Application {
 
     }
 
-    /**
-     * KeyboardActions class is responsible for handling keyboard input and translating it into actions within the grid.
-     * It manages the current cell selection and applies keyboard actions to it.
-     */
-    public class KeyboardActions {
-        private boolean playerMovementEnabled = true;
-        private boolean onBus = false;
-        private Grid grid;
-        public Cell currentCell; // Made public for access in start method
-        public Player playerUno; // Made public for access in start method
-        private int currentRow = 0;
-        private int currentColumn = 0;
-//        public void setX(int i ){
-//            this.playerUnosCell.setRow(i);
-//        }
-//        public void setY(int j ){
-//            this.playerUnosCell.setColumn(j);
-//        }
-//        public int getX(){
-//            return this.currentColumn;
-//        }
-//        public int getY(){
-//            return this.currentRow;
-//        }
-        // Constructor to initialise grid
-        public KeyboardActions(Grid grid) {
-            this.grid = grid;
-            // Don't initialize currentCell here
-        }
-        private void collectGem(Cell gemCell) {
-            grid.getChildren().remove(gemCell);
-            gemCell.unhighlight(); // Unhighlight only the gem cell
-            grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow()); // Replace the gem cell with a normal cell
-            playGemCollectSound();
-        }
+public class KeyboardActions {
+    private boolean playerMovementEnabled = true;
+    private boolean onBus = false;
+    private Grid grid;
+    public Cell currentCell;
+    public Player playerUno;
 
-        private void interactWithBusStop(busStop stop) {
-            // Implement what happens when interacting with a bus stop
-            // For example, showing a UI prompt to board a bus, or automatically boarding
-            System.out.println("Interacted with Bus Stop at: " + stop.getX() + ", " + stop.getY());
-            // Additional logic for boarding the bus, updating stats, etc.
-        }
+    public KeyboardActions(Grid grid) {
+        this.grid = grid;
+    }
 
-        public void setupKeyboardActions(Scene scene) {
-            scene.setOnKeyPressed(event -> {
-                        if (playerMovementEnabled) {
+    public void setupKeyboardActions(Scene scene) {
+        scene.setOnKeyPressed(event -> {
+            if (playerMovementEnabled) {
                 switch (event.getCode()) {
-
-                    // Player
-                    case D -> movePLayer(1, 0);
-                    case A -> movePLayer(-1, 0);
-                    case W -> movePLayer(0, -1);
-                    case S -> movePLayer(0, 1);
+                    case D -> movePlayer(1, 0);
+                    case A -> movePlayer(-1, 0);
+                    case W -> movePlayer(0, -1);
+                    case S -> movePlayer(0, 1);
                     case T -> hailTaxi();
                     case E -> togglePlayerMovement();
-                    case C ->
-                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
                 }
-
-                    // Add more cases as needed
-                }else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
-            });
-        }
-
-
-        private void togglePlayerMovement() {
-            if (this.onBus) {
-                // Convert the player's current cell coordinates into a Point for easy comparison
-                int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()}; // Ensure the order of coordinates is (x, y)
-                System.out.println(playerLocation[0] + "  " + playerLocation[1]);
-
-                // Check if the player's current location matches any bus stop location
-                boolean atBusStop = busStopCoordinates.stream()
-                        .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]); // Compare coordinates individually
-
-                if (atBusStop) {
-                    // Allow the player to get off the bus
-                    playerMovementEnabled = true;
-                    this.onBus = false;
-                    System.out.println("You got off the bus.");
-                } else {
-                    System.out.println("You can only get off the bus at a bus stop.");
-                }
+            } else if (event.getCode() == KeyCode.E) {
+                togglePlayerMovement();
             }
-            else{if (playerUno.getCell() instanceof busStop&&!this.onBus) {
-            playerMovementEnabled = !playerMovementEnabled;
-            if (!playerMovementEnabled) {
-                // Player decides to wait at a bus stop
-                System.out.println("----------- Waiting for bus ---------"+playerMovementEnabled);
-                    ((busStop) playerUno.getCell()).setPlayerHere(true); // Mark the player as waiting at the bus stop
-
-            } else {
-                // Player decides to continue moving
-                if (!this.onBus) {
-                    System.out.println("----------- Impatient fuck ---------");
-                    ((busStop) playerUno.getCell()).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
-                }
-
-            }}}
-        }
-
-        /**
-         * Hail a taxi and change the player's appearance to yellow.
-         */
-        private void hailTaxi() {
-            if (!hailTaxi) {
-                hailTaxi = true;
-                // Increase carbon footprint
-                carbonFootprint += 75;
-                updateCarbonFootprintLabel();
-                // Change the color of the player's cell to yellow
-                currentCell.setStyle("-fx-background-color: yellow;");
-            } else {
-                hailTaxi = false;
-                // Change the color of the player's cell back to blue
-                currentCell.setStyle("-fx-background-color: blue;");
-            }
-        }
-
-
-        private void movePLayer(int dx, int dy) {
-            int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
-            int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), grid.getColumns() - 1);
-            Cell newCell = grid.getCell(newColumn, newRow);
-            // Check if the next cell is an obstacle
-            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
-                // Move the player to the new cell because there is no obstacle
-                Cell nextCell = grid.getCell(newColumn, newRow);
-
-                // Optionally unhighlight the old cell
-                playerUno.getCell().unhighlight();
-
-                playerUno.setCell(nextCell);
-
-
-                // Check for interaction with a gem
-                if ("gem".equals(playerUno.getCell().getUserData())) {
-                    collectGem(playerUno.getCell());
-                    System.out.println("PLayer has entered busstop");
-                }
-
-                // Check for interaction with a bus stop
-                if (playerUno.getCell() instanceof busStop) {
-                    interactWithBusStop((busStop) playerUno.getCell());
-                    System.out.println("player has entered stop");
-                }
-                if (playerUno.getCell() == finishCell) {
-                    // Player reached the finish cell
-                    gameFinished = true; // Set game as finished
-                    // Display "Level Complete" text
-                    Label levelCompleteLabel = new Label("Level Complete");
-                    levelCompleteLabel.setStyle("-fx-font-size: 24px;");
-                    StackPane root = (StackPane) grid.getScene().getRoot();
-                    root.getChildren().add(levelCompleteLabel);
-
-                    // Exit the game after five seconds
-                    PauseTransition pause = new PauseTransition(Duration.seconds(5));
-                    pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
-                    pause.play();
-                }
-                // Optionally highlight the new cell
-                playerUno.getCell().highlight();
-            }
-            // If there is an obstacle, don't move and possibly add some feedback
-        }
-
+        });
     }
+
+    private void movePlayer(int dx, int dy) {
+        int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
+        int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), grid.getColumns() - 1);
+        if (canMoveTo(newColumn, newRow)) {
+            playerUno.getCell().unhighlight();
+            playerUno.setCell(grid.getCell(newColumn, newRow));
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
+        }
+    }
+
+    private boolean canMoveTo(int x, int y) {
+        return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+    }
+
+    private void interactWithCell(Cell cell) {
+        if ("gem".equals(cell.getUserData())) {
+            collectGem(cell);
+        } else if (cell instanceof busStop) {
+            interactWithBusStop((busStop) cell);
+        } else if (cell == finishCell) {
+            finishGame();
+        }
+    }
+
+    private void collectGem(Cell gemCell) {
+        grid.getChildren().remove(gemCell);
+        grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
+        playGemCollectSound();
+    }
+
+    private void interactWithBusStop(busStop stop) {
+        System.out.println("Interacted with Bus Stop at: " + stop.getX() + ", " + stop.getY());
+    }
+
+    private void finishGame() {
+        gameFinished = true;
+        Label levelCompleteLabel = new Label("Level Complete");
+        levelCompleteLabel.setStyle("-fx-font-size: 24px;");
+        StackPane root = (StackPane) grid.getScene().getRoot();
+        root.getChildren().add(levelCompleteLabel);
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
+        pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
+        pause.play();
+    }
+
+    private void hailTaxi() {
+        hailTaxi = !hailTaxi;
+        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
+        if (hailTaxi) {
+            carbonFootprint += 75;
+            updateCarbonFootprintLabel();
+        }
+    }
+
+    private void togglePlayerMovement() {
+        if (this.onBus) {
+            int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
+            boolean atBusStop = busStopCoordinates.stream()
+                    .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]);
+            if (atBusStop) {
+                playerMovementEnabled = true;
+                this.onBus = false;
+                System.out.println("You got off the bus.");
+            } else {
+                System.out.println("You can only get off the bus at a bus stop.");
+            }
+        } else if (playerUno.getCell() instanceof busStop) {
+            playerMovementEnabled = !playerMovementEnabled;
+            System.out.println(playerMovementEnabled ? "Impatient" : "Waiting for bus");
+            ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
+        }
+    }
+}
 
     public void printArrayContents() {
         System.out.println("Obstacle Coordinates:");
