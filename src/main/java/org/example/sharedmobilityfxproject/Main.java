@@ -478,61 +478,6 @@ public class Main extends Application {
             }
         }
 
-        /**
-         * Attempts to move the current selection by a specified number of columns and rows.
-         * The movement is performed if the destination cell is not an obstacle.
-         *
-         * @param dx The number of columns to move. A positive number moves right, a negative number moves left.
-         * @param dy The number of rows to move. A positive number moves down, a negative number moves up.
-         */
-        private void moveSelection(int dx, int dy) {
-            // Check if the game is finished, if so, return without allowing movement
-            if (gameFinished) {
-                return;
-            }
-
-            int newRow = Math.min(Math.max(currentRow + dy, 0), grid.getRows() - 1);
-            int newColumn = Math.min(Math.max(currentColumn + dx, 0), grid.getColumns() - 1);
-            Cell newCell = grid.getCell(newColumn, newRow);
-
-            // Check if the next cell is an obstacle
-            if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
-                // Move the player to the new cell because there is no obstacle
-                Cell nextCell = grid.getCell(newColumn, newRow);
-
-                // Optionally unhighlight the old cell
-                currentCell.unhighlight();
-
-                currentCell = nextCell;
-                currentRow = newRow;
-                currentColumn = newColumn;
-
-                // Optionally highlight the new cell
-                currentCell.highlight();
-            }
-            // If there is an obstacle, don't move and possibly add some feedback
-            if (newCell == finishCell) {
-                // Player reached the finish cell
-                gameFinished = true; // Set game as finished
-                // Display "Level Complete" text
-                Label levelCompleteLabel = new Label("Level Complete");
-                levelCompleteLabel.setStyle("-fx-font-size: 24px;");
-                StackPane root = (StackPane) grid.getScene().getRoot();
-                root.getChildren().add(levelCompleteLabel);
-
-                // Exit the game after five seconds
-                PauseTransition pause = new PauseTransition(Duration.seconds(5));
-                pause.setOnFinished(event -> ((Stage) grid.getScene().getWindow()).close());
-                pause.play();
-            }
-
-            if ("gem".equals(newCell.getUserData())) {
-                grid.getChildren().remove(newCell);
-                newCell.unhighlight(); // Unhighlight only the gem cell
-                grid.add(new Cell(newColumn, newRow), newColumn, newRow); // Replace the gem cell with a normal cell
-                updateGemCountLabel(); // Update gem count label
-            }
-        }
 
         private void movePLayer(int dx, int dy) {
             int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
@@ -560,7 +505,7 @@ public class Main extends Application {
                     interactWithBusStop((busStop) playerUno.getCell());
                     System.out.println("player has entered stop");
                 }
-                if (newCell == finishCell) {
+                if (playerUno.getCell() == finishCell) {
                     // Player reached the finish cell
                     gameFinished = true; // Set game as finished
                     // Display "Level Complete" text
@@ -617,7 +562,6 @@ public class Main extends Application {
         }
         return false;
     }
-
 
     // Method to update the gem count label
     private static void updateGemCountLabel() {
