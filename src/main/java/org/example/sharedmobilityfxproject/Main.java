@@ -38,7 +38,7 @@ public class Main extends Application {
     private static final int COLUMNS = 120;
     private static final double WIDTH = 1300;
     private static final double HEIGHT = 680;
-
+    Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
     // Gem count
     static int gemCount = 0;
 
@@ -123,8 +123,8 @@ public class Main extends Application {
             }
 
             //bus SHITE
-            busStop busS1 = new busStop(4,4);
-            busStop busS2 = new busStop(110,4);
+            busStop busS1 = new busStop(4,5);
+            busStop busS2 = new busStop(110,5);
             busStop busS3 = new busStop(57,25);
             busStop busS4 = new busStop(110,64);
             busStop busS5 = new busStop(57,64);
@@ -148,7 +148,7 @@ public class Main extends Application {
             busStops.add(busS6);
             busStops.add(busS7);
 
-            busman = new Bus(busStops,4, 4);
+            busman = new Bus(busStops,4, 5);
             taximan= new Taxi (58,28);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
@@ -183,10 +183,10 @@ public class Main extends Application {
             // Define the size of the obstacle blocks and the gap between them
             int obstacleWidth = 5;
             int obstacleHeight = 3;
-            int gap = 5;
+            int gap = 2; // Reduced gap between buildings
 
             // Calculate the number of obstacle blocks in each direction
-            int numBlocksX = (COLUMNS - 2 * gap) / (obstacleWidth + gap);
+            int numBlocksX = 6; // Only six columns of buildings
             int numBlocksY = (ROWS - 2 * gap) / (obstacleHeight + gap);
 
             // For each block position
@@ -211,6 +211,7 @@ public class Main extends Application {
             for (Obstacle obstacle : obstacles) {
                 obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
             }
+
 
             colorCell(70, 70, "red");
             colorCell(75, 75, "yellow");
