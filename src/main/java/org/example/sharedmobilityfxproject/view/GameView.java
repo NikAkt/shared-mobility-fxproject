@@ -146,6 +146,14 @@ public class GameView {
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
         //Font Set
 
+        // Apply initial styles
+        applyButtonStyles(btnStartGame, false);
+        applyButtonStyles(btnExit, false);
+// Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
+        applyButtonStyles(btnExit, btnExit.isFocused());
+        applyButtonStyles(btnStartGame, btnStartGame.isFocused());
+
+
         // Create a VBox for buttons
         buttonBox = new VBox(20, btnStartGame, btnExit, imageView);
         VBox imgBox = new VBox(20, imageView);
@@ -166,12 +174,18 @@ public class GameView {
         this.root.getChildren().add(imgBox);
 
         // Set focus on the "Game Start" button initially
-        btnStartGame.requestFocus();
+        btnStartGame.setFont(btnFont);
+
+
+// Request focus for the "Game Start" button when scene is shown
+        primaryStage.setOnShown(event -> btnStartGame.requestFocus());
 
         primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true); // Set the stage to full screen
+        //primaryStage.setFullScreen(true); // Set the stage to full screen
         primaryStage.show();
+        btnStartGame.requestFocus();
+
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case DOWN:
@@ -404,7 +418,7 @@ public class GameView {
             Scene scene = new Scene(borderPane, 1496, 1117);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Welcome To " + stageName);
-            primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreen(true);
             primaryStage.show();
 
 //            // Create grid for the game
@@ -579,13 +593,22 @@ public class GameView {
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
         gameController = new GameController();
+
         root.getChildren().removeAll(buttonBox);
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button backToMenu = gameController.createButton("Back", event -> showInitialScreen(primaryStage));
         backToMenu.setMinWidth(gameController.BUTTON_WIDTH);
         backToMenu.setMaxWidth(gameController.BUTTON_WIDTH);
-        backToMenu.setStyle("-fx-font-size: 24px;");
+
+        applyButtonStyles(btnOnePlayer, false);
+        applyButtonStyles(btnTwoPlayer, false);
+        applyButtonStyles(backToMenu, false);
+
+        // Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
+        applyButtonStyles(btnOnePlayer, btnOnePlayer.isFocused());
+        applyButtonStyles(btnTwoPlayer, btnTwoPlayer.isFocused());
+        applyButtonStyles(backToMenu, backToMenu.isFocused());
 
         // Create the game mode selection box if not already created
         if (gameModeBox == null) {
@@ -672,6 +695,21 @@ public class GameView {
         // 아무곳이나 클릭하면 팝업 닫기
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
+
+    private void applyButtonStyles(Button button, boolean focused) {
+        String fontFamily = btnFont.getName(); // Get the font name from the Font object
+        String fontSize = "24px";
+        String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";
+        String textColor = focused ? "white" : "black";
+        String textShadow = focused ? "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);" : "";
+
+        button.setStyle(String.format("-fx-font-family: '%s'; -fx-font-size: %s; -fx-background-color: %s; -fx-text-fill: %s; %s",
+                fontFamily, fontSize, backgroundColor, textColor, textShadow));
+        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            applyButtonStyles(button, isNowFocused);
+        });
+    }
+
 
 
 }

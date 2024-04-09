@@ -41,15 +41,12 @@ public class GameController {
     public StackPane root;
     public static Label gemCountLabel;
 
-    //****FXML ****
-    @FXML
-    public ProgressBar progressBar;
+
 
     int co2Points = 0;
     int staminaPoints = 0;
 
-    @FXML
-    public Text text;
+
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
 
@@ -143,8 +140,6 @@ public class GameController {
         button.setMaxWidth(BUTTON_WIDTH);
         button.setOnAction(action);
         button.setFocusTraversable(true);
-
-
         //hover colour change
         button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused) {
