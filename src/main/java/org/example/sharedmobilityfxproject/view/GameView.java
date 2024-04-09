@@ -41,15 +41,19 @@ import org.example.sharedmobilityfxproject.model.Cell;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.Animation;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.example.sharedmobilityfxproject.model.Player;
+import javafx.animation.PauseTransition;
 public class GameView {
 
     // **** Class call ****
