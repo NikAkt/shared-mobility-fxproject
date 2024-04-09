@@ -473,10 +473,10 @@ public class Main extends Application {
 
                     if(this.inTaxi){
                         switch (event.getCode()) {
-                            case D -> movePLayer(1, 0);
-                            case A -> movePLayer(-1, 0);
-                            case W -> movePLayer(0, -1);
-                            case S -> movePLayer(0, 1);
+                            case D -> movePLayer(2, 0);
+                            case A -> movePLayer(-2, 0);
+                            case W -> movePLayer(0, -2);
+                            case S -> movePLayer(0, 2);
                             case T -> this.inTaxi =false;
                             case E -> togglePlayerMovement();
                             case C ->
