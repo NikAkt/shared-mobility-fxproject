@@ -1,8 +1,6 @@
 package org.example.sharedmobilityfxproject.view;
 
 import javafx.animation.PauseTransition;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -13,18 +11,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.Parent;
 
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
@@ -43,13 +36,8 @@ import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class GameView {
@@ -117,6 +105,7 @@ public class GameView {
 
     // **** Font Setting ****
     public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
+    public Font creditFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 50);
     public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
     public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
 
@@ -143,22 +132,27 @@ public class GameView {
         // Create and configure the "Game Start" button
         Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, root, bgmediaPlayer));
         // Create and configure the "Exit" button
+        Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
         //Font Set
 
         // Apply initial styles
         applyButtonStyles(btnStartGame, false);
         applyButtonStyles(btnExit, false);
+        applyButtonStyles(gameCredit, false);
 // Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
         applyButtonStyles(btnExit, btnExit.isFocused());
+        applyButtonStyles(btnStartGame, gameCredit.isFocused());
         applyButtonStyles(btnStartGame, btnStartGame.isFocused());
+        gameCredit.setFocusTraversable(true);
 
 
         // Create a VBox for buttons
-        buttonBox = new VBox(20, btnStartGame, btnExit, imageView);
         VBox imgBox = new VBox(20, imageView);
+        imgBox.setAlignment(Pos.TOP_RIGHT);
+        buttonBox = new VBox(40, imageView,btnStartGame,gameCredit, btnExit);
         buttonBox.setAlignment(Pos.CENTER); // Align buttons to center
-        imgBox.setAlignment(Pos.TOP_CENTER);
+
 
         // Center the VBox in the StackPane
         StackPane.setAlignment(buttonBox, Pos.CENTER);
@@ -185,31 +179,102 @@ public class GameView {
         //primaryStage.setFullScreen(true); // Set the stage to full screen
         primaryStage.show();
         btnStartGame.requestFocus();
-
+        gameCredit.setOnAction(event -> {
+            System.out.println("gameCredit action handler called"); // For debugging
+            // Other action handling code
+        });
         scene.setOnKeyPressed(event -> {
+            System.out.println("Key pressed: " + event.getCode()); // For debugging
             switch (event.getCode()) {
                 case DOWN:
+                    System.out.println("Down key pressed"); // For debugging
                     if (btnStartGame.isFocused()) {
+                        gameCredit.requestFocus();
+                    } else if (gameCredit.isFocused()) {
                         btnExit.requestFocus();
                     }
                     break;
                 case UP:
+                    System.out.println("Up key pressed"); // For debugging
                     if (btnExit.isFocused()) {
+                        gameCredit.requestFocus();
+                    } else if (gameCredit.isFocused()) {
                         btnStartGame.requestFocus();
                     }
                     break;
                 case ENTER:
+                    System.out.println("Enter key pressed"); // For debugging
                     if (btnStartGame.isFocused()) {
+                        System.out.println("Start Game Selected"); // For debugging
                         btnStartGame.fire();
                     } else if (btnExit.isFocused()) {
+                        System.out.println("Exit Selected"); // For debugging
                         btnExit.fire();
+                    } else if (gameCredit.isFocused()) {
+                        System.out.println("Credits Selected"); // For debugging
+                        gameCredit.fire();
+                        showCredit();
                     }
                     break;
                 default:
+                    System.out.println("Other key pressed"); // For debugging
                     break;
             }
         });
+    }
+    public void showCredit(){
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(this.primaryStage);
+        dialog.initStyle(StageStyle.UNDECORATED);
 
+        VBox popupVbox = new VBox(10);
+        popupVbox.setAlignment(Pos.CENTER);
+        popupVbox.setPrefWidth(450);
+        popupVbox.setPrefHeight(700);
+        popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+
+        Label noticeLabel = new Label("Game Credit");
+        noticeLabel.setFont(creditFont);
+        noticeLabel.setAlignment(Pos.TOP_CENTER);
+
+        Label startMessageLabel = new Label(
+                "COMP30820 -JAVA Programming\n" +
+                        "          My Dearest team mates\n          OilWrestlingLovers" +
+                        " \n          Nick aktoudianakis" +"\n          MustaFa Yilmaz"+"\n          Eamonn Walsh"+"\n          and \n          Gyuwon Jung"
+
+        );
+        startMessageLabel.setWrapText(true);
+        startMessageLabel.setAlignment(Pos.CENTER);
+        startMessageLabel.setFont(contentFont);
+
+        // Close Button
+        Button closeButton = new Button("Close");
+        if (contentFont != null) {
+            closeButton.setFont(btnFont);
+        } else {
+            System.out.println("Failed to load custom font. Using default font.");
+        }
+        closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+        closeButton.setOnAction(e -> {
+            dialog.close(); // Close the popup
+            // Start the timer after the popup is closed
+            PauseTransition wait = new PauseTransition(Duration.seconds(5));
+            wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+            wait.play();
+        });
+        // Add labels and close button to VBox
+        popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
+        VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
+
+// Scene and stage setup
+        Scene dialogScene = new Scene(popupVbox);
+        dialog.setOnShown(event -> {
+            dialog.setX(this.primaryStage.getX() + this.primaryStage.getWidth() / 2 - dialog.getWidth() / 2);
+            dialog.setY(this.primaryStage.getY() + this.primaryStage.getHeight() / 2 - dialog.getHeight() / 2);
+        });
+        dialog.setScene(dialogScene);
+        dialog.showAndWait();
     }
 
     public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv) {
@@ -224,9 +289,11 @@ public class GameView {
                 String[] topStages = {"Dublin", "Athens", "Seoul", "Istanbul"};
                 String[] bottomStages = {"Vilnius", "Back"};
 
+                //List up the stages
                 for (String stage : topStages) {
                     ImageView stageImage = createStageImage(stage);
                     Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    stageButton.setFont(btnFont);
                     topRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
                 }
@@ -234,6 +301,7 @@ public class GameView {
                 for (String stage : bottomStages) {
                     ImageView stageImage = createStageImage(stage);
                     Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    stageButton.setFont(btnFont);
                     bottomRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
                 }
@@ -597,22 +665,17 @@ public class GameView {
         root.getChildren().removeAll(buttonBox);
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
-        Button backToMenu = gameController.createButton("Back", event -> showInitialScreen(primaryStage));
-        backToMenu.setMinWidth(gameController.BUTTON_WIDTH);
-        backToMenu.setMaxWidth(gameController.BUTTON_WIDTH);
 
         applyButtonStyles(btnOnePlayer, false);
         applyButtonStyles(btnTwoPlayer, false);
-        applyButtonStyles(backToMenu, false);
 
         // Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
         applyButtonStyles(btnOnePlayer, btnOnePlayer.isFocused());
         applyButtonStyles(btnTwoPlayer, btnTwoPlayer.isFocused());
-        applyButtonStyles(backToMenu, backToMenu.isFocused());
 
         // Create the game mode selection box if not already created
         if (gameModeBox == null) {
-            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer, backToMenu);
+            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
             gameModeBox.setAlignment(Pos.CENTER);
         }
         // Add the game mode box to the root stack pane, making it visible
@@ -629,7 +692,6 @@ public class GameView {
                     if (btnOnePlayer.isFocused()) {
                         btnTwoPlayer.requestFocus();
                     } else if (btnTwoPlayer.isFocused()) {
-                        backToMenu.requestFocus();
                     } else {
                         btnOnePlayer.requestFocus(); // Wrap around to the first button
                     }
@@ -639,7 +701,6 @@ public class GameView {
                     if (btnOnePlayer.isFocused()) {
                         btnTwoPlayer.requestFocus();
                     } else if (btnTwoPlayer.isFocused()) {
-                        backToMenu.requestFocus();
                     } else {
                         btnOnePlayer.requestFocus(); // Wrap around to the first button
                     }
@@ -650,10 +711,9 @@ public class GameView {
                         btnOnePlayer.fire();
                     } else if (btnTwoPlayer.isFocused()) {
                         btnTwoPlayer.fire();
-                    } else if (backToMenu.isFocused()) {
-                        backToMenu.fire();
-                    }
+                    }else {
                     break;
+                    }
                 default:
                     break;
             }
@@ -696,7 +756,7 @@ public class GameView {
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
 
-    private void applyButtonStyles(Button button, boolean focused) {
+    public void applyButtonStyles(Button button, boolean focused) {
         String fontFamily = btnFont.getName(); // Get the font name from the Font object
         String fontSize = "24px";
         String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";
@@ -709,6 +769,7 @@ public class GameView {
             applyButtonStyles(button, isNowFocused);
         });
     }
+
 
 
 
