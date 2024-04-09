@@ -174,8 +174,6 @@ public class Main extends Application {
 
 
             // Initialise Obstacles for x = 0
-            // Initialise Obstacles
-            // Initialise Obstacles
             obstacles = new ArrayList<>();
 
             // Define the size of the obstacle blocks and the gap between them
@@ -186,7 +184,6 @@ public class Main extends Application {
             // Calculate the number of obstacle blocks in each direction
             int numBlocksX = (COLUMNS - 2 * gap) / (obstacleWidth + gap);
             int numBlocksY = (ROWS - 2 * gap) / (obstacleHeight + gap);
-
 
             // For each block position
             for (int bx = 0; bx < numBlocksX; bx++) {
@@ -210,6 +207,9 @@ public class Main extends Application {
             for (Obstacle obstacle : obstacles) {
                 obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
             }
+
+            colorCell(70, 70, "red");
+            colorCell(75, 75, "yellow");
 
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
