@@ -72,6 +72,8 @@ public class Main extends Application {
     boolean gameFinished = false;
     private Pane metroLayer;
     private Scene metroScene;
+    private Scene scene;
+    private Grid grid;
     private StackPane root;
     private Grid metroGrid;
     // Boolean flag to track if the player is in a taxi
@@ -91,15 +93,15 @@ public class Main extends Application {
         try {
             // Create a StackPane to hold all elements
             StackPane root = new StackPane();
-            Scene scene = new Scene(root);
+            scene = new Scene(root);
             busStopCoordinates = new ArrayList<>();
             obstacleCoordinates = new ArrayList<>();
 
-            initializeMetroSystem();
+
             // Settings
             Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
             primaryStage.getIcons().add(icon);
-            primaryStage.setTitle("Shared Mobility Application");
+            primaryStage.setTitle("PokemonGo");
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
             primaryStage.setResizable(false);
@@ -107,7 +109,7 @@ public class Main extends Application {
 //            primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
             // Create grid for the game
-            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+            grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
             // Create keyboard actions handler
             KeyboardActions ka = new KeyboardActions(grid);
@@ -129,7 +131,7 @@ public class Main extends Application {
             busStop busS5 = new busStop(57,64);
             busStop busS6 = new busStop(4,64);
             busStop busS7 = new busStop(4,34);
-            metroStop metroEntrance1 = new metroStop(52,64);
+            metroStop metroEntrance1 = new metroStop(2,4);
 
             busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
             busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
@@ -235,7 +237,7 @@ public class Main extends Application {
             Player playerUno = new Player(0,0,10,1,10,0);
             playerUno.initCell(grid);
             ka.playerUno = playerUno;
-
+            initializeMetroSystem(ka);
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
@@ -283,18 +285,26 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-    private void initializeMetroSystem() {
+    private void initializeMetroSystem(KeyboardActions player) {
         metroLayer = new StackPane();
+        metroLayer.setStyle("-fx-background-color: #CCCCCC;");
         metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
         // Initialize metro cells
         for (int row = 0; row < ROWS; row++) {
             for (int column = 0; column < COLUMNS; column++) {
-                Cell cell = new Cell(column, row); // Assuming you have a similar constructor for metro cells
+                Cell cell = new Cell(column, row);
+                 // Make sure cells are visible
                 metroGrid.add(cell, column, row);
             }
         }
-        metroLayer.getChildren().add(metroGrid);
+        metroStop under1 = new metroStop(5,4);
+        metroGrid.add(under1,4,4);
+        player.playerUno.initCell(metroGrid);
+        Label testLabel = new Label("Metro System Active");
+
+        metroLayer.getChildren().addAll(metroGrid,testLabel);
         metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
+
     }
 
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, KeyboardActions ka) {
@@ -635,22 +645,29 @@ public class Main extends Application {
         }
         private void movePLayer(int dx, int dy) {
 
-            Grid currentGrid;
-            if (isMetroSceneActive) {
-                currentGrid = metroGrid;
-            } else {
-                currentGrid = this.grid; // Use the main game grid
-            }
-            int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), currentGrid.getRows() - 1);
-            int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), currentGrid.getColumns() - 1);
+            int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), grid.getRows() - 1);
+            int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), grid.getColumns() - 1);
             Cell newCell = grid.getCell(newColumn, newRow);
-            Cell metroCell = grid.getCell(newColumn, newRow);
+            Cell metroCell = metroGrid.getCell(newColumn, newRow);
+            if(isMetroSceneActive){
+                playerUno.setCell(metroCell);
+                playerUno.getCell().highlight();
+                playerUno.getCell().setStyle("-fx-border-color: black; -fx-background-color: white;");
+                System.out.println("player pos" +playerUno.getCoordX()+" "+playerUno.getCoordY());
+            }
             if (playerUno.getCell() instanceof metroStop) {
 
-                isMetroSceneActive = true; // Metro scene is now active
+                isMetroSceneActive = !isMetroSceneActive; // Metro scene is now active
                 Stage primaryStage = (Stage) grid.getScene().getWindow();
+                playerUno.isUnderground = true;
+                System.out.println(this.grid);
+                this.grid =metroGrid;
                 primaryStage.setScene(metroScene);
-                System.out.println("Player has entered a metro entrance");
+                metroLayer.requestFocus();
+                playerUno.setCellByCoords(metroGrid,newColumn,newRow);
+                System.out.println("Player has entered a metro entrance" + this.grid);
+                this.setupKeyboardActions(metroScene);
+
             }
             // Check if the next cell is an obstacle
             if (obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == newColumn && obstacle.getRow() == newRow)) {
@@ -659,22 +676,16 @@ public class Main extends Application {
                 Cell nextMetroCell = metroGrid.getCell(newColumn, newRow);
                 // Optionally unhighlight the old cell
                 playerUno.getCell().unhighlight();
-                if(playerUno.isUnderground){
-                    System.out.println("moving underground");
-                    playerUno.setCell(metroCell);
-                }
-                else{
+
+
                     playerUno.setCell(nextCell);
-                }
+
 
                 if (inTaxi) {
                     // Assuming taximan is accessible from here, or find a way to access it
                     moveTaxi(grid, taximan, newColumn, newRow);
                     System.out.println("btich");
                 }
-
-
-
                 // Check for interaction with a gem
                 if ("gem".equals(playerUno.getCell().getUserData())) {
                     collectGem(playerUno.getCell());
