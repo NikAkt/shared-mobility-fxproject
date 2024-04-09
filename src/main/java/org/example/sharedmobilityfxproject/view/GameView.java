@@ -27,6 +27,7 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
+
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.image.Image;
@@ -133,24 +134,12 @@ public class GameView {
     private static final double WIDTH = 1300;
     private static final double HEIGHT = 680;
 
-    // Gem count
-    static int gemCount = 0;
 
-    // Carbon footprint
-    float carbonFootprint = 0;
-
-    // Label to keep track of gem count
-    static Label gemCountLabel; // Label to display gem count
-
-    // Obstacles
-    // List to keep track of all obstacles
-    private List<Obstacle> obstacles;
     public ArrayList<int[]> busStopCoordinates;
     public ArrayList<int[]> obstacleCoordinates;
 
-    // Finish cell
-    private Cell finishCell;
     private Bus busman;
+
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
 
@@ -757,7 +746,7 @@ public class GameView {
 
     ;
 
-    public void updateGemCountLabel() {
+    public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
