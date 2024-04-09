@@ -1,4 +1,5 @@
 package org.example.sharedmobilityfxproject.view;
+
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -51,7 +52,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class GameView{
+public class GameView {
 
     // **** Class call ****
     public GameView gameView;
@@ -114,6 +115,10 @@ public class GameView{
     private static final double WIDTH = 800;
     private static final double HEIGHT = 600;
 
+    // **** Font Setting ****
+    public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
+    public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
+    public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
 
     public GameView(Grid grid) {
         gameController = new GameController();
@@ -137,9 +142,9 @@ public class GameView{
         this.root = new StackPane();
         // Create and configure the "Game Start" button
         Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, root, bgmediaPlayer));
-
         // Create and configure the "Exit" button
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
+        //Font Set
 
         // Create a VBox for buttons
         buttonBox = new VBox(20, btnStartGame, btnExit, imageView);
@@ -280,44 +285,61 @@ public class GameView{
     public void loadGameScreen(String stageName, Stage primaryStage) {
 
         try {
-            //Start Pop up
             final Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(primaryStage);
             dialog.initStyle(StageStyle.UNDECORATED);
 
-            Label startMessageLabel = new Label("Notice" +
-                    "Eco and Friendly, who cherish the environment, are roaming the city collecting Gems needed for their journey. " +
-                    "Try to gather the Gems in the most eco-friendly way possible, " +
-                    "Then Let's Rock!");
+            // Start Pop up
+            //right left margin 20px 씩
+            //width 200 height 180
+            VBox popupVbox = new VBox(10);
+            popupVbox.setAlignment(Pos.CENTER);
+            popupVbox.setPrefWidth(400);
+            popupVbox.setPrefHeight(700);
+            popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+
+            Label noticeLabel = new Label("Notice");
+            noticeLabel.setFont(titleFont);
+            noticeLabel.setAlignment(Pos.TOP_CENTER);
+
+            Label startMessageLabel = new Label(
+                    "Eco and Friendly, who cherish the environment, are roaming the city." +
+                            " collecting Gems needed for their journey. " +
+                            "\nTry to gather the Gems in the most eco-friendly way possible."
+            );
             startMessageLabel.setWrapText(true);
             startMessageLabel.setAlignment(Pos.CENTER);
-            startMessageLabel.setStyle("-fx-font-size: 20px;");
+            startMessageLabel.setFont(contentFont);
 
-            Button closeButton = new Button("Close");
-            StackPane dialogPane = new StackPane(startMessageLabel, closeButton);
-            StackPane.setAlignment(closeButton, Pos.BOTTOM_CENTER);
-            dialogPane.setAlignment(Pos.CENTER);
-            dialogPane.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.9);");
-            dialogPane.setPadding(new Insets(10, 50, 50, 50));
-            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
-
+            // Close Button
+            Button closeButton = new Button("Let's Rock!");
+            if (contentFont != null) {
+                // 로드된 폰트를 버튼에 적용합니다.
+                closeButton.setFont(btnFont);
+            } else {
+                System.out.println("Failed to load custom font. Using default font.");
+            }
+            closeButton.setPrefSize(160, 80); // Set the preferred size of the button
             closeButton.setOnAction(e -> {
-
-                dialog.close(); // close Popup
-
-                // Timer will be started after close popup
+                dialog.close(); // Close the popup
+                // Start the timer after the popup is closed
                 PauseTransition wait = new PauseTransition(Duration.seconds(5));
                 wait.setOnFinished(event -> System.out.println("5 Seconds past"));
                 wait.play();
             });
 
-            Scene dialogScene = new Scene(dialogPane, 600, 300);
+            // Add labels and close button to VBox
+            popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
+            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
+
+// Scene and stage setup
+            Scene dialogScene = new Scene(popupVbox);
             dialog.setScene(dialogScene);
             dialog.showAndWait();
 
 
-
+            // **** Start Pop up ****
             BorderPane borderPane = new BorderPane();
 
             // CO2 Parameter Bar (Vertical)
@@ -378,11 +400,10 @@ public class GameView{
             // Add all to the layout
 
 
-
             // Set this layout in the scene
             Scene scene = new Scene(borderPane, 1496, 1117);
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Welcome To "+ stageName);
+            primaryStage.setTitle("Welcome To " + stageName);
             primaryStage.setFullScreen(true);
             primaryStage.show();
 
@@ -500,7 +521,7 @@ public class GameView{
 //            scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
 
             // Add Stage name and Time above and below the map
-            VBox mapBox = new VBox( timeLabel,mapPlaceholder,staminaParameter);
+            VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
             mapBox.setAlignment(Pos.CENTER);
             VBox.setMargin(mapPlaceholder, new Insets(0, 0, 70, 0));
             VBox.setMargin(timeLabel, new Insets(0, 0, 60, 0));
@@ -552,7 +573,7 @@ public class GameView{
         // You might want to hide the stage selection screen and display the game screen, like so:
         root.setVisible(false);
         root.getChildren().removeAll(buttonBox, this.gameModeBox);
-      loadGameScreen(stageName, actionEvent);
+        loadGameScreen(stageName, actionEvent);
 
     }
 

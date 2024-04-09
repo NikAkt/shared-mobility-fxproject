@@ -75,8 +75,6 @@ public class GameController {
     // ****Gem count****
     public static int gemCount = 0;
     // Label to keep track of gem count
-
-
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -136,11 +134,16 @@ public class GameController {
 
     public Button createButton(String text, EventHandler<ActionEvent> action) {
         Button button = new Button(text);
+        if (gameView.btnFont != null) {
+            button.setFont(gameView.btnFont);
+        } else {
+            System.out.println("Failed to load custom font. Using default font.");
+        }
         button.setMinWidth(BUTTON_WIDTH);
         button.setMaxWidth(BUTTON_WIDTH);
-        button.setStyle(normalButtonStyle());
         button.setOnAction(action);
         button.setFocusTraversable(true);
+
 
         //hover colour change
         button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
@@ -155,11 +158,11 @@ public class GameController {
     }
 
     public String normalButtonStyle() {
-        return "-fx-font-size: 24px; -fx-background-color: rgba(255, 255, 240, 0.7); -fx-text-fill: black;";
+        return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: rgba(255, 255, 240, 0.7); -fx-text-fill: black;";
     }
 
     public String focusedButtonStyle() {
-        return "-fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white;";
+        return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
     }
 
 ///Transportation
