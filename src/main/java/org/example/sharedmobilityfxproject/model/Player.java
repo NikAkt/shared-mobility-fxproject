@@ -6,8 +6,7 @@ public class Player implements motion {
     private int stamina; // stamina
     private int speed; // speed
     private double co2; // co2 produced
-
-
+    private Cell playerCell;
 
 
     public Player(int x, int y,int stamina,int speed,double co2,int gems) {
@@ -18,18 +17,17 @@ public class Player implements motion {
         this.co2=0;
     }
 
-
     public int getCoordX() {
-        return x;
+        return this.x;
     }
     public int getCoordY() {
-        return y;
+        return this.y;
     }
     public int getStamina() {
         return stamina;
     }
     public void setSpeed(int speed) {
-        this.speed=speed;
+    this.speed=speed;
     }
     public int getSpeed() {
         return speed;
@@ -48,24 +46,20 @@ public class Player implements motion {
         y -= speed;
     }
 
-
     @Override
     public void moveDown() {
         y += speed;
     }
-
 
     @Override
     public void moveLeft() {
         x -= speed;
     }
 
-
     @Override
     public void moveRight() {
         x += speed;
     }
-
 
     public void decreaseStamina(){ //alternatively we could have each item change the stamina
         stamina=stamina-10;
@@ -73,5 +67,28 @@ public class Player implements motion {
     public void increaseStamina(){
         stamina=stamina+10;
     }
+
+    public void initCell(Grid grid) {
+        this.playerCell = grid.getCell(this.getCoordY(), this.getCoordX());
+    }
+
+    public void setCell(Cell cell) {
+        this.playerCell = cell;
+        this.x = cell.getColumn();
+        this.y = cell.getRow();
+    }
+
+    public void setCellByCoords(Grid grid, int x, int y) {
+        this.playerCell.setColumn(x);
+        this.playerCell.setRow(y);
+        this.x = x;
+        this.y = y;
+    }
+
+    public Cell getCell() {
+        return this.playerCell;
+    }
+
+
 
 }
