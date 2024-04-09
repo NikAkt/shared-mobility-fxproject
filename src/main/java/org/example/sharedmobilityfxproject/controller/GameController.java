@@ -288,7 +288,7 @@ public class GameController {
     }
 
     // Method to update the gem count label
-    private static void updateGemCountLabel() {
+    public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
 

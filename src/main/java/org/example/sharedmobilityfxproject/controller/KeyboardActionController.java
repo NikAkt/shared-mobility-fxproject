@@ -30,8 +30,8 @@ public class KeyboardActionController {
     public boolean onBus = false;
     public Player playerUno;
 
-    public List<Obstacle> obstacles;
-    public ArrayList<int[]> busStopCoordinates;
+    protected List<Obstacle> obstacles;
+    protected ArrayList<int[]> busStopCoordinates;
     public Cell finishCell;
 
     // Constructor to initialise grid
