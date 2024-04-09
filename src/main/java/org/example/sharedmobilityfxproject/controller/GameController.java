@@ -1,5 +1,5 @@
 package org.example.sharedmobilityfxproject.controller;
-import org.example.sharedmobilityfxproject.controller.
+import org.example.sharedmobilityfxproject.controller.GameController;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,7 +63,6 @@ public class GameController {
     public MediaPlayer mediaPlayer;
     public VBox stageSelectionBox;
 
-    public List<Obstacle> obstacles;
 
     // Finish cell
     private Cell finishCell;
@@ -76,6 +75,10 @@ public class GameController {
 
     // ****Gem count****
     public static int gemCount = 0;
+
+    public GameController(KeyboardActionController ka, List<Obstacle> obstacles) {
+    }
+
     // Label to keep track of gem count
     @FunctionalInterface
     public interface GemCollector {
@@ -186,21 +189,12 @@ public class GameController {
         gameView.gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
-    public static void updateGemCountLabel() {
-        System.out.print(gemCount);//works
-        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
-    }
+//    public static void updateGemCountLabel() {
+//        System.out.print(gemCount);//works
+//        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
+//    }
 
-    public void initializeObstacles(Grid grid) {
-        // Initialise Obstacles Setting
-        obstacles = new ArrayList<>();
-        obstacles.add(new Obstacle(grid, 5, 5));
-        obstacles.add(new Obstacle(grid, 10, 5));
-        obstacles.add(new Obstacle(grid, 5, 10));
-
-    }
-
-    public void moveBusTowardsBusStop(Grid grid, Bus bus, busStop stop, KeyboardActions ka, Player playerUno) {
+    public void moveBusTowardsBusStop(Grid grid, Bus bus, busStop stop, KeyboardActionController ka, Player playerUno) {
         // Calculate the Manhattan distance for both possible next steps
         int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
         int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
@@ -279,6 +273,63 @@ public class GameController {
         //grid.add(cell,cell.getColumn(),cell.getRow());
 
     }
+
+
+    public void printArrayContents() {
+        System.out.println("Obstacle Coordinates:");
+        for (int[] coordinates : obstacleCoordinates) {
+            System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
+        }
+
+        System.out.println("Bus Stop Coordinates:");
+        for (int[] coordinates : busStopCoordinates) {
+            System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
+        }
+    }
+
+    // Place the gem after the grid is filled and the player's position is initialized
+    public void generateGems(Grid grid, int numberOfGems) {
+        for (int i = 0; i < numberOfGems; i++) {
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while (containsPointInArray(busStopCoordinates, gemColumn, gemRow) || containsPointInArray(obstacleCoordinates, gemColumn, gemRow));
+
+            Gem gem = new Gem(gemColumn, gemRow,this);
+            grid.add(gem, gemColumn, gemRow);
+        }
+    }
+
+    public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
+        for (int[] coordinates : array) {
+            if (coordinates[0] == x && coordinates[1] == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Method to update the gem count label
+    private static void updateGemCountLabel() {
+        gemCountLabel.setText("Gem Count: " + gemCount);
+    }
+
+    // Method to play the gem collect sound
+    void playGemCollectSound() {
+        Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+
+        // Release resources after sound finishes playing3211
+        mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
+    }
+
+    // Method to update the carbon footprint label
+//    private void updateCarbonFootprintLabel() {
+//        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
+//    }
 
 }
 
