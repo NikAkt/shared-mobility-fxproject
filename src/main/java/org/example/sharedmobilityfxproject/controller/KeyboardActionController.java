@@ -4,17 +4,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 import java.util.ArrayList;
-import java.util.Objects;
-
-
+import java.util.List;
 
 
 public class KeyboardActionController {
@@ -30,14 +26,21 @@ public class KeyboardActionController {
     public int currentColumn;
 
     // Newly Added
-    private boolean playerMovementEnabled = true;
-    private boolean onBus = false;
+    public boolean playerMovementEnabled = true;
+    public boolean onBus = false;
     public Player playerUno;
 
+    public List<Obstacle> obstacles;
+    public ArrayList<int[]> busStopCoordinates;
+    public Cell finishCell;
+
     // Constructor to initialise grid
-    public KeyboardActionController(GameView gameView,Grid grid, Obstacle obstacles, busStop busStopCoordinates, Cell finishCell) {
+    public KeyboardActionController(GameView gameView, Grid grid, List<Obstacle> obstacles, ArrayList<int[]> busStopCoordinates, Cell finishCell) {
         this.gameView = gameView;
         this.grid = grid;
+        this.obstacles = obstacles;
+        this.busStopCoordinates = busStopCoordinates;
+        this.finishCell = finishCell;
         // Don't initialize currentCell here
     }
 
@@ -49,7 +52,7 @@ public class KeyboardActionController {
                     case A -> movePlayer(-1, 0);
                     case W -> movePlayer(0, -1);
                     case S -> movePlayer(0, 1);
-                    case T -> hailTaxi();
+//                    case T -> hailTaxi();
                     case E -> togglePlayerMovement();
                 }
             } else if (event.getCode() == KeyCode.E) {
@@ -86,7 +89,7 @@ public class KeyboardActionController {
     private void collectGem(Cell gemCell) {
         grid.getChildren().remove(gemCell);
         grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
-        playGemCollectSound();
+        gameController.playGemCollectSound();
     }
 
     private void interactWithBusStop(busStop stop) {
@@ -94,7 +97,7 @@ public class KeyboardActionController {
     }
 
     private void finishGame() {
-        gameFinished = true;
+//        gameFinished = true;
         Label levelCompleteLabel = new Label("Level Complete");
         levelCompleteLabel.setStyle("-fx-font-size: 24px;");
         StackPane root = (StackPane) grid.getScene().getRoot();
@@ -104,14 +107,14 @@ public class KeyboardActionController {
         pause.play();
     }
 
-    private void hailTaxi() {
-        hailTaxi = !hailTaxi;
-        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
-        if (hailTaxi) {
-            carbonFootprint += 75;
-            updateCarbonFootprintLabel();
-        }
-    }
+//    private void hailTaxi() {
+//        hailTaxi = !hailTaxi;
+//        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
+//        if (hailTaxi) {
+//            carbonFootprint += 75;
+//            updateCarbonFootprintLabel();
+//        }
+//    }
 
     private void togglePlayerMovement() {
         if (this.onBus) {
