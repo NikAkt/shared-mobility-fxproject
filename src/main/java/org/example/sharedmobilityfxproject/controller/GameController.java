@@ -32,6 +32,7 @@ import java.util.Objects;
 public class GameController {
 
     public Grid grid;
+    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
     public static GameView gameView;
     // ****JavaElement****
     public Stage primaryStage;
@@ -206,9 +207,9 @@ public class GameController {
 //            System.out.println("----------- moving x ---------");
             // Move horizontally towards the bus stop, if not blocked
             int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
-            if (canMoveBusTo(newX, bus.getY())) {
+            if (canMoveBusTo(newX, bus.getY(), ka)) {
                 moveBus(grid ,bus, newX, bus.getY());
-            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1))) {
+            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1), ka)) {
                 // Move vertically as a fallback
                 moveBus(grid ,bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
             }
@@ -218,11 +219,11 @@ public class GameController {
 //            System.out.println("----------- moving y ---------");
             // Move vertically towards the bus stop, if not blocked
             int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
-            if (canMoveBusTo(bus.getX(), newY)) {
+            if (canMoveBusTo(bus.getX(), newY, ka)) {
 
                 moveBus(grid,bus, bus.getX(), newY);
             }
-            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
+            else if (canMoveBusTo(bus.getX() +1, bus.getY(), ka)) {
                 // Move horizontally as a fallback
                 if (bus.flagMove == 0){
                     bus.flagMove =1;
@@ -253,10 +254,10 @@ public class GameController {
 
     }
 
-    private boolean canMoveBusTo(int x, int y) {
+    private boolean canMoveBusTo(int x, int y, KeyboardActionController ka) {
         // Implement logic to check if the bus can move to (x, y) considering obstacles
         // Return true if it can move, false if there's an obstacle
-        return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+        return ka.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
 
     private void moveBus(Grid grid,Bus bus, int newX, int newY) {
@@ -275,32 +276,7 @@ public class GameController {
     }
 
 
-    public void printArrayContents() {
-        System.out.println("Obstacle Coordinates:");
-        for (int[] coordinates : obstacleCoordinates) {
-            System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
-        }
 
-        System.out.println("Bus Stop Coordinates:");
-        for (int[] coordinates : busStopCoordinates) {
-            System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
-        }
-    }
-
-    // Place the gem after the grid is filled and the player's position is initialized
-    public void generateGems(Grid grid, int numberOfGems) {
-        for (int i = 0; i < numberOfGems; i++) {
-            int gemColumn;
-            int gemRow;
-            do {
-                gemColumn = (int) (Math.random() * COLUMNS);
-                gemRow = (int) (Math.random() * ROWS);
-            } while (containsPointInArray(busStopCoordinates, gemColumn, gemRow) || containsPointInArray(obstacleCoordinates, gemColumn, gemRow));
-
-            Gem gem = new Gem(gemColumn, gemRow,this);
-            grid.add(gem, gemColumn, gemRow);
-        }
-    }
 
     public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
         for (int[] coordinates : array) {
