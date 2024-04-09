@@ -26,7 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
+import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
 
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
@@ -55,11 +55,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
+
+
+
 public class GameView {
 
     // **** Class call ****
     public GameView gameView;
     public GameController gameController;
+    public KeyboardActionController ka;
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
@@ -161,9 +165,10 @@ public class GameView {
     // From MAIN OF MERGE ENDING
 
     public GameView(Grid grid) {
-        gameController = new GameController();
+        ka = new KeyboardActionController(this, grid, obstacles, busStopCoordinates, finishCell);
+        gameController = new GameController(ka, obstacles);
         this.obstacles = new ArrayList<>();
-        gameController.initializeObstacles(grid);
+//        gameController.initializeObstacles(grid);
     }
 
     public void showInitialScreen(Stage primaryStage) {
@@ -442,15 +447,15 @@ public class GameView {
 
 
             // Set this layout in the scene
-            Scene scene = new Scene(borderPane, 1496, 1117);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Welcome To " + stageName);
-            primaryStage.setFullScreen(true);
-            primaryStage.show();
+//            Scene scene = new Scene(borderPane, 1496, 1117);
+//            primaryStage.setScene(scene);
 
             // Create a StackPane to hold all elements
             StackPane root = new StackPane();
             Scene scene = new Scene(root);
+            primaryStage.setTitle("Welcome To " + stageName);
+            primaryStage.setFullScreen(true);
+            primaryStage.show();
             busStopCoordinates = new ArrayList<>();
             obstacleCoordinates = new ArrayList<>();
 
@@ -468,7 +473,7 @@ public class GameView {
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
             // Create keyboard actions handler
-            KeyboardActions ka = new KeyboardActions(grid);
+
             // Fill grid with cells
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
@@ -607,7 +612,7 @@ public class GameView {
                 if (!busman.isWaiting){
 
 
-                    moveBusTowardsBusStop(grid, busman, targetBusStop, ka, playerUno);
+                    gameController.moveBusTowardsBusStop(grid, busman, targetBusStop, ka, playerUno);
 
                     // Here's the updated part
                     if (ka.onBus) {
@@ -616,7 +621,7 @@ public class GameView {
                         System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
                         //Increase carbon footprint amount as long as player is on the bus
                         carbonFootprint+=0.2; //subject to change
-                        updateCarbonFootprintLabel();
+                        gameController.updateCarbonFootprintLabel();
                     }}
                 else{
                     if(busman.waitTime ==0){
@@ -664,7 +669,7 @@ public class GameView {
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);
 
-        gameController = new GameController();
+        gameController = new GameController(ka = new KeyboardActionController(this, new Grid(COLUMNS, ROWS, WIDTH, HEIGHT), obstacles, busStopCoordinates, finishCell), obstacles);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -684,7 +689,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
-        gameController = new GameController();
+        gameController = new GameController(ka, obstacles); // #TODO: why is this here?
         root.getChildren().removeAll(buttonBox);
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
