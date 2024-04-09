@@ -17,7 +17,7 @@ import java.util.Objects;
 
 
 
-public class KeyBoradActionController {
+public class KeyboardActionController {
 
     //class call
     public GameController gameController;
@@ -32,12 +32,10 @@ public class KeyBoradActionController {
     // Newly Added
     private boolean playerMovementEnabled = true;
     private boolean onBus = false;
-    private Grid grid;
-    public Cell currentCell;
     public Player playerUno;
 
     // Constructor to initialise grid
-    public KeyBoradActionController(GameView gameView,Grid grid) {
+    public KeyboardActionController(GameView gameView,Grid grid, Obstacle obstacles, busStop busStopCoordinates, Cell finishCell) {
         this.gameView = gameView;
         this.grid = grid;
         // Don't initialize currentCell here
@@ -133,61 +131,4 @@ public class KeyBoradActionController {
             ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
         }
     }
-}
-
-public void printArrayContents() {
-    System.out.println("Obstacle Coordinates:");
-    for (int[] coordinates : obstacleCoordinates) {
-        System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
-    }
-
-    System.out.println("Bus Stop Coordinates:");
-    for (int[] coordinates : busStopCoordinates) {
-        System.out.println("X: " + coordinates[0] + ", Y: " + coordinates[1]);
-    }
-}
-
-// Place the gem after the grid is filled and the player's position is initialized
-public void generateGems(Grid grid, int numberOfGems) {
-    for (int i = 0; i < numberOfGems; i++) {
-        int gemColumn;
-        int gemRow;
-        do {
-            gemColumn = (int) (Math.random() * COLUMNS);
-            gemRow = (int) (Math.random() * ROWS);
-        } while (containsPointInArray(busStopCoordinates, gemColumn, gemRow) || containsPointInArray(obstacleCoordinates, gemColumn, gemRow));
-
-        Gem gem = new Gem(gemColumn, gemRow,this);
-        grid.add(gem, gemColumn, gemRow);
-    }
-}
-
-public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
-    for (int[] coordinates : array) {
-        if (coordinates[0] == x && coordinates[1] == y) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Method to update the gem count label
-private static void updateGemCountLabel() {
-    gemCountLabel.setText("Gem Count: " + gemCount);
-}
-
-// Method to play the gem collect sound
-private void playGemCollectSound() {
-    Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
-    MediaPlayer mediaPlayer = new MediaPlayer(sound);
-    mediaPlayer.play();
-
-    // Release resources after sound finishes playing3211
-    mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
-}
-
-// Method to update the carbon footprint label
-private void updateCarbonFootprintLabel() {
-    carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
-}
 }
