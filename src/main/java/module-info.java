@@ -11,6 +11,7 @@ module org.example.sharedmobilityfxproject {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires com.fasterxml.jackson.databind;
 
     opens org.example.sharedmobilityfxproject to javafx.fxml;
     exports org.example.sharedmobilityfxproject;

@@ -1,5 +1,7 @@
 package org.example.sharedmobilityfxproject.view;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.PauseTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -35,9 +37,10 @@ import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class GameView {
@@ -135,7 +138,7 @@ public class GameView {
         Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
         //Font Set
-
+       educationalPopup();
         // Apply initial styles
         applyButtonStyles(btnStartGame, false);
         applyButtonStyles(btnExit, false);
@@ -240,7 +243,7 @@ public class GameView {
 
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
-                        "          My Dearest team mates\n          OilWrestlingLovers" +
+                        "          My Dearest team mates\n          OilWrestlingLovers :)" +
                         " \n          Nick aktoudianakis" +"\n          MustaFa Yilmaz"+"\n          Eamonn Walsh"+"\n          and \n          Gyuwon Jung"
 
         );
@@ -449,8 +452,7 @@ public class GameView {
 //            staminaContainer.getChildren().add(staminaText);
             staminaContainer.getChildren().add(staminaParameter); // 상단에 텍스트 추가
             VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
-            staminaContainer.setAlignment(Pos.CENTER); // 컨테이너 내의 항목을 중앙 정렬
-
+            staminaContainer.setAlignment(Pos.CENTER);
 
             // Time countdown
             Label timeLabel = new Label();
@@ -468,7 +470,7 @@ public class GameView {
 
             timeSeconds.addListener((obs, oldVal, newVal) -> {
                 timeLabel.setText("Time left: " + newVal + "s");
-                timeLabel.setFont(javafx.scene.text.Font.font(40));
+                timeLabel.setFont(btnFont);
             });
             timeLabel.setAlignment(Pos.CENTER);
 
@@ -478,129 +480,12 @@ public class GameView {
             mapPlaceholder.setAlignment(Pos.CENTER);
             mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
-
-            // Add all to the layout
-
-
             // Set this layout in the scene
             Scene scene = new Scene(borderPane, 1496, 1117);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Welcome To " + stageName);
             //primaryStage.setFullScreen(true);
             primaryStage.show();
-
-//            // Create grid for the game
-            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
-
-//            // Create keyboard actions handler
-            KeyBoradActionController ka = new KeyBoradActionController(gameView, grid);
-            // Fill grid with cells
-            Cell cell = null;
-            for (int row = 0; row < ROWS; row++) {
-                for (int column = 0; column < COLUMNS; column++) {
-                    cell = new Cell(column, row);
-                    ka.setupKeyboardActions(scene);
-                    grid.add(cell, column, row);
-                }
-            }
-
-//            // Create label for gem count
-            gemCountLabel = new Label("Gem Count: " + gemCount);
-            gemCountLabel.setStyle("-fx-font-size: 16px;");
-            gemCountLabel.setAlignment(Pos.TOP_LEFT);
-            gemCountLabel.setPadding(new Insets(10));
-
-//            // Create label for carbon footprint
-            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
-            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-            carbonFootprintLabel.setPadding(new Insets(10));
-//
-//
-//            // Create a VBox to hold the gem count label
-//            VBox mapBox = new VBox((Node) gemCountLabel, (Node) carbonFootprintLabel, (Node) timeLabel, (Node) staminaParameter);
-//            mapBox.setAlignment(Pos.CENTER);
-//
-//            int gemColumn;
-//            int gemRow;
-//            do {
-//                gemColumn = (int) (Math.random() * COLUMNS);
-//                gemRow = (int) (Math.random() * ROWS);
-//            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
-//            Gem gem = new Gem(gemColumn, gemRow);
-//            grid.add(gem, gemColumn, gemRow);
-//
-//            // Initialise Obstacles for x = 0 only
-//            obstacles = new ArrayList<>();
-//
-//            // Start at row index 3 and create groups of three obstacles with a space of two
-//            int positionX0 = 3;
-//            int countX0 = 0;
-//            while (countX0 < 67) {
-//                obstacles.add(new Obstacle(grid, 0, positionX0));
-//                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
-//                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
-//                positionX0 += 5;
-//                countX0 += 3;
-//            }
-//
-//
-////            // Initialise Obstacles
-////            obstacles = new ArrayList<>();
-////            obstacles.add(new Obstacle(grid, 5, 5));
-////            obstacles.add(new Obstacle(grid, 10, 5));
-////            obstacles.add(new Obstacle(grid, 5, 10));
-//
-//            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
-//
-//
-//            // For each x position
-//            for (int x : xPositions) {
-//                int positionX = 3;
-//                int countX = 0;
-//                while (countX < 67) {
-//                    obstacles.add(new Obstacle(grid, x, positionX));
-//                    obstacles.add(new Obstacle(grid, x, positionX + 1));
-//                    obstacles.add(new Obstacle(grid, x, positionX + 2));
-//                    positionX += 5;
-//                    countX += 3;
-//                }
-//            }
-//
-//            // Place the finish cell after the grid is filled and the player's position is initialised
-//            int finishColumn;
-//            int finishRow;
-//            do {
-//                finishColumn = (int) (Math.random() * COLUMNS);
-//                finishRow = (int) (Math.random() * ROWS);
-//            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
-//            finishCell = new Cell(finishColumn, finishRow);
-//            finishCell.getStyleClass().add("finish");
-//            grid.add(finishCell, finishColumn, finishRow);
-//
-//            // Initialise currentCell after the grid has been filled
-//            // Initialise Player
-//            Player playerUno = new Player(25, 25, 10, 1, 10, 0);
-//            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
-//
-//
-//            // Initialize currentCell after the grid has been filled
-//            ka.currentCell = grid.getCell(0, 0);
-//
-//
-//            // Add background image, grid, and gem count label to the root StackPane
-//            root.getChildren().addAll(grid);
-//
-//            // Colour cells
-//            // Define cells with coordinates and colors
-//            cell.colorCell(70, 70, "red");
-//            cell.colorCell(75, 75, "yellow");
-//
-//
-//            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
-//            // create scene and set to stage
-//
-//            scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
 
             // Add Stage name and Time above and below the map
             VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
@@ -645,10 +530,11 @@ public class GameView {
             mediaPlayer.stop();
         }
 
-        Media gameMusic = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
-        mediaPlayer = new MediaPlayer(gameMusic);
+        Media gameMusic1 = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(gameMusic1);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
         mediaPlayer.play(); // Start playing the new background music
+
         // This is where you would transition to the actual game play scene
         // For now, just printing out the selection
         System.out.println("You have selected the stage: " + stageName);
@@ -770,7 +656,71 @@ public class GameView {
         });
     }
 
+    public void educationalPopup() {
+        try {
 
+            FileInputStream ins = new FileInputStream("src/main/resources/data/educational_messages.json");
+            InputStreamReader inr = new InputStreamReader(ins, "UTF-8");
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Read the JSON content as a List
+            List<String> messages = mapper.readValue(inr, new TypeReference<List<String>>(){});
+
+            // Ensure the list is not empty and select a random message
+            if (!messages.isEmpty()) {
+                Random rand = new Random();
+                String randomMessage = messages.get(rand.nextInt(messages.size()));
+
+                final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(this.primaryStage);
+                dialog.initStyle(StageStyle.UNDECORATED);
+
+                VBox popupVbox = new VBox(60);
+                popupVbox.setAlignment(Pos.CENTER);
+                popupVbox.setPrefWidth(450);
+                popupVbox.setPrefHeight(700);
+                popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+
+                Label noticeLabel = new Label("Environmental \n      Fun Fact!");
+                noticeLabel.setFont(creditFont);
+                noticeLabel.setAlignment(Pos.TOP_CENTER);
+
+                Label educationalMsgLabel = new Label();
+                educationalMsgLabel.setText(randomMessage);
+                educationalMsgLabel.setWrapText(true);
+                educationalMsgLabel.setAlignment(Pos.CENTER);
+                educationalMsgLabel.setFont(contentFont);
+
+                // Close Button
+                Button closeButton = new Button("Close");
+                if (contentFont != null) {
+                    closeButton.setFont(btnFont);
+                } else {
+                    System.out.println("Failed to load custom font. Using default font.");
+                }
+                closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+                closeButton.setOnAction(e -> {
+                    dialog.close(); // Close the popup
+                    // Start the timer after the popup is closed
+                    PauseTransition wait = new PauseTransition(Duration.seconds(5));
+                    wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+                    wait.play();
+                });
+                // Add labels and close button to VBox
+                popupVbox.getChildren().addAll(noticeLabel, educationalMsgLabel, closeButton);
+                VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
+                Scene dialogScene = new Scene(popupVbox);
+                dialog.setScene(dialogScene);
+                dialog.showAndWait();
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
