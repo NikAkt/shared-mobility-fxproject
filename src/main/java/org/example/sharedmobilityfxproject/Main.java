@@ -1,34 +1,8 @@
 package org.example.sharedmobilityfxproject;
-import org.example.sharedmobilityfxproject.model.*;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.animation.Animation;
-import javafx.scene.input.KeyCode;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.sharedmobilityfxproject.model.Player;
-
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
-import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Arrays;
-import org.example.sharedmobilityfxproject.controller.GameController;
-import org.example.sharedmobilityfxproject.controller.SceneController;
 
 // Main class extends Application for JavaFX application
 public class Main extends Application {
