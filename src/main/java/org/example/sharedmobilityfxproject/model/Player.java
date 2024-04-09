@@ -7,7 +7,7 @@ public class Player implements motion {
     private int speed; // speed
     private double co2; // co2 produced
     private Cell playerCell;
-
+    public boolean isUnderground= false;
 
     public Player(int x, int y,int stamina,int speed,double co2,int gems) {
         this.x = x;
