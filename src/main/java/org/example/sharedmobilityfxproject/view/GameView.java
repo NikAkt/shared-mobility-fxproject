@@ -1,11 +1,8 @@
 package org.example.sharedmobilityfxproject.view;
 
-import javafx.animation.PauseTransition;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -41,6 +38,7 @@ import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.model.Cell;
+import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 
 import java.io.File;
 import java.io.InputStream;
@@ -108,17 +106,66 @@ public class GameView {
 
     //Grid setting
     // Boolean flag to control hover cursor visibility
-    boolean showHoverCursor = true;
-    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    private static final int ROWS = 30;
-    private static final int COLUMNS = 60;
-    private static final double WIDTH = 800;
-    private static final double HEIGHT = 600;
+//    boolean showHoverCursor = true;
+//    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+//    private static final int ROWS = 30;
+//    private static final int COLUMNS = 60;
+//    private static final double WIDTH = 800;
+//    private static final double HEIGHT = 600;
 
     // **** Font Setting ****
     public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
     public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
     public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
+
+
+    // From MAIN OF MERGE STARTS
+
+    // Boolean flag to control hover cursor visibility
+    boolean showHoverCursor = true;
+    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    private static final int ROWS = 80;
+    private static final int COLUMNS = 120;
+    private static final double WIDTH = 1300;
+    private static final double HEIGHT = 680;
+
+    // Gem count
+    static int gemCount = 0;
+
+    // Carbon footprint
+    float carbonFootprint = 0;
+
+    // Label to keep track of gem count
+    static Label gemCountLabel; // Label to display gem count
+
+    // Obstacles
+    // List to keep track of all obstacles
+    private List<Obstacle> obstacles;
+    public ArrayList<int[]> busStopCoordinates;
+    public ArrayList<int[]> obstacleCoordinates;
+
+    // Finish cell
+    private Cell finishCell;
+    private Bus busman;
+    // Boolean flag to track if the game has finished
+    boolean gameFinished = false;
+
+    // Boolean flag to track if the player is in a taxi
+    boolean hailTaxi = false;
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
+
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
+    @FunctionalInterface
+    public interface GemCollector {
+        void collectGem();
+    }
+
+    // From MAIN OF MERGE ENDING
 
     public GameView(Grid grid) {
         gameController = new GameController();
@@ -282,6 +329,7 @@ public class GameView {
         return imageView;
     }
 
+    // This is where the game screen is loaded MAIN WILL BE HERE
     public void loadGameScreen(String stageName, Stage primaryStage) {
 
         try {
@@ -407,128 +455,193 @@ public class GameView {
             primaryStage.setFullScreen(true);
             primaryStage.show();
 
-//            // Create grid for the game
+            // Create a StackPane to hold all elements
+            StackPane root = new StackPane();
+            Scene scene = new Scene(root);
+            busStopCoordinates = new ArrayList<>();
+            obstacleCoordinates = new ArrayList<>();
+
+            // Settings
+            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+            primaryStage.getIcons().add(icon);
+            primaryStage.setTitle("Shared Mobility Application");
+            primaryStage.setWidth(WIDTH);
+            primaryStage.setHeight(HEIGHT);
+            primaryStage.setResizable(false);
+//            primaryStage.setFullScreen(true);
+//            primaryStage.setFullScreenExitHint("Press esc to minimize !");
+
+            // Create grid for the game
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
-//            // Create keyboard actions handler
-            KeyBoradActionController ka = new KeyBoradActionController(gameView, grid);
+            // Create keyboard actions handler
+            KeyboardActions ka = new KeyboardActions(grid);
             // Fill grid with cells
-            Cell cell = null;
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
-                    cell = new Cell(column, row);
+                    Cell cell = new Cell(column, row);
                     ka.setupKeyboardActions(scene);
                     grid.add(cell, column, row);
                 }
             }
 
-//            // Create label for gem count
+            //bus SHITE
+            busStop busS1 = new busStop(4,4);
+            busStop busS2 = new busStop(110,4);
+            busStop busS3 = new busStop(57,25);
+            busStop busS4 = new busStop(110,64);
+            busStop busS5 = new busStop(57,64);
+            busStop busS6 = new busStop(4,64);
+            busStop busS7 = new busStop(4,34);
+
+            busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+            busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+            busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+            busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+            busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+            busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+            busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+
+            ArrayList busStops  = new ArrayList<>();
+            busStops.add(busS1);
+            busStops.add(busS2);
+            busStops.add(busS3);
+            busStops.add(busS4);
+            busStops.add(busS5);
+            busStops.add(busS6);
+            busStops.add(busS7);
+
+            busman = new Bus(busStops,4, 4);
+            for (int i = 0; i < busman.list().size(); i++){
+                busStop stop = busman.list().get(i);
+                grid.add(stop,stop.getX(), stop.getY());
+            }
+
+            grid.add(busman,busman.getX(), busman.getY());// Example starting position
+
+            // Schedule the bus to move every second
+
+
+            // Create label for gem count
             gemCountLabel = new Label("Gem Count: " + gemCount);
             gemCountLabel.setStyle("-fx-font-size: 16px;");
             gemCountLabel.setAlignment(Pos.TOP_LEFT);
             gemCountLabel.setPadding(new Insets(10));
 
-//            // Create label for carbon footprint
-            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            // Create label for carbon footprint
+            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
             carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
             carbonFootprintLabel.setPadding(new Insets(10));
-//
-//
-//            // Create a VBox to hold the gem count label
-//            VBox mapBox = new VBox((Node) gemCountLabel, (Node) carbonFootprintLabel, (Node) timeLabel, (Node) staminaParameter);
-//            mapBox.setAlignment(Pos.CENTER);
-//
-//            int gemColumn;
-//            int gemRow;
-//            do {
-//                gemColumn = (int) (Math.random() * COLUMNS);
-//                gemRow = (int) (Math.random() * ROWS);
-//            } while (gemColumn == 0 && gemRow == 0); // Ensure gem doesn't spawn at player's starting position
-//            Gem gem = new Gem(gemColumn, gemRow);
-//            grid.add(gem, gemColumn, gemRow);
-//
-//            // Initialise Obstacles for x = 0 only
-//            obstacles = new ArrayList<>();
-//
-//            // Start at row index 3 and create groups of three obstacles with a space of two
-//            int positionX0 = 3;
-//            int countX0 = 0;
-//            while (countX0 < 67) {
-//                obstacles.add(new Obstacle(grid, 0, positionX0));
-//                obstacles.add(new Obstacle(grid, 0, positionX0 + 1));
-//                obstacles.add(new Obstacle(grid, 0, positionX0 + 2));
-//                positionX0 += 5;
-//                countX0 += 3;
-//            }
-//
-//
-////            // Initialise Obstacles
-////            obstacles = new ArrayList<>();
-////            obstacles.add(new Obstacle(grid, 5, 5));
-////            obstacles.add(new Obstacle(grid, 10, 5));
-////            obstacles.add(new Obstacle(grid, 5, 10));
-//
-//            int[] xPositions = {3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 59, 60, 61, 62, 63};
-//
-//
-//            // For each x position
-//            for (int x : xPositions) {
-//                int positionX = 3;
-//                int countX = 0;
-//                while (countX < 67) {
-//                    obstacles.add(new Obstacle(grid, x, positionX));
-//                    obstacles.add(new Obstacle(grid, x, positionX + 1));
-//                    obstacles.add(new Obstacle(grid, x, positionX + 2));
-//                    positionX += 5;
-//                    countX += 3;
-//                }
-//            }
-//
-//            // Place the finish cell after the grid is filled and the player's position is initialised
-//            int finishColumn;
-//            int finishRow;
+
+            // Create a VBox to hold the gem count label
+            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
+            vbox.setAlignment(Pos.TOP_LEFT);
+
+
+            // Initialise Obstacles for x = 0
+            // Initialise Obstacles
+            // Initialise Obstacles
+            obstacles = new ArrayList<>();
+
+            // Define the size of the obstacle blocks and the gap between them
+            int obstacleWidth = 5;
+            int obstacleHeight = 3;
+            int gap = 5;
+
+            // Calculate the number of obstacle blocks in each direction
+            int numBlocksX = (COLUMNS - 2 * gap) / (obstacleWidth + gap);
+            int numBlocksY = (ROWS - 2 * gap) / (obstacleHeight + gap);
+
+
+            // For each block position
+            for (int bx = 0; bx < numBlocksX; bx++) {
+                for (int by = 0; by < numBlocksY; by++) {
+                    // Calculate the top-left corner of the block
+                    int x = gap + bx * (obstacleWidth + gap);
+                    int y = gap + by * (obstacleHeight + gap);
+
+                    // Create the obstacle block
+                    for (int i = 0; i < obstacleWidth; i++) {
+                        for (int j = 0; j < obstacleHeight; j++) {
+                            obstacles.add(new Obstacle(grid, x + i, y + j));
+                            List<Integer> coordinatePair = new ArrayList<>();
+
+                            coordinatePair.add(x + i);
+                            coordinatePair.add(y + j);
+                        }
+                    }
+                }
+            }
+            for (Obstacle obstacle : obstacles) {
+                obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
+            }
+
+            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
+
+            // Place the finish cell after the grid is filled and the player's position is initialised
+            int finishColumn;
+            int finishRow;
+            finishColumn=102;
+            finishRow=58;
 //            do {
 //                finishColumn = (int) (Math.random() * COLUMNS);
 //                finishRow = (int) (Math.random() * ROWS);
-//            } while ((finishColumn == 0 && finishRow == 0) || (finishColumn == gemColumn && finishRow == gemRow)); // Ensure finish doesn't spawn at player's starting position or gem position
-//            finishCell = new Cell(finishColumn, finishRow);
-//            finishCell.getStyleClass().add("finish");
-//            grid.add(finishCell, finishColumn, finishRow);
-//
-//            // Initialise currentCell after the grid has been filled
-//            // Initialise Player
-//            Player playerUno = new Player(25, 25, 10, 1, 10, 0);
-//            ka.playerUnosCell = grid.getCell(playerUno.getCoordY(), playerUno.getCoordY());
-//
-//
-//            // Initialize currentCell after the grid has been filled
-//            ka.currentCell = grid.getCell(0, 0);
-//
-//
-//            // Add background image, grid, and gem count label to the root StackPane
-//            root.getChildren().addAll(grid);
-//
-//            // Colour cells
-//            // Define cells with coordinates and colors
-//            cell.colorCell(70, 70, "red");
-//            cell.colorCell(75, 75, "yellow");
-//
-//
-//            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
-//            // create scene and set to stage
-//
-//            scene.getStylesheets().add(new File("src/main/resources/css/application.css").toURI().toString());
+//            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
+            finishCell = new Cell(finishColumn, finishRow);
+            finishCell.getStyleClass().add("finish");
+            grid.add(finishCell, finishColumn, finishRow);
 
-            // Add Stage name and Time above and below the map
-            VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
-            mapBox.setAlignment(Pos.CENTER);
-            VBox.setMargin(mapPlaceholder, new Insets(0, 0, 70, 0));
-            VBox.setMargin(timeLabel, new Insets(0, 0, 60, 0));
+            // Initialise Player
+            Player playerUno = new Player(0,0,10,1,10,0);
+            playerUno.initCell(grid);
+            ka.playerUno = playerUno;
 
-            // Add all to the layout
-            borderPane.setCenter(mapBox);
-            borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
+            // Initialize currentCell after the grid has been filled
+            ka.currentCell = grid.getCell(0, 0);
+
+            // Add background image, grid, and gem count label to the root StackPane
+            root.getChildren().addAll(grid, vbox);
+//            System.out.println(busS1.getX());
+            // create scene and set to stage
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+            // Schedule the bus to move every second
+            Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
+                busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
+                if (!busman.isWaiting){
+
+
+                    moveBusTowardsBusStop(grid, busman, targetBusStop, ka, playerUno);
+
+                    // Here's the updated part
+                    if (ka.onBus) {
+                        // Update player's coordinates to match the bus when the player is on the bus
+                        playerUno.setCellByCoords(grid, busman.getX(), busman.getY());
+                        System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
+                        //Increase carbon footprint amount as long as player is on the bus
+                        carbonFootprint+=0.2; //subject to change
+                        updateCarbonFootprintLabel();
+                    }}
+                else{
+                    if(busman.waitTime ==0){
+                        busman.waitASec();
+                    }
+                    else{
+                        busman.waitTime--;
+                    }
+                }
+            }));
+
+            busMovementTimeline.setCycleCount(Animation.INDEFINITE);
+            busMovementTimeline.play();
+
+            // Player animation
+            Timeline playerMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> {
+
+            }));
         } catch (Exception e) {
             e.printStackTrace();
 
