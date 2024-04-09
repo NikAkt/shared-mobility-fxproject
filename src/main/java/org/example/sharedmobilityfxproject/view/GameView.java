@@ -166,7 +166,7 @@ public class GameView {
 
     public GameView(Grid grid) {
         ka = new KeyboardActionController(this, grid, obstacles, busStopCoordinates, finishCell);
-        gameController = new GameController(ka, obstacles);
+        gameController = new GameController();
         this.obstacles = new ArrayList<>();
 //        gameController.initializeObstacles(grid);
     }
