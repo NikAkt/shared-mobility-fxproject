@@ -76,6 +76,10 @@ public class Main extends Application {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
+    private void colorCell(int column, int row, String color) {
+        Cell cell = grid.getCell(column, row);
+        cell.colorCell(color);
+    }
     public static void increaseGemCount() {
         gemCount++;
         updateGemCountLabel();
