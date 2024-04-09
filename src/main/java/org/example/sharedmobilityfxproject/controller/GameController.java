@@ -76,7 +76,7 @@ public class GameController {
     // ****Gem count****
     public static int gemCount = 0;
 
-    public GameController(KeyboardActionController ka, List<Obstacle> obstacles) {
+    public GameController() {
     }
 
     // Label to keep track of gem count

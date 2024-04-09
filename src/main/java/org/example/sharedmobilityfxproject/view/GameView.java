@@ -669,7 +669,7 @@ public class GameView {
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);
 
-        gameController = new GameController(ka = new KeyboardActionController(this, new Grid(COLUMNS, ROWS, WIDTH, HEIGHT), obstacles, busStopCoordinates, finishCell), obstacles);
+        gameController = new GameController();
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -689,7 +689,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
-        gameController = new GameController(ka, obstacles); // #TODO: why is this here?
+        gameController = new GameController(); // #TODO: why is this here?
         root.getChildren().removeAll(buttonBox);
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
