@@ -61,7 +61,6 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 public class GameView {
 
     // **** Class call ****
-    public GameView gameView;
     public GameController gameController;
     public KeyboardActionController ka;
     public Gem gem;
@@ -157,15 +156,9 @@ public class GameView {
         gemCount++;
         updateGemCountLabel();
     }
-    @FunctionalInterface
-    public interface GemCollector {
-        void collectGem();
-    }
 
     // From MAIN OF MERGE ENDING
-
     public GameView() {
-        ka = new KeyboardActionController(this, obstacles, finishCell);
         gameController = new GameController();
 //        gameController.initializeObstacles(grid);
     }
@@ -574,16 +567,9 @@ public class GameView {
             // Initialise Player
             Player playerUno = new Player(0,0,10,1,10,0);
             playerUno.initCell(grid);
+
+            ka = new KeyboardActionController(this, obstacles, finishCell);
             ka.playerUno = playerUno;
-
-            // Initialize currentCell after the grid has been filled
-            ka.currentCell = grid.getCell(0, 0);
-
-            // to pass into keyboard interraction might need to change
-            ka.obstacles = obstacles;
-            ka.finishCell = finishCell;
-
-
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid);
@@ -596,9 +582,9 @@ public class GameView {
 
 
             // Player animation
-            Timeline playerMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> {
-
-            }));
+//            Timeline playerMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> {
+//
+//            }));
         } catch (Exception e) {
             e.printStackTrace();
 
