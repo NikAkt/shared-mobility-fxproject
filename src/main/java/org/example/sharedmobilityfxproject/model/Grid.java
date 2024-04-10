@@ -14,7 +14,8 @@ public class Grid extends Pane {
     double width;
     double height;
 
-    Cell[][] cells;
+    private Cell[][] cells;
+
 
     public Grid(int columns, int rows, double width, double height) {
 
@@ -22,7 +23,6 @@ public class Grid extends Pane {
         this.rows = rows;
         this.width = width;
         this.height = height;
-
         cells = new Cell[rows][columns];
 
     }
@@ -31,6 +31,7 @@ public class Grid extends Pane {
      * Add cell to array and to the UI.
      */
     public void add(Cell cell, int column, int row) {
+
         cells[row][column] = cell;
         updateCellPosition(cell, column, row);
     }
@@ -60,6 +61,7 @@ public class Grid extends Pane {
             getChildren().add(cell);
         }
     }
+
     public int getRows() {
         return rows;
     }

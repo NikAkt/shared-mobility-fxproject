@@ -7,22 +7,17 @@ import javafx.scene.layout.StackPane;
  * It manages the visual representation and state of the cell, such as highlighting.
  */
 public class Cell extends StackPane {
-
     int column;
     int row;
 
     public Cell(int column, int row) {
-
         this.column = column;
         this.row = row;
-
         getStyleClass().add("cell");
+    }
 
-//          Label label = new Label(this.toString());
-//
-//          getChildren().add(label);
-
-        setOpacity(0.9);
+    public void colorCell(int column, int row,String color) {
+        this.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 0;");
     }
 
     public void highlight() {

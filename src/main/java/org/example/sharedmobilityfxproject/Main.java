@@ -1,4 +1,44 @@
 package org.example.sharedmobilityfxproject;
+
+import javafx.application.Application;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import org.example.sharedmobilityfxproject.controller.GameController;
+import org.example.sharedmobilityfxproject.controller.SceneController;
+
+// Main class extends Application for JavaFX application
+public class Main extends Application {
+
+    public SceneController sceneController;
+    public GameController gameController;
+
+    // Label to keep track of total carbon footprint
+    Label carbonFootprintLabel; // Label to display carbon footprint
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        try {
+            gameController = new GameController();
+            gameController.startGame(primaryStage);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+
+/////////////////////////////////////////////////////////////////////
+
+
+
+
+package org.example.sharedmobilityfxproject;
 import org.example.sharedmobilityfxproject.model.*;
 
 import javafx.animation.KeyFrame;
@@ -250,17 +290,17 @@ public class Main extends Application {
                 if (!busman.isWaiting){
 
 
-                moveBusTowardsBusStop(grid, busman, targetBusStop, ka);
+                    moveBusTowardsBusStop(grid, busman, targetBusStop, ka);
 
-                // Here's the updated part
-                if (ka.onBus) {
-                    // Update player's coordinates to match the bus when the player is on the bus
-                    playerUno.setCellByCoords(grid, busman.getX(), busman.getY());
-                    System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
-                    //Increase carbon footprint amount as long as player is on the bus
-                    carbonFootprint+=0.2; //subject to change
-                    updateCarbonFootprintLabel();
-                }}
+                    // Here's the updated part
+                    if (ka.onBus) {
+                        // Update player's coordinates to match the bus when the player is on the bus
+                        playerUno.setCellByCoords(grid, busman.getX(), busman.getY());
+                        System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
+                        //Increase carbon footprint amount as long as player is on the bus
+                        carbonFootprint+=0.2; //subject to change
+                        updateCarbonFootprintLabel();
+                    }}
                 else{
                     if(busman.waitTime ==0){
                         busman.waitASec();
@@ -282,7 +322,7 @@ public class Main extends Application {
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus, KeyboardActions ka) {
 
         if (bus.getX()==ka.playerUno.getCoordX()&&bus.getY()==ka.playerUno.getCoordY()&&taximan.arrived&&!ka.inTaxi){
-          ka.inTaxi = true;
+            ka.inTaxi = true;
 
         }
 //        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
@@ -377,9 +417,9 @@ public class Main extends Application {
             System.out.println("now going towards :"+bus.nextStop());
             if(!ka.playerMovementEnabled&&ka.playerUno.getCoordX()==bus.getX()&&ka.playerUno.getCoordY()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
-            ka.onBus = true;
+                ka.onBus = true;
 
-        }else if(ka.onBus){
+            }else if(ka.onBus){
                 System.out.println("----------- You arrived at  ---------"+stop);
                 System.out.println("----------- Press E to get off  ---------");
                 ka.onBus = true;
@@ -387,7 +427,7 @@ public class Main extends Application {
             }
         }
         else if (bus.getY()==stop.getY()) {
-         bus.flagMove=0;
+            bus.flagMove=0;
         }
 
     }
@@ -436,7 +476,7 @@ public class Main extends Application {
         public Player playerUno; // Made public for access in start method
         private int currentRow = 0;
         private int currentColumn = 0;
-//        public void setX(int i ){
+        //        public void setX(int i ){
 //            this.playerUnosCell.setRow(i);
 //        }
 //        public void setY(int j ){
@@ -469,7 +509,7 @@ public class Main extends Application {
 
         public void setupKeyboardActions(Scene scene) {
             scene.setOnKeyPressed(event -> {
-                        if (playerMovementEnabled) {
+                if (playerMovementEnabled) {
 
                     if(this.inTaxi){
                         switch (event.getCode()) {
@@ -489,21 +529,21 @@ public class Main extends Application {
                     // Player
                     else{ switch (event.getCode()) {
                         case D -> movePLayer(1, 0);
-                    case A -> movePLayer(-1, 0);
-                    case W -> movePLayer(0, -1);
-                    case S -> movePLayer(0, 1);
-                    case T -> hailTaxi();
-                    case E -> togglePlayerMovement();
-                    case C ->System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                            "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                            "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                            "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+                        case A -> movePLayer(-1, 0);
+                        case W -> movePLayer(0, -1);
+                        case S -> movePLayer(0, 1);
+                        case T -> hailTaxi();
+                        case E -> togglePlayerMovement();
+                        case C ->System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
 
-                }}
+                    }}
 
                 }
 
-                    // Add more cases as needed
+                // Add more cases as needed
                 else{switch (event.getCode()) {case E -> togglePlayerMovement();}}
             });
         }
@@ -529,20 +569,20 @@ public class Main extends Application {
                 }
             }
             else{if (playerUno.getCell() instanceof busStop&&!this.onBus) {
-            playerMovementEnabled = !playerMovementEnabled;
-            if (!playerMovementEnabled) {
-                // Player decides to wait at a bus stop
-                System.out.println("----------- Waiting for bus ---------"+playerMovementEnabled);
+                playerMovementEnabled = !playerMovementEnabled;
+                if (!playerMovementEnabled) {
+                    // Player decides to wait at a bus stop
+                    System.out.println("----------- Waiting for bus ---------"+playerMovementEnabled);
                     ((busStop) playerUno.getCell()).setPlayerHere(true); // Mark the player as waiting at the bus stop
 
-            } else {
-                // Player decides to continue moving
-                if (!this.onBus) {
-                    System.out.println("----------- Impatient fuck ---------");
-                    ((busStop) playerUno.getCell()).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
-                }
+                } else {
+                    // Player decides to continue moving
+                    if (!this.onBus) {
+                        System.out.println("----------- Impatient fuck ---------");
+                        ((busStop) playerUno.getCell()).setPlayerHere(false); // Mark the player as no longer waiting at the bus stop
+                    }
 
-            }}}
+                }}}
         }
 
         /**
@@ -707,7 +747,7 @@ public class Main extends Application {
     // Method to update the gem count label
     private static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
-        }
+    }
 
     // Method to play the gem collect sound
     private void playGemCollectSound() {
