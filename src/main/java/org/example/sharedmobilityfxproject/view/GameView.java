@@ -518,12 +518,14 @@ public class GameView {
             busStops.add(busS7);
 
             busman = new Bus(busStops,4, 4);
+            taximan= new Taxi (58,28);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
                 grid.add(stop,stop.getX(), stop.getY());
             }
 
             grid.add(busman,busman.getX(), busman.getY());// Example starting position
+            grid.add(taximan, taximan.getX(), taximan.getY());
 
             // Schedule the bus to move every second
 
@@ -543,7 +545,7 @@ public class GameView {
             // Create a VBox to hold the gem count label
 //            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
 //            vbox.setAlignment(Pos.TOP_LEFT);
-            System.out.println("I am here");
+
 
             // Initialise Obstacles for x = 0
             // Initialise Obstacles
@@ -606,6 +608,7 @@ public class GameView {
             // Initialize currentCell after the grid has been filled
             ka.currentCell = grid.getCell(0, 0);
 
+            // to pass into keyboard interraction might need to change
             ka.obstacles = obstacles;
             ka.busStopCoordinates = busStopCoordinates;
             ka.finishCell = finishCell;
@@ -624,6 +627,9 @@ public class GameView {
             // Schedule the bus to move every second
             Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
                 busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
+                if(taximan.hailed&&!taximan.arrived){
+                    moveTaxiTowardsPlayer(grid, taximan, ka);
+                }
                 if (!busman.isWaiting){
 
 
@@ -728,7 +734,7 @@ public class GameView {
         // Create and configure the scene
         root.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case DOWN:
+                case DOWN, UP:
                     if (btnOnePlayer.isFocused()) {
                         btnTwoPlayer.requestFocus();
                     } else if (btnTwoPlayer.isFocused()) {
@@ -738,16 +744,7 @@ public class GameView {
                     }
 
                     break;
-                case UP:
-                    if (btnOnePlayer.isFocused()) {
-                        btnTwoPlayer.requestFocus();
-                    } else if (btnTwoPlayer.isFocused()) {
-                        backToMenu.requestFocus();
-                    } else {
-                        btnOnePlayer.requestFocus(); // Wrap around to the first button
-                    }
 
-                    break;
                 case ENTER:
                     if (btnOnePlayer.isFocused()) {
                         btnOnePlayer.fire();
