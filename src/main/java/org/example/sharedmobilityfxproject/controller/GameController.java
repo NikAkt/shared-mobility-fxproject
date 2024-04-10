@@ -81,10 +81,7 @@ public class GameController {
     }
 
     // Label to keep track of gem count
-    @FunctionalInterface
-    public interface GemCollector {
-        void collectGem();
-    }
+
 
     // ****Carbon footprint****
     int carbonFootprint = 0;
@@ -170,13 +167,6 @@ public class GameController {
         return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
     }
 
-///Transportation
-
-    /**
-     * Hail a taxi and change the player's appearance to yellow.
-     */
-
-
     ///CO2
     public void updateCarbonFootprintLabel() {
         carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
@@ -184,7 +174,6 @@ public class GameController {
 
     public static void increaseGemCount() {
         gameView.gemCountLabel = new Label();
-        updateGemCountLabel();
         gemCount++;
         gameView.gemCountLabel.setText("Gem Count: " + gemCount);
     }
@@ -202,11 +191,6 @@ public class GameController {
             }
         }
         return false;
-    }
-
-    // Method to update the gem count label
-    public static void updateGemCountLabel() {
-        gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
     // Method to play the gem collect sound
