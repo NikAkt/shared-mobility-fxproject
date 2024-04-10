@@ -103,7 +103,7 @@ public class KeyboardActionController {
                 moveBusTowardsBusStop(this.busman, targetBusStop);
 
                 // Here's the updated part
-                if (onBus) {
+                if (this.onBus) {
                     // Update player's coordinates to match the bus when the player is on the bus
                     playerUno.setCellByCoords(gameView.grid, this.busman.getX(), this.busman.getY());
                     System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
@@ -124,8 +124,6 @@ public class KeyboardActionController {
         busMovementTimeline.setCycleCount(Animation.INDEFINITE);
         busMovementTimeline.play();
     }
-
-
 
     public void moveBusTowardsBusStop(Bus bus, busStop stop) {
         // Calculate the Manhattan distance for both possible next steps
@@ -171,12 +169,12 @@ public class KeyboardActionController {
             System.out.println("now going towards :"+bus.nextStop());
             if(!playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
-                onBus = true;
+                this.onBus = true;
 
-            }else if(onBus){
+            }else if(this.onBus){
                 System.out.println("----------- You arrived at  ---------"+stop);
                 System.out.println("----------- Press E to get off  ---------");
-                onBus = true;
+                this.onBus = true;
 
             }
         }
@@ -186,24 +184,23 @@ public class KeyboardActionController {
 
     }
 
-    public void setupKeyboardActions(Scene scene) {
-        scene.setOnKeyPressed(event -> {
-            if(this.inTaxi){
-                switch (event.getCode()) {
+    public void setupKeyboardActions(KeyCode key) {
+            if(inTaxi){
+                switch (key) {
                     case D -> movePlayer(1, 0);
                     case A -> movePlayer(-1, 0);
                     case W -> movePlayer(0, -1);
                     case S -> movePlayer(0, 1);
-                    case T -> this.inTaxi =false;
+                    case T -> inTaxi =false;
                     case E -> togglePlayerMovement();
                     case C ->
                             System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
                                     "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
                                     "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                    "\nBus is at coordinates: (" + this.busman.getX() + "," + this.busman.getY() + ")");
+                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
                 }
             } else if (playerMovementEnabled) {
-                switch (event.getCode()) {
+                switch (key) {
                     case D -> movePlayer(1, 0);
                     case A -> movePlayer(-1, 0);
                     case W -> movePlayer(0, -1);
@@ -211,10 +208,9 @@ public class KeyboardActionController {
 //                    case T -> hailTaxi();
                     case E -> togglePlayerMovement();
                 }
-            } else if (event.getCode() == KeyCode.E) {
+            } else if (key == KeyCode.E) {
                 togglePlayerMovement();
             }
-        });
     }
 
     private void moveBus(Bus bus, int newX, int newY) {
@@ -301,6 +297,7 @@ public class KeyboardActionController {
 
         }}
 
+
     private void movePlayer(int dx, int dy) {
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
@@ -357,13 +354,13 @@ public class KeyboardActionController {
 //    }
 
     private void togglePlayerMovement() {
-        if (this.onBus) {
+        if (onBus) {
             int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
             boolean atBusStop = busStopCoordinates.stream()
                     .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]);
             if (atBusStop) {
                 playerMovementEnabled = true;
-                this.onBus = false;
+                onBus = false;
                 System.out.println("You got off the bus.");
             } else {
                 System.out.println("You can only get off the bus at a bus stop.");
