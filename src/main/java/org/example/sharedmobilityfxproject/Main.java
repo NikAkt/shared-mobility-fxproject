@@ -88,6 +88,7 @@ public class Main extends Application {
         void collectGem();
     }
 
+
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -246,6 +247,7 @@ public class Main extends Application {
 //            System.out.println(busS1.getX());
             // create scene and set to stage
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+
             primaryStage.setScene(scene);
             primaryStage.show();
             Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
@@ -297,13 +299,14 @@ public class Main extends Application {
                 metroGrid.add(cell, column, row);
             }
         }
-        metroStop under1 = new metroStop(5,4);
-        metroGrid.add(under1,4,4);
+        metroStop under1 = new metroStop(2,4);
+        metroGrid.add(under1,2,4);
         player.playerUno.initCell(metroGrid);
         Label testLabel = new Label("Metro System Active");
 
         metroLayer.getChildren().addAll(metroGrid,testLabel);
         metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
+        metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
 
     }
 
@@ -650,10 +653,10 @@ public class Main extends Application {
             Cell newCell = grid.getCell(newColumn, newRow);
             Cell metroCell = metroGrid.getCell(newColumn, newRow);
             if(isMetroSceneActive){
+                playerUno.getCell().unhighlight();
                 playerUno.setCell(metroCell);
                 playerUno.getCell().highlight();
-                playerUno.getCell().setStyle("-fx-border-color: black; -fx-background-color: white;");
-                System.out.println("player pos" +playerUno.getCoordX()+" "+playerUno.getCoordY());
+                System.out.println("player pos: " +playerUno.getCoordX()+" "+playerUno.getCoordY());
             }
             if (playerUno.getCell() instanceof metroStop) {
 
@@ -662,9 +665,16 @@ public class Main extends Application {
                 playerUno.isUnderground = true;
                 System.out.println(this.grid);
                 this.grid =metroGrid;
-                primaryStage.setScene(metroScene);
+                if(isMetroSceneActive){
+                    primaryStage.setScene(metroScene);
+
+                }
+                if(!isMetroSceneActive){
+                    primaryStage.setScene(scene);
+                }
+
                 metroLayer.requestFocus();
-                playerUno.setCellByCoords(metroGrid,newColumn,newRow);
+                playerUno.setCellByCoords(this.grid,newColumn,newRow);
                 System.out.println("Player has entered a metro entrance" + this.grid);
                 this.setupKeyboardActions(metroScene);
 
@@ -684,7 +694,7 @@ public class Main extends Application {
                 if (inTaxi) {
                     // Assuming taximan is accessible from here, or find a way to access it
                     moveTaxi(grid, taximan, newColumn, newRow);
-                    System.out.println("btich");
+
                 }
                 // Check for interaction with a gem
                 if ("gem".equals(playerUno.getCell().getUserData())) {
