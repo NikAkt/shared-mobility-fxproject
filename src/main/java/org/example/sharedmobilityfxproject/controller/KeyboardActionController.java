@@ -43,6 +43,11 @@ public class KeyboardActionController {
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
 
+    @FunctionalInterface
+    public interface GemCollector {
+        void collectGem();
+    }
+
     // Constructor to initialise grid
     public KeyboardActionController(GameView gameView, List<Obstacle> obstacles, Cell finishCell) {
         this.gameView = gameView;
@@ -109,7 +114,7 @@ public class KeyboardActionController {
                     System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
                     //Increase carbon footprint amount as long as player is on the bus
                     double carbonFootprint = 0.2; //subject to change
-                    gameController.updateCarbonFootprintLabel();
+//                    gameController.updateCarbonFootprintLabel();
                 }}
             else{
                 if(this.busman.waitTime ==0){
@@ -232,6 +237,81 @@ public class KeyboardActionController {
         // Return true if it can move, false if there's an obstacle
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
+
+    private void movePlayer(int dx, int dy) {
+        int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
+        int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
+        if (canMoveTo(newColumn, newRow)) {
+            playerUno.getCell().unhighlight();
+            playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
+        }
+    }
+
+    private boolean canMoveTo(int x, int y) {
+        return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+    }
+
+    private void interactWithCell(Cell cell) {
+        if ("gem".equals(cell.getUserData())) {
+            collectGem(cell);
+        } else if (cell instanceof busStop) {
+            interactWithBusStop((busStop) cell);
+        } else if (cell == finishCell) {
+            finishGame();
+        }
+    }
+
+    private void collectGem(Cell gemCell) {
+        gameView.grid.getChildren().remove(gemCell);
+        gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
+//        gameController.playGemCollectSound();
+    }
+
+    private void interactWithBusStop(busStop stop) {
+        System.out.println("Interacted with Bus Stop at: " + stop.getX() + ", " + stop.getY());
+    }
+
+    private void finishGame() {
+//        gameFinished = true;
+        Label levelCompleteLabel = new Label("Level Complete");
+        levelCompleteLabel.setStyle("-fx-font-size: 24px;");
+        StackPane root = (StackPane) gameView.grid.getScene().getRoot();
+        root.getChildren().add(levelCompleteLabel);
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
+        pause.setOnFinished(event -> ((Stage) gameView.grid.getScene().getWindow()).close());
+        pause.play();
+    }
+
+//    private void hailTaxi() {
+//        hailTaxi = !hailTaxi;
+//        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
+//        if (hailTaxi) {
+//            carbonFootprint += 75;
+//            updateCarbonFootprintLabel();
+//        }
+//    }
+
+    private void togglePlayerMovement() {
+        if (onBus) {
+            int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
+            boolean atBusStop = busStopCoordinates.stream()
+                    .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]);
+            if (atBusStop) {
+                playerMovementEnabled = true;
+                onBus = false;
+                System.out.println("You got off the bus.");
+            } else {
+                System.out.println("You can only get off the bus at a bus stop.");
+            }
+        } else if (playerUno.getCell() instanceof busStop) {
+            playerMovementEnabled = !playerMovementEnabled;
+            System.out.println(playerMovementEnabled ? "Impatient" : "Waiting for bus");
+            ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
+        }
+    }
+
     private void moveTaxi(Taxi bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
 
@@ -242,7 +322,7 @@ public class KeyboardActionController {
         //grid.add(cell,cell.getColumn(),cell.getRow());
 
     }
-    
+
     public void moveTaxiTowardsPlayer(Taxi bus) {
 
         if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
@@ -296,79 +376,4 @@ public class KeyboardActionController {
             }
 
         }}
-
-
-    private void movePlayer(int dx, int dy) {
-        int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
-        int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
-        if (canMoveTo(newColumn, newRow)) {
-            playerUno.getCell().unhighlight();
-            playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
-            playerUno.getCell().highlight();
-            interactWithCell(playerUno.getCell());
-        }
-    }
-
-    private boolean canMoveTo(int x, int y) {
-        return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
-    }
-
-    private void interactWithCell(Cell cell) {
-        if ("gem".equals(cell.getUserData())) {
-            collectGem(cell);
-        } else if (cell instanceof busStop) {
-            interactWithBusStop((busStop) cell);
-        } else if (cell == finishCell) {
-            finishGame();
-        }
-    }
-
-    private void collectGem(Cell gemCell) {
-        gameView.grid.getChildren().remove(gemCell);
-        gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
-        gameController.playGemCollectSound();
-    }
-
-    private void interactWithBusStop(busStop stop) {
-        System.out.println("Interacted with Bus Stop at: " + stop.getX() + ", " + stop.getY());
-    }
-
-    private void finishGame() {
-//        gameFinished = true;
-        Label levelCompleteLabel = new Label("Level Complete");
-        levelCompleteLabel.setStyle("-fx-font-size: 24px;");
-        StackPane root = (StackPane) gameView.grid.getScene().getRoot();
-        root.getChildren().add(levelCompleteLabel);
-        PauseTransition pause = new PauseTransition(Duration.seconds(5));
-        pause.setOnFinished(event -> ((Stage) gameView.grid.getScene().getWindow()).close());
-        pause.play();
-    }
-
-//    private void hailTaxi() {
-//        hailTaxi = !hailTaxi;
-//        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
-//        if (hailTaxi) {
-//            carbonFootprint += 75;
-//            updateCarbonFootprintLabel();
-//        }
-//    }
-
-    private void togglePlayerMovement() {
-        if (onBus) {
-            int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
-            boolean atBusStop = busStopCoordinates.stream()
-                    .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]);
-            if (atBusStop) {
-                playerMovementEnabled = true;
-                onBus = false;
-                System.out.println("You got off the bus.");
-            } else {
-                System.out.println("You can only get off the bus at a bus stop.");
-            }
-        } else if (playerUno.getCell() instanceof busStop) {
-            playerMovementEnabled = !playerMovementEnabled;
-            System.out.println(playerMovementEnabled ? "Impatient" : "Waiting for bus");
-            ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
-        }
-    }
 }
