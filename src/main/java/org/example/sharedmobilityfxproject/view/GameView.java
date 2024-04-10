@@ -138,7 +138,9 @@ public class GameView {
         Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
         //Font Set
-       educationalPopup();
+
+        //popup test
+        //educationalPopup();
         // Apply initial styles
         applyButtonStyles(btnStartGame, false);
         applyButtonStyles(btnExit, false);
@@ -346,15 +348,14 @@ public class GameView {
 
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
-            case "Seoul" -> "/images/seoul.jpg"; // 서울 이미지 경로
-            case "Athens" -> "/images/athens.png"; // 아테네 이미지 경로
-            case "Dublin" -> "/images/dublin.png"; // 더블린 이미지 경로
-            case "Vilnius" -> "/images/vilnius.png"; // 더블린 이미지 경로
-            case "Istanbul" -> "/images/istanbul.png"; // 더블린 이미지 경로
-            case "Home" -> "/images/home.png"; // 더블린 이미지 경로
+            case "Seoul" -> "/images/seoul.jpg";
+            case "Athens" -> "/images/athens.png";
+            case "Dublin" -> "/images/dublin.png";
+            case "Vilnius" -> "/images/vilnius.png";
+            case "Istanbul" -> "/images/istanbul.png";
+            case "Home" -> "/images/home.png";
             case "Back" -> "/images/home.png";
             default ->
-                // 기본 이미지 또는 에러 처리
                     "/images/Way_Back_Home.png.png";
         };
         Image is = new Image(new File("src/main/resources/" + imagePath).toURI().toString());
@@ -376,8 +377,6 @@ public class GameView {
             dialog.initStyle(StageStyle.UNDECORATED);
 
             // Start Pop up
-            //right left margin 20px 씩
-            //width 200 height 180
             VBox popupVbox = new VBox(10);
             popupVbox.setAlignment(Pos.CENTER);
             popupVbox.setPrefWidth(400);
@@ -400,7 +399,6 @@ public class GameView {
             // Close Button
             Button closeButton = new Button("Let's Rock!");
             if (contentFont != null) {
-                // 로드된 폰트를 버튼에 적용합니다.
                 closeButton.setFont(btnFont);
             } else {
                 System.out.println("Failed to load custom font. Using default font.");
@@ -418,7 +416,7 @@ public class GameView {
             popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
             VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
 
-// Scene and stage setup
+            // Scene and stage setup
             Scene dialogScene = new Scene(popupVbox);
             dialog.setScene(dialogScene);
             dialog.showAndWait();
@@ -498,10 +496,7 @@ public class GameView {
             borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
         } catch (Exception e) {
             e.printStackTrace();
-
         }
-
-
     }
 
     // Place the gem after the grid is filled and the player's position is initialized
@@ -607,8 +602,6 @@ public class GameView {
         return null;
     }
 
-    ;
-
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
@@ -633,12 +626,10 @@ public class GameView {
         dialog.setScene(dialogScene);
         dialog.show();
 
-        // 5초 후 팝업 닫기
         PauseTransition delay = new PauseTransition(Duration.seconds(7));
         delay.setOnFinished(e -> dialog.close());
         delay.play();
 
-        // 아무곳이나 클릭하면 팝업 닫기
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
 
