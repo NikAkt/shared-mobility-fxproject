@@ -142,7 +142,6 @@ public class GameView {
 
 
     public ArrayList<int[]> obstacleCoordinates;
-    public ArrayList<busStop> busStops;
 
 
     // Boolean flag to track if the game has finished
@@ -488,10 +487,12 @@ public class GameView {
             for (int row = 0; row < ROWS; row++) {
                 for (int column = 0; column < COLUMNS; column++) {
                     Cell cell = new Cell(column, row);
-                    ka.setupKeyboardActions(scene);
                     grid.add(cell, column, row);
                 }
             }
+
+            // This is where the keyboard action is initialized
+            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
 
 
 
@@ -581,7 +582,6 @@ public class GameView {
             // to pass into keyboard interraction might need to change
             ka.obstacles = obstacles;
             ka.finishCell = finishCell;
-            ka.playerUno = playerUno;
 
 
 
