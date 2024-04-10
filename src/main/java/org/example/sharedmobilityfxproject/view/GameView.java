@@ -55,7 +55,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
-
+import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 
 
 public class GameView {
@@ -143,6 +143,7 @@ public class GameView {
     public ArrayList<int[]> obstacleCoordinates;
 
     private Bus busman;
+    private Taxi taximan;
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
@@ -165,7 +166,7 @@ public class GameView {
     // From MAIN OF MERGE ENDING
 
     public GameView(Grid grid) {
-        ka = new KeyboardActionController(this, grid, obstacles, busStopCoordinates, finishCell);
+        ka = new KeyboardActionController(this, grid, obstacles, busStopCoordinates, finishCell, taximan, busman);
         gameController = new GameController();
 //        gameController.initializeObstacles(grid);
     }
@@ -518,7 +519,7 @@ public class GameView {
             busStops.add(busS7);
 
             busman = new Bus(busStops,4, 4);
-            taximan= new Taxi (58,28);
+            taximan = new Taxi (58,28);
             for (int i = 0; i < busman.list().size(); i++){
                 busStop stop = busman.list().get(i);
                 grid.add(stop,stop.getX(), stop.getY());
@@ -613,6 +614,8 @@ public class GameView {
             ka.busStopCoordinates = busStopCoordinates;
             ka.finishCell = finishCell;
             ka.grid = grid;
+            ka.taximan = taximan;
+            ka.busman = busman;
 
 
 
@@ -624,38 +627,7 @@ public class GameView {
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            // Schedule the bus to move every second
-            Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
-                busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
-                if(taximan.hailed&&!taximan.arrived){
-                    moveTaxiTowardsPlayer(grid, taximan, ka);
-                }
-                if (!busman.isWaiting){
 
-
-                    gameController.moveBusTowardsBusStop(grid, busman, targetBusStop, ka, playerUno);
-
-                    // Here's the updated part
-                    if (ka.onBus) {
-                        // Update player's coordinates to match the bus when the player is on the bus
-                        playerUno.setCellByCoords(grid, busman.getX(), busman.getY());
-                        System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
-                        //Increase carbon footprint amount as long as player is on the bus
-                        carbonFootprint+=0.2; //subject to change
-                        gameController.updateCarbonFootprintLabel();
-                    }}
-                else{
-                    if(busman.waitTime ==0){
-                        busman.waitASec();
-                    }
-                    else{
-                        busman.waitTime--;
-                    }
-                }
-            }));
-
-            busMovementTimeline.setCycleCount(Animation.INDEFINITE);
-            busMovementTimeline.play();
 
             // Player animation
             Timeline playerMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> {
