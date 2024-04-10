@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class GameController {
 
-    public Grid grid;
+
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
     public static GameView gameView;
     // ****JavaElement****
@@ -94,8 +94,7 @@ public class GameController {
     public void startGame(Stage primaryStage) {
         // Start game logic here
         System.out.println("Game Started");
-        Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT); // Grid 객체 생성
-        gameView = new GameView(grid);
+        gameView = new GameView();
         gameView.showInitialScreen(primaryStage);
     }
 
@@ -114,7 +113,7 @@ public class GameController {
     }
 
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        gameView = new GameView(grid);
+        gameView = new GameView();
         Button stageButton = new Button(stage);
         if (!stage.equals("Dublin")) {
             ColorAdjust colorAdjust = new ColorAdjust();

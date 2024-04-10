@@ -89,7 +89,8 @@ public class GameView {
 
     // **** Obstacles ****
     // List to keep track of all obstacles
-    public List<Obstacle> obstacles;
+    public List<Obstacle> obstacles = new ArrayList<>();
+    public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
     // Gem count
     static int gemCount = 0;
@@ -139,11 +140,10 @@ public class GameView {
     private static final double HEIGHT = 680;
 
 
-    public ArrayList<int[]> busStopCoordinates;
-    public ArrayList<int[]> obstacleCoordinates;
 
-    private Bus busman;
-    private Taxi taximan;
+    public ArrayList<int[]> obstacleCoordinates;
+    public ArrayList<busStop> busStops;
+
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
@@ -165,8 +165,8 @@ public class GameView {
 
     // From MAIN OF MERGE ENDING
 
-    public GameView(Grid grid) {
-        ka = new KeyboardActionController(this, grid, obstacles, busStopCoordinates, finishCell, taximan, busman);
+    public GameView() {
+        ka = new KeyboardActionController(this, obstacles, finishCell);
         gameController = new GameController();
 //        gameController.initializeObstacles(grid);
     }
@@ -463,7 +463,8 @@ public class GameView {
 //            primaryStage.setTitle("Welcome To " + stageName);
 //            primaryStage.setFullScreen(true);
 //            primaryStage.show();
-            busStopCoordinates = new ArrayList<>();
+
+
             obstacleCoordinates = new ArrayList<>();
 
 
@@ -479,7 +480,7 @@ public class GameView {
 //            primaryStage.setFullScreenExitHint("Press esc to minimize !");
 
             // Create grid for the game
-            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+
 
             // Create keyboard actions handler
 
@@ -492,41 +493,8 @@ public class GameView {
                 }
             }
 
-            //bus SHITE
-            busStop busS1 = new busStop(4,4);
-            busStop busS2 = new busStop(110,4);
-            busStop busS3 = new busStop(57,25);
-            busStop busS4 = new busStop(110,64);
-            busStop busS5 = new busStop(57,64);
-            busStop busS6 = new busStop(4,64);
-            busStop busS7 = new busStop(4,34);
 
-            busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-            busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-            busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-            busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-            busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-            busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-            busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
 
-            ArrayList busStops  = new ArrayList<busStop>();
-            busStops.add(busS1);
-            busStops.add(busS2);
-            busStops.add(busS3);
-            busStops.add(busS4);
-            busStops.add(busS5);
-            busStops.add(busS6);
-            busStops.add(busS7);
-
-            busman = new Bus(busStops,4, 4);
-            taximan = new Taxi (58,28);
-            for (int i = 0; i < busman.list().size(); i++){
-                busStop stop = busman.list().get(i);
-                grid.add(stop,stop.getX(), stop.getY());
-            }
-
-            grid.add(busman,busman.getX(), busman.getY());// Example starting position
-            grid.add(taximan, taximan.getX(), taximan.getY());
 
             // Schedule the bus to move every second
 
@@ -551,7 +519,7 @@ public class GameView {
             // Initialise Obstacles for x = 0
             // Initialise Obstacles
             // Initialise Obstacles
-            obstacles = new ArrayList<>();
+//            obstacles = new ArrayList<>();
 
             // Define the size of the obstacle blocks and the gap between them
             int obstacleWidth = 5;
@@ -585,6 +553,7 @@ public class GameView {
             for (Obstacle obstacle : obstacles) {
                 obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
             }
+            System.out.println("Obstacle Coordinates: ");
 
             generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
 
@@ -611,11 +580,8 @@ public class GameView {
 
             // to pass into keyboard interraction might need to change
             ka.obstacles = obstacles;
-            ka.busStopCoordinates = busStopCoordinates;
             ka.finishCell = finishCell;
-            ka.grid = grid;
-            ka.taximan = taximan;
-            ka.busman = busman;
+            ka.playerUno = playerUno;
 
 
 
