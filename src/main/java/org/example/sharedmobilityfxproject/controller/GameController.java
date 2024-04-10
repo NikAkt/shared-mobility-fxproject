@@ -69,9 +69,9 @@ public class GameController {
     private Cell finishCell;
     // Boolean flag to track if the game has finished
     static boolean gameFinished = false;
-
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+
 
 
     // ****Gem count****
@@ -194,88 +194,6 @@ public class GameController {
 //        System.out.print(gemCount);//works
 //        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
 //    }
-
-    public void moveBusTowardsBusStop(Grid grid, Bus bus, busStop stop, KeyboardActionController ka, Player playerUno) {
-        // Calculate the Manhattan distance for both possible next steps
-        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
-        int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
-//        System.out.println("--------------------");
-//        System.out.println(stop.getX()+"   "+ stop.getY());
-
-//        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
-        if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
-//            System.out.println("----------- moving x ---------");
-            // Move horizontally towards the bus stop, if not blocked
-            int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
-            if (canMoveBusTo(newX, bus.getY(), ka)) {
-                moveBus(grid ,bus, newX, bus.getY());
-            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1), ka)) {
-                // Move vertically as a fallback
-                moveBus(grid ,bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
-            }
-        }
-
-        else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
-//            System.out.println("----------- moving y ---------");
-            // Move vertically towards the bus stop, if not blocked
-            int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
-            if (canMoveBusTo(bus.getX(), newY, ka)) {
-
-                moveBus(grid,bus, bus.getX(), newY);
-            }
-            else if (canMoveBusTo(bus.getX() +1, bus.getY(), ka)) {
-                // Move horizontally as a fallback
-                if (bus.flagMove == 0){
-                    bus.flagMove =1;
-                }
-                moveBus(grid,bus, bus.getX() + +1, bus.getY());
-            }
-        }
-        //arriving at stop logic
-        else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
-            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
-            bus.waitASec();
-            bus.list().add(bus.list().remove(0));
-            System.out.println("now going towards :"+bus.nextStop());
-            if(!ka.playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
-                System.out.println("----------- You just got on the bus ---------");
-                ka.onBus = true;
-
-            }else if(ka.onBus){
-                System.out.println("----------- You arrived at  ---------"+stop);
-                System.out.println("----------- Press E to get off  ---------");
-                ka.onBus = true;
-
-            }
-        }
-        else if (bus.getY()==stop.getY()) {
-            bus.flagMove=0;
-        }
-
-    }
-
-    private boolean canMoveBusTo(int x, int y, KeyboardActionController ka) {
-        // Implement logic to check if the bus can move to (x, y) considering obstacles
-        // Return true if it can move, false if there's an obstacle
-        return ka.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
-    }
-
-    private void moveBus(Grid grid,Bus bus, int newX, int newY) {
-        // Move the bus to the new position (newX, newY) on the grid
-//        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
-//        int x = bus.getX();
-//        int y = bus.getY();
-        //Cell cell = grid.getCell(x,y);
-
-        grid.moveCell(bus, newX, newY);
-
-        bus.setX(newX);
-        bus.setY(newY);
-        //grid.add(cell,cell.getColumn(),cell.getRow());
-
-    }
-
-
 
 
     public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
