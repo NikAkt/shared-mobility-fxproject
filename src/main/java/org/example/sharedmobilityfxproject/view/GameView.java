@@ -1,27 +1,17 @@
 package org.example.sharedmobilityfxproject.view;
 
-import javafx.animation.*;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.Parent;
 
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
@@ -39,7 +29,6 @@ import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.model.Cell;
-import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,15 +36,11 @@ import java.util.List;
 import java.util.Objects;
 
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.animation.Animation;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
-import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 
 
 public class GameView {
@@ -159,12 +144,10 @@ public class GameView {
 
     // From MAIN OF MERGE ENDING
     public GameView() {
-        gameController = new GameController();
-//        gameController.initializeObstacles(grid);
     }
 
     public void showInitialScreen(Stage primaryStage) {
-        gameController = new GameController();
+        gameController = new GameController(this);
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -614,7 +597,7 @@ public class GameView {
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);
 
-        gameController = new GameController();
+        gameController = new GameController(this);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -634,7 +617,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
-        gameController = new GameController(); // #TODO: why is this here?
+        gameController = new GameController(this); // #TODO: why is this here?
         root.getChildren().removeAll(buttonBox);
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
