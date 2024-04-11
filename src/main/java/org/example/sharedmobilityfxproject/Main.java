@@ -1,28 +1,23 @@
 package org.example.sharedmobilityfxproject;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-
 
 import javafx.application.Application;
-
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
+
 import org.example.sharedmobilityfxproject.controller.GameController;
+import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
 import org.example.sharedmobilityfxproject.controller.SceneController;
+import org.example.sharedmobilityfxproject.model.Player;
+import org.example.sharedmobilityfxproject.view.GameView;
 
 // Main class extends Application for JavaFX application
 public class Main extends Application {
+
     public SceneController sceneController;
     public GameController gameController;
+
+    // Label to keep track of total carbon footprint
+    Label carbonFootprintLabel; // Label to display carbon footprint
 
     public static void main(String[] args) {
         launch(args);
@@ -30,8 +25,12 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-                gameController = new GameController();
-                gameController.startGame(primaryStage);
+            System.out.println("Game Started");
+
+            GameView gameView = new GameView();
+            gameView.showInitialScreen(primaryStage);
+            gameController = new GameController(gameView);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,3 +38,6 @@ public class Main extends Application {
     }
 
 }
+
+
+/////////////////////////////////////////////////////////////////////
