@@ -147,7 +147,7 @@ public class GameView {
     // From MAIN OF MERGE ENDING
     public GameView() {
     }
-    private void initializeMetroSystem(KeyboardActions player) {
+    private void initializeMetroSystem( ) {
         metroLayer = new StackPane();
         metroLayer.setStyle("-fx-background-color: #CCCCCC;");
         metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
@@ -159,9 +159,9 @@ public class GameView {
                 metroGrid.add(cell, column, row);
             }
         }
-        metroStop under1 = new metroStop(2,4);
-        metroGrid.add(under1,2,4);
-        player.playerUno.initCell(metroGrid);
+        metroStop under1 = new metroStop(2,30);
+        metroGrid.add(under1,2,30);
+        playerUno.initCell(metroGrid);
         Label testLabel = new Label("Metro System Active");
 
         metroLayer.getChildren().addAll(metroGrid,testLabel);
@@ -240,6 +240,12 @@ public class GameView {
         });
 
     }
+    /*
+    swithc
+    if flag true
+        swith\ch scene
+        flag = !flag
+     */
     public void switchSceneToMetro(){
         if(isMetroSceneActive){
             primaryStage.setScene(metroScene);
@@ -514,6 +520,7 @@ public class GameView {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
+            initializeMetroSystem();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -137,7 +137,8 @@ public class KeyboardActionController {
         busStop busS6 = new busStop(4,64);
         busStop busS7 = new busStop(4,34);
 
-
+        metroStop metro1 = new metroStop(2,30);
+        this.gameView.grid.add(metro1,2,30);
         this.busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
         this.busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
         this.busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
@@ -343,7 +344,8 @@ public class KeyboardActionController {
         }
         if (playerUno.getCell() instanceof metroStop) {
 
-            gameView.isMetroSceneActive = !gameView.isMetroSceneActive; // Metro scene is now active
+            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
+            gameView.switchSceneToMetro();// Metro scene is now active
             Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
             playerUno.isUnderground = true;
             System.out.println(gameView.grid);
