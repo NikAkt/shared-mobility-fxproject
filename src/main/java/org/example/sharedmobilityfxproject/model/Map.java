@@ -12,6 +12,15 @@ public class Map {
      */
     public Map() {
     }
+    public static void main(String[] args) {
+        Map map = new Map();
+        try {
+            int[][] arr = map.loadMap();
+            System.out.println(arr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public int[][] loadMap() throws Exception {
         // Load the image
@@ -45,25 +54,25 @@ public class Map {
                 // Assign values based on color
                 if (pixelColor.equals(YELLOW_BUSSTOP)) {
                     // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
-                }if (pixelColor.equals(MAROON_METRO)) {
-                    // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
-                }if (pixelColor.equals(GRAY_OBSTACLE)) {
-                    // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
-                }if (pixelColor.equals(BLUE_LAKE)) {
-                    // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
-                }if (pixelColor.equals(GREEN_GRASS)) {
-                    // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
-                }if (pixelColor.equals(WHITE_ROAD)) {
-                    // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
-                }if (pixelColor.equals(BLACK_BLOCKAGE)) {
-                    // Assign a special value when the pixel color is YELLOW_BUSSTOP
-                    mapArray[row][column] = /* Your special value here */;
+                    mapArray[row][column] = 4;
+                } else if (pixelColor.equals(MAROON_METRO)) {
+                    // Assign a special value when the pixel color is MAROON_METRO
+                    mapArray[row][column] = 5;
+                } else if (pixelColor.equals(GRAY_OBSTACLE)) {
+                    // Assign a special value when the pixel color is GRAY_OBSTACLE
+                    mapArray[row][column] = 1;
+                } else if (pixelColor.equals(BLUE_LAKE)) {
+                    // Assign a special value when the pixel color is BLUE_LAKE
+                    mapArray[row][column] = 3;
+                } else if (pixelColor.equals(GREEN_GRASS)) {
+                    // Assign a special value when the pixel color is GREEN_GRASS
+                    mapArray[row][column] = 2;
+                } else if (pixelColor.equals(WHITE_ROAD)) {
+                    // Assign a special value when the pixel color is WHITE_ROAD
+                    mapArray[row][column] = 0;
+                } else if (pixelColor.equals(BLACK_BLOCKAGE)) {
+                    // Assign a special value when the pixel color is BLACK_BLOCKAGE
+                    mapArray[row][column] = 9;
                 } else {
                     // Default case, might need to adjust based on actual image
                     mapArray[row][column] = -1;
