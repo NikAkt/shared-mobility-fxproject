@@ -157,7 +157,7 @@ public class GameView {
     }
 
     public void showInitialScreen(Stage primaryStage) {
-        gameController = new GameController(this);
+        GameController gameController = new GameController();
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -166,8 +166,10 @@ public class GameView {
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(100); // You can adjust this value as needed
 
+
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
+
 
         this.root = new StackPane();
         // Create and configure the "Game Start" button
@@ -176,6 +178,7 @@ public class GameView {
         Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
         //Font Set
+
 
         //popup test
         //educationalPopup();
@@ -190,31 +193,43 @@ public class GameView {
         gameCredit.setFocusTraversable(true);
 
 
+
+
         // Create a VBox for buttons
-        buttonBox = new VBox(20, btnStartGame, btnExit, imageView);
         VBox imgBox = new VBox(20, imageView);
+        imgBox.setAlignment(Pos.TOP_RIGHT);
+        buttonBox = new VBox(40, imageView,btnStartGame,gameCredit, btnExit);
         buttonBox.setAlignment(Pos.CENTER); // Align buttons to center
-        imgBox.setAlignment(Pos.TOP_CENTER);
+
+
+
 
         // Center the VBox in the StackPane
         StackPane.setAlignment(buttonBox, Pos.CENTER);
         StackPane.setAlignment(imgBox, Pos.CENTER);
 
+
         this.root.getChildren().add(mediaView);
+
 
         // Set up the scene with the StackPane and show the stage
         Scene scene = new Scene(this.root, 1496, 1117); // Use the same size as the image for a full background
         gameController.setupKeyControls(scene);
 
+
         this.root.getChildren().add(buttonBox);
         this.root.getChildren().add(imgBox);
+
 
         // Set focus on the "Game Start" button initially
         btnStartGame.setFont(btnFont);
 
 
+
+
 // Request focus for the "Game Start" button when scene is shown
         primaryStage.setOnShown(event -> btnStartGame.requestFocus());
+
 
         primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
         primaryStage.setScene(scene);
@@ -264,6 +279,7 @@ public class GameView {
             }
         });
     }
+
     public void showCredit(){
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
