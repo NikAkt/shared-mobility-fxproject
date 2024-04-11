@@ -333,12 +333,38 @@ public class KeyboardActionController {
         System.out.println(playerUno);
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
+        Cell newCell = gameView.grid.getCell(newColumn, newRow);
+
+        if(gameView.isMetroSceneActive){
+            playerUno.getCell().unhighlight();
+
+            playerUno.getCell().highlight();
+            System.out.println("player pos: " +playerUno.getCoordX()+" "+playerUno.getCoordY());
+        }
+        if (playerUno.getCell() instanceof metroStop) {
+
+            gameView.isMetroSceneActive = !gameView.isMetroSceneActive; // Metro scene is now active
+            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
+            playerUno.isUnderground = true;
+            System.out.println(gameView.grid);
+
+
+
+            playerUno.setCellByCoords(gameView.grid,newColumn,newRow);
+            System.out.println("Player has entered a metro entrance" + gameView.grid);
+
+
+        }
         if (canMoveTo(newColumn, newRow)) {
             playerUno.getCell().unhighlight();
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
+            if (inTaxi) {
+                // Assuming taximan is accessible from here, or find a way to access it
+                moveTaxi(taximan, newColumn, newRow);
 
+            }
         }
     }
 

@@ -55,6 +55,7 @@ public class GameView {
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
+    public boolean isMetroSceneActive =false;
     public VBox buttonBox;
     public StackPane root;
     public MediaPlayer mediaPlayer;
@@ -124,7 +125,10 @@ public class GameView {
     private static final double WIDTH = 1300;
     private static final double HEIGHT = 680;
 
-
+    private Scene scene;
+    private Scene metroScene;
+    private StackPane metroLayer;
+    private Grid metroGrid;
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
@@ -143,7 +147,28 @@ public class GameView {
     // From MAIN OF MERGE ENDING
     public GameView() {
     }
+    private void initializeMetroSystem(KeyboardActions player) {
+        metroLayer = new StackPane();
+        metroLayer.setStyle("-fx-background-color: #CCCCCC;");
+        metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+        // Initialize metro cells
+        for (int row = 0; row < ROWS; row++) {
+            for (int column = 0; column < COLUMNS; column++) {
+                Cell cell = new Cell(column, row);
+                // Make sure cells are visible
+                metroGrid.add(cell, column, row);
+            }
+        }
+        metroStop under1 = new metroStop(2,4);
+        metroGrid.add(under1,2,4);
+        player.playerUno.initCell(metroGrid);
+        Label testLabel = new Label("Metro System Active");
 
+        metroLayer.getChildren().addAll(metroGrid,testLabel);
+        metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
+        metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+
+    }
     public void showInitialScreen(Stage primaryStage) {
         gameController = new GameController(this);
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
@@ -215,7 +240,17 @@ public class GameView {
         });
 
     }
+    public void switchSceneToMetro(){
+        if(isMetroSceneActive){
+            primaryStage.setScene(metroScene);
 
+
+        }
+        if(!isMetroSceneActive){
+            primaryStage.setScene(scene);
+
+        }
+    }
     public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv) {
         try {
             List<Button> allButtons = new ArrayList<>();
