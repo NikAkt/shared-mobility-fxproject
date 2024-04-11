@@ -4,24 +4,43 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 
+/**
+ * This class represents a map for a shared mobility project.
+ * It provides functionality to load a map from an image and export the map to a file.
+ */
 public class Map {
 
     /**
-     * Initialises the map with a specified background image.
+     * Default constructor for the Map class.
      */
     public Map() {
     }
+
+    /**
+     * The main method for testing the Map class.
+     * It creates a Map object, loads a map from an image, and exports the map to a file.
+     */
     public static void main(String[] args) {
         Map map = new Map();
         try {
             int[][] arr = map.loadMap();
             System.out.println(arr);
+            map.exportArrayToFile(arr);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Loads a map from an image.
+     * The image is divided into a grid, and each cell is assigned a value based on its color.
+     * @return A 2D array representing the map.
+     * @throws Exception If an error occurs while loading the image.
+     */
     public int[][] loadMap() throws Exception {
         // Load the image
         File imageFile = new File("src/main/resources/images/Manhattan.png");
@@ -37,7 +56,7 @@ public class Map {
         int cellHeight = image.getHeight() / ROWS;
 
         // Define colors
-        Color YELLOW_BUSSTOP = Color.decode("#ffeb3b");
+        Color YELLOW_BUSSTOP = Color.decode("#fff200");
         Color MAROON_METRO = Color.decode("#990030");
         Color GRAY_OBSTACLE = Color.decode("#808080");
         Color BLUE_LAKE = Color.decode("#0000ff");
@@ -81,5 +100,28 @@ public class Map {
         }
 
         return mapArray;
+    }
+
+    /**
+     * Exports a map to a file.
+     * The map is represented as a 2D array, and each row of the array is written as a line in the file.
+     * @param mapArray The 2D array representing the map.
+     */
+    public void exportArrayToFile(int[][] mapArray) {
+
+        // The file you want to write to
+        File file = new File("mapArray.txt");
+
+        try (PrintWriter pw = new PrintWriter(file)) {
+            for (int[] ins : mapArray) {
+                for (int j = 0; j < ins.length; j++) {
+                    pw.print(ins[j] + (j < ins.length - 1 ? ", " : ""));
+                }
+                pw.println();
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file.");
+            e.printStackTrace();
+        }
     }
 }
