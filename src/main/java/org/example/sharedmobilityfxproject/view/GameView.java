@@ -125,9 +125,6 @@ public class GameView {
 
 
 
-    public ArrayList<int[]> obstacleCoordinates;
-
-
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
 
@@ -440,7 +437,7 @@ public class GameView {
 //            primaryStage.show();
 
 
-            obstacleCoordinates = new ArrayList<>();
+
 
 
 
@@ -451,29 +448,11 @@ public class GameView {
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
             primaryStage.setResizable(false);
-//            primaryStage.setFullScreen(true);
-//            primaryStage.setFullScreenExitHint("Press esc to minimize !");
-
-            // Create grid for the game
 
 
-            // Create keyboard actions handler
-
-            // Fill grid with cells
-            for (int row = 0; row < ROWS; row++) {
-                for (int column = 0; column < COLUMNS; column++) {
-                    Cell cell = new Cell(column, row);
-                    grid.add(cell, column, row);
-                }
-            }
 
             // This is where the keyboard action is initialized
             scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
-
-
-
-
-            // Schedule the bus to move every second
 
 
             // Create label for gem count
@@ -482,70 +461,8 @@ public class GameView {
             gemCountLabel.setAlignment(Pos.TOP_LEFT);
             gemCountLabel.setPadding(new Insets(10));
 
-            // Create label for carbon footprint
-//            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
-//            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
-//            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-//            carbonFootprintLabel.setPadding(new Insets(10));
-
-            // Create a VBox to hold the gem count label
-//            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
-//            vbox.setAlignment(Pos.TOP_LEFT);
 
 
-            // Initialise Obstacles for x = 0
-            // Initialise Obstacles
-            // Initialise Obstacles
-//            obstacles = new ArrayList<>();
-
-            // Define the size of the obstacle blocks and the gap between them
-            int obstacleWidth = 5;
-            int obstacleHeight = 3;
-            int gap = 5;
-
-            // Calculate the number of obstacle blocks in each direction
-            int numBlocksX = (COLUMNS - 2 * gap) / (obstacleWidth + gap);
-            int numBlocksY = (ROWS - 2 * gap) / (obstacleHeight + gap);
-
-
-            // For each block position
-            for (int bx = 0; bx < numBlocksX; bx++) {
-                for (int by = 0; by < numBlocksY; by++) {
-                    // Calculate the top-left corner of the block
-                    int x = gap + bx * (obstacleWidth + gap);
-                    int y = gap + by * (obstacleHeight + gap);
-
-                    // Create the obstacle block
-                    for (int i = 0; i < obstacleWidth; i++) {
-                        for (int j = 0; j < obstacleHeight; j++) {
-                            obstacles.add(new Obstacle(grid, x + i, y + j));
-                            List<Integer> coordinatePair = new ArrayList<>();
-
-                            coordinatePair.add(x + i);
-                            coordinatePair.add(y + j);
-                        }
-                    }
-                }
-            }
-            for (Obstacle obstacle : obstacles) {
-                obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
-            }
-            System.out.println("Obstacle Coordinates: ");
-
-            generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
-
-            // Place the finish cell after the grid is filled and the player's position is initialised
-            int finishColumn;
-            int finishRow;
-            finishColumn=102;
-            finishRow=58;
-//            do {
-//                finishColumn = (int) (Math.random() * COLUMNS);
-//                finishRow = (int) (Math.random() * ROWS);
-//            } while ((finishColumn == 0 && finishRow == 0) || grid.getCell(finishColumn, finishRow).getUserData() != null); // Ensure finish doesn't spawn at player's starting position or on a gem
-            finishCell = new Cell(finishColumn, finishRow);
-            finishCell.getStyleClass().add("finish");
-            grid.add(finishCell, finishColumn, finishRow);
 
             // Initialise Player
             Player playerUno = new Player(0,0,10,1,10,0);
