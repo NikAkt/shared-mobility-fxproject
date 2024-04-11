@@ -35,7 +35,7 @@ public class KeyboardActionController {
     public boolean inTaxi = false;
     public Player playerUno;
 
-    public List<Obstacle> obstacles;
+    public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
 
     public Cell finishCell;
@@ -50,13 +50,9 @@ public class KeyboardActionController {
     }
 
     // Constructor to initialise grid
-    public KeyboardActionController(GameView gameView, List<Obstacle> obstacles, Cell finishCell, Player playerUno) {
+    public KeyboardActionController(GameView gameView, Player playerUno) {
         this.gameView = gameView;
-        this.obstacles = obstacles;
-        this.finishCell = finishCell;
         this.playerUno = playerUno;
-
-        this.playerUno.initCell(gameView.grid);
 
 
         // Fill the grid with cells
@@ -120,7 +116,7 @@ public class KeyboardActionController {
         }
         System.out.println("Obstacle Coordinates: ");
 
-        generateGems(grid, 5); // Replace 5 with the number of gems you want to generate
+        generateGems(gameView.grid, 5); // Replace 5 with the number of gems you want to generate
 
         // Place the finish cell after the grid is filled and the player's position is initialised
         int finishColumn;
@@ -205,6 +201,24 @@ public class KeyboardActionController {
 
         busMovementTimeline.setCycleCount(Animation.INDEFINITE);
         busMovementTimeline.play();
+
+        // give playerUno a cell goddamit
+        this.playerUno.initCell(gameView.grid);
+    }
+
+    private void generateGems(Grid grid, int numberOfGems) {
+        for (int i = 0; i < numberOfGems; i++) {
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * gameView.getColumns());
+                gemRow = (int) (Math.random() * gameView.getRows());
+            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+
+
+            Gem gem = new Gem(gemColumn, gemRow);
+            grid.add(gem, gemColumn, gemRow);
+        }
     }
 
     public void moveBusTowardsBusStop(Bus bus, busStop stop) {
@@ -316,6 +330,7 @@ public class KeyboardActionController {
     }
 
     private void movePlayer(int dx, int dy) {
+        System.out.println(playerUno);
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         if (canMoveTo(newColumn, newRow)) {
@@ -323,6 +338,7 @@ public class KeyboardActionController {
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
+
         }
     }
 
