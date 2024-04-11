@@ -21,10 +21,10 @@ import javafx.scene.text.Font;
 
 import javafx.scene.input.KeyCode;
 
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.example.sharedmobilityfxproject.controller.KeyBoradActionController;
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.image.Image;
@@ -83,6 +83,7 @@ public class GameView {
 
     // **** Stamina ****
     int staminagauge;
+    public StackPane mainBackground;
 
     {
         staminagauge = 0;
@@ -131,17 +132,15 @@ public class GameView {
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
 
-        this.root = new StackPane();
+       mainBackground = new StackPane();
+
         // Create and configure the "Game Start" button
-        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, root, bgmediaPlayer));
+        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, mainBackground, bgmediaPlayer,logoImage));
         // Create and configure the "Exit" button
         Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
         //Font Set
-
-        //popup test
-        //educationalPopup();
-        // Apply initial styles
+        btnStartGame.requestFocus();
         applyButtonStyles(btnStartGame, false);
         applyButtonStyles(btnExit, false);
         applyButtonStyles(gameCredit, false);
@@ -163,14 +162,14 @@ public class GameView {
         StackPane.setAlignment(buttonBox, Pos.CENTER);
         StackPane.setAlignment(imgBox, Pos.CENTER);
 
-        this.root.getChildren().add(mediaView);
+        mainBackground.getChildren().add(mediaView);
 
         // Set up the scene with the StackPane and show the stage
-        Scene scene = new Scene(this.root, 1496, 1117); // Use the same size as the image for a full background
+        Scene scene = new Scene(mainBackground, 1496, 1117); // Use the same size as the image for a full background
         gameController.setupKeyControls(scene);
 
-        this.root.getChildren().add(buttonBox);
-        this.root.getChildren().add(imgBox);
+        mainBackground.getChildren().add(buttonBox);
+        mainBackground.getChildren().add(imgBox);
 
         // Set focus on the "Game Start" button initially
         btnStartGame.setFont(btnFont);
@@ -282,7 +281,7 @@ public class GameView {
         dialog.showAndWait();
     }
 
-    public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv) {
+    public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv, StackPane root) {
         try {
             List<Button> allButtons = new ArrayList<>();
             if (topRow == null && bottomRow == null) {
@@ -332,18 +331,18 @@ public class GameView {
             });
 
             stageSelectionBox.requestFocus(); // 키 이벤트를 받을 수 있도록 포커스 설정
-
             stageSelectionBox.setAlignment(Pos.CENTER);
             gameModeBox.setVisible(false);
 
+            //Remove previous page's btns
             root.getChildren().removeAll(buttonBox, gameModeBox);
+
+            //Add new StageSelectionBox
             root.getChildren().add(stageSelectionBox);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     public ImageView createStageImage(String stageName) {
@@ -371,6 +370,7 @@ public class GameView {
     public void loadGameScreen(String stageName, Stage primaryStage) {
 
         try {
+            // *****Game Story Popup*****
             final Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(primaryStage);
@@ -411,7 +411,6 @@ public class GameView {
                 wait.setOnFinished(event -> System.out.println("5 Seconds past"));
                 wait.play();
             });
-
             // Add labels and close button to VBox
             popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
             VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
@@ -421,8 +420,11 @@ public class GameView {
             dialog.setScene(dialogScene);
             dialog.showAndWait();
 
+            //**** game Introduction Popup end ****
 
-            // **** Start Pop up ****
+
+            // **** GameContainer ****
+            // Can align top/right/left/bottom
             BorderPane borderPane = new BorderPane();
 
             // CO2 Parameter Bar (Vertical)
@@ -441,17 +443,20 @@ public class GameView {
             staminaParameter.setPrefWidth(1200);
             staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
 
-            // "Stamina" 텍스트 생성
-//            Text staminaText = new Text("Stamina");
-//            staminaText.setFont(javafx.scene.text.Font.font(14)); // 폰트 크기 설정
 
-            // Wrap CO2 bar in VBox to align it vertically
+
+            //StaminaBox
+            // "Stamina" text
+            Text staminaText = new Text("Stamina");
+            staminaText.setFont(javafx.scene.text.Font.font(14));
             VBox staminaContainer = new VBox();
-//            staminaContainer.getChildren().add(staminaText);
-            staminaContainer.getChildren().add(staminaParameter); // 상단에 텍스트 추가
+            staminaContainer.getChildren().add(staminaText);
+            staminaContainer.getChildren().add(staminaParameter);
             VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
             staminaContainer.setAlignment(Pos.CENTER);
 
+
+            // **** Time configure ****
             // Time countdown
             Label timeLabel = new Label();
             timeLabel.setAlignment(Pos.TOP_CENTER);
@@ -472,18 +477,21 @@ public class GameView {
             });
             timeLabel.setAlignment(Pos.CENTER);
 
+            // **** Time configure End ****
+
+
+            // ****Map BorderPane Setting ****
             // Placeholder for the map
-            Label mapPlaceholder = new Label();
+            BorderPane mapBorderPane = new BorderPane();
+            Label mapPlaceholder = new Label(stageName);
             mapPlaceholder.setPrefSize(1200, 600);
             mapPlaceholder.setAlignment(Pos.CENTER);
             mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
-            // Set this layout in the scene
-            Scene scene = new Scene(borderPane, 1496, 1117);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Welcome To " + stageName);
-            //primaryStage.setFullScreen(true);
-            primaryStage.show();
+            mapBorderPane.setTop(mapPlaceholder);
+            mapBorderPane.setStyle("-fx-border-color: Yellow; -fx-border-width: 2; -fx-border-style: solid;");
+            
+
 
             // Add Stage name and Time above and below the map
             VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
@@ -494,6 +502,16 @@ public class GameView {
             // Add all to the layout
             borderPane.setCenter(mapBox);
             borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
+
+
+
+            // Set this layout in the scene
+            Scene scene = new Scene(borderPane, 1496, 1117);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Welcome To " + stageName);
+            //primaryStage.setFullScreen(true);
+            primaryStage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -516,15 +534,21 @@ public class GameView {
     }
 
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        mdv.stop();
-        root.getChildren().remove(stageSelectionBox);
-        root.getChildren().remove(gameModeBox);
+        //This function is describing between Mapselection and MainGamePage
 
+        //Video Stop(MineCraft)
+        mdv.stop();
+
+        //Previous buttons delete
+        root.getChildren().remove(stageSelectionBox);
+
+        //gameController Check
         gameController = new GameController();
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
 
+        //New Music Load
         Media gameMusic1 = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(gameMusic1);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
@@ -536,16 +560,21 @@ public class GameView {
         // You might want to hide the stage selection screen and display the game screen, like so:
         root.setVisible(false);
         root.getChildren().removeAll(buttonBox, this.gameModeBox);
+
+        //Move to real GamePage
         loadGameScreen(stageName, actionEvent);
 
     }
 
-    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
+    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage) {
         gameController = new GameController();
-
         root.getChildren().removeAll(buttonBox);
-        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
-        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
+        ImageView imageView = new ImageView(logoImage);
+        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(100); // You can adjust this value as needed
+
+        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
+        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
 
         applyButtonStyles(btnOnePlayer, false);
         applyButtonStyles(btnTwoPlayer, false);
@@ -556,7 +585,7 @@ public class GameView {
 
         // Create the game mode selection box if not already created
         if (gameModeBox == null) {
-            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer);
+            gameModeBox = new VBox(80, imageView,btnOnePlayer, btnTwoPlayer);
             gameModeBox.setAlignment(Pos.CENTER);
         }
         // Add the game mode box to the root stack pane, making it visible
@@ -583,9 +612,8 @@ public class GameView {
                         btnTwoPlayer.requestFocus();
                     } else if (btnTwoPlayer.isFocused()) {
                     } else {
-                        btnOnePlayer.requestFocus(); // Wrap around to the first button
+                        btnOnePlayer.requestFocus();
                     }
-
                     break;
                 case ENTER:
                     if (btnOnePlayer.isFocused()) {
