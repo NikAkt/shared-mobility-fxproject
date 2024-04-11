@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.controller.SceneController;
+import org.example.sharedmobilityfxproject.view.GameView;
 
 // Main class extends Application for JavaFX application
 public class Main extends Application {
@@ -22,8 +23,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            gameController = new GameController();
-            gameController.startGame(primaryStage);
+            System.out.println("Game Started");
+            GameView gameView = new GameView();
+            gameView.showInitialScreen(primaryStage);
+            gameController = new GameController(gameView);
+
 
         } catch (Exception e) {
             e.printStackTrace();
