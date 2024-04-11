@@ -549,10 +549,9 @@ public class GameView {
 
             // Initialise Player
             Player playerUno = new Player(0,0,10,1,10,0);
-            playerUno.initCell(grid);
 
-            ka = new KeyboardActionController(this, obstacles, finishCell);
-            ka.playerUno = playerUno;
+
+            ka = new KeyboardActionController(this, obstacles, finishCell, playerUno);
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid);
@@ -562,18 +561,18 @@ public class GameView {
             primaryStage.setScene(scene);
             primaryStage.show();
 
-
-
-            // Player animation
-//            Timeline playerMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> {
-//
-//            }));
         } catch (Exception e) {
             e.printStackTrace();
 
         }
 
 
+    }
+    public int getRows() {
+        return ROWS;
+    }
+    public int getColumns() {
+        return COLUMNS;
     }
 
     // Place the gem after the grid is filled and the player's position is initialized
