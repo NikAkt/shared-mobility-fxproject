@@ -633,22 +633,9 @@ public class GameView {
             primaryStage.setTitle("Welcome To " + stageName);
             //primaryStage.setFullScreen(true);
             primaryStage.show();
-//            Scene scene = new Scene(borderPane, 1496, 1117);
-//            primaryStage.setScene(scene);
-
-            // Create a StackPane to hold all elements
-//            Stage gridStage = new Stage();
-//            gridStage.initOwner(primaryStage);
             StackPane root = new StackPane();
-            Scene scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
-//            gridStage.setScene(scene);
-//            Stage gridStage = new Stage();
-//            gridStage.initOwner(primaryStage);
-//            StackPane root = new StackPane();
-//            Scene scene = new Scene(root);
-//            primaryStage.setTitle("Welcome To " + stageName);
-//            primaryStage.setFullScreen(true);
-//            primaryStage.show();
+            scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
+
 
             // Add Stage name and Time above and below the map
             VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
@@ -828,6 +815,18 @@ public class GameView {
         // 아무곳이나 클릭하면 팝업 닫기
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
+    public void applyButtonStyles(Button button, boolean focused) {
+        String fontFamily = btnFont.getName(); // Get the font name from the Font object
+        String fontSize = "24px";
+        String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";
+        String textColor = focused ? "white" : "black";
+        String textShadow = focused ? "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);" : "";
 
+        button.setStyle(String.format("-fx-font-family: '%s'; -fx-font-size: %s; -fx-background-color: %s; -fx-text-fill: %s; %s",
+                fontFamily, fontSize, backgroundColor, textColor, textShadow));
+        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            applyButtonStyles(button, isNowFocused);
+        });
+    }
 
 }
