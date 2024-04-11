@@ -1,8 +1,6 @@
 package org.example.sharedmobilityfxproject.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -20,17 +18,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.view.GameView;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class GameController {
 
-    public Grid grid;
-    public static GameView gameView;
+
+    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    public GameView gameView;
     // ****JavaElement****
     public Stage primaryStage;
     public Button btnStartGame;
@@ -58,36 +55,34 @@ public class GameController {
     public MediaPlayer mediaPlayer;
     public VBox stageSelectionBox;
 
-    public List<Obstacle> obstacles;
 
     // Finish cell
     private Cell finishCell;
     // Boolean flag to track if the game has finished
     static boolean gameFinished = false;
-
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
 
 
+
     // ****Gem count****
     public static int gemCount = 0;
-    // Label to keep track of gem count
-    @FunctionalInterface
-    public interface GemCollector {
-        void collectGem();
+
+    public GameController(GameView gameView) {
+        this.gameView = gameView;
     }
+
+    // Label to keep track of gem count
+
 
     // ****Carbon footprint****
     int carbonFootprint = 0;
     Label carbonFootprintLabel; // Label to display carbon footprint
 
     //Game Start initialise method
-    public void startGame(Stage primaryStage) {
+    public void startGame() {
         // Start game logic here
-        System.out.println("Game Started");
-        Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT); // Grid 객체 생성
-        gameView = new GameView(grid);
-        gameView.showInitialScreen(primaryStage);
+
     }
 
     public void setupKeyControls(Scene scene) {
@@ -105,7 +100,7 @@ public class GameController {
     }
 
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        gameView = new GameView(grid);
+        gameView = new GameView(primaryStage);
         Button stageButton = new Button(stage);
         if (!stage.equals("Dublin")) {
             ColorAdjust colorAdjust = new ColorAdjust();
@@ -160,38 +155,47 @@ public class GameController {
         return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
     }
 
-///Transportation
-
-    /**
-     * Hail a taxi and change the player's appearance to yellow.
-     */
-
-
     ///CO2
     public void updateCarbonFootprintLabel() {
         carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
     }
 
-    public static void increaseGemCount() {
+    public void increaseGemCount() {
         gameView.gemCountLabel = new Label();
-        updateGemCountLabel();
         gemCount++;
         gameView.gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
-    public static void updateGemCountLabel() {
-        System.out.print(gemCount);//works
-        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
+//    public static void updateGemCountLabel() {
+//        System.out.print(gemCount);//works
+//        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
+//    }
+
+
+    public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
+        for (int[] coordinates : array) {
+            if (coordinates[0] == x && coordinates[1] == y) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void initializeObstacles(Grid grid) {
-        // Initialise Obstacles Setting
-        obstacles = new ArrayList<>();
-        obstacles.add(new Obstacle(grid, 5, 5));
-        obstacles.add(new Obstacle(grid, 10, 5));
-        obstacles.add(new Obstacle(grid, 5, 10));
+    // Method to play the gem collect sound
+    void playGemCollectSound() {
+        Media sound = new Media(Objects.requireNonNull(getClass().getResource(GEM_COLLECT_SOUND)).toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
 
+        // Release resources after sound finishes playing3211
+        mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
     }
+
+    // Method to update the carbon footprint label
+//    private void updateCarbonFootprintLabel() {
+//        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
+//    }
+
 }
 
 

@@ -21,4 +21,5 @@ module org.example.sharedmobilityfxproject {
     opens org.example.sharedmobilityfxproject.model.tranportMode to javafx.fxml;
     opens org.example.sharedmobilityfxproject.controller to javafx.fxml;
     exports org.example.sharedmobilityfxproject.controller;
+    exports org.example.sharedmobilityfxproject.view;
 }

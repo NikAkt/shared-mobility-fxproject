@@ -1,30 +1,22 @@
 package org.example.sharedmobilityfxproject.view;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.animation.PauseTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 import javafx.scene.input.KeyCode;
 
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
+
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.image.Image;
@@ -37,10 +29,17 @@ import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.example.sharedmobilityfxproject.model.Player;
+import javafx.animation.PauseTransition;
 
 
 public class GameView {
@@ -48,6 +47,7 @@ public class GameView {
     // **** Class call ****
     public GameView gameView;
     public GameController gameController;
+    public KeyboardActionController ka;
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
@@ -55,6 +55,7 @@ public class GameView {
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
+    public boolean isMetroSceneActive =false;
     public VBox buttonBox;
     public StackPane root;
     public MediaPlayer mediaPlayer;
@@ -74,7 +75,8 @@ public class GameView {
     // **** Obstacles ****
     // List to keep track of all obstacles
     public List<Obstacle> obstacles;
-
+    public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+    public Player playerUno;
     // Gem count
     static int gemCount = 0;
     // Carbon footprint
@@ -100,27 +102,74 @@ public class GameView {
 
     //Grid setting
     // Boolean flag to control hover cursor visibility
-    boolean showHoverCursor = true;
-    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    private static final int ROWS = 30;
-    private static final int COLUMNS = 60;
-    private static final double WIDTH = 800;
-    private static final double HEIGHT = 600;
+
 
     // **** Font Setting ****
     public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
     public Font creditFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 50);
     public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
     public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
+    // From MAIN OF MERGE STARTS
 
-    public GameView(Grid grid) {
-        gameController = new GameController();
-        this.obstacles = new ArrayList<>();
-        gameController.initializeObstacles(grid);
+    // Boolean flag to control hover cursor visibility
+    boolean showHoverCursor = true;
+    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    private static final int ROWS = 80;
+    private static final int COLUMNS = 120;
+    private static final double WIDTH = 1300;
+    private static final double HEIGHT = 680;
+
+    private Scene scene;
+    private Scene metroScene;
+    private StackPane metroLayer;
+    private Grid metroGrid;
+
+    // Boolean flag to track if the game has finished
+    boolean gameFinished = false;
+
+    // Boolean flag to track if the player is in a taxi
+    boolean hailTaxi = false;
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+        
+        
+    public GameView(Stage primaryStage) {
+            this.primaryStage = primaryStage;
+        }
+
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
     }
 
+    // From MAIN OF MERGE ENDING
+    public GameView(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+    private void initializeMetroSystem() {
+        metroLayer = new StackPane();
+        metroLayer.setStyle("-fx-background-color: #CCCCCC;");
+        metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+        // Initialize metro cells
+        for (int row = 0; row < ROWS; row++) {
+            for (int column = 0; column < COLUMNS; column++) {
+                Cell cell = new Cell(column, row);
+                // Make sure cells are visible
+                metroGrid.add(cell, column, row);
+            }
+        }
+        metroStop under1 = new metroStop(2,30);
+        metroGrid.add(under1,2,30);
+        playerUno.initCell(metroGrid);
+        Label testLabel = new Label("Metro System Active");
+
+        metroLayer.getChildren().addAll(metroGrid,testLabel);
+        metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
+        metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+
+    }
     public void showInitialScreen(Stage primaryStage) {
-        gameController = new GameController();
+        gameController = new GameController(this);
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -172,11 +221,8 @@ public class GameView {
         mainBackground.getChildren().add(imgBox);
 
         // Set focus on the "Game Start" button initially
-        btnStartGame.setFont(btnFont);
-
-
-// Request focus for the "Game Start" button when scene is shown
-        primaryStage.setOnShown(event -> btnStartGame.requestFocus());
+            btnStartGame.setFont(btnFont);
+        btnStartGame.requestFocus();
 
         primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
         primaryStage.setScene(scene);
@@ -281,6 +327,26 @@ public class GameView {
         dialog.showAndWait();
     }
 
+    
+      /*
+    swithc
+    if flag true
+        swith\ch scene
+        flag = !flag
+     */
+        public void switchSceneToMetro(){
+            if(isMetroSceneActive){
+                primaryStage.setScene(metroScene);
+
+
+            }
+            if(!isMetroSceneActive){
+                primaryStage.setScene(scene);
+
+            }
+        }
+    
+    
     public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv, StackPane root) {
         try {
             List<Button> allButtons = new ArrayList<>();
@@ -343,6 +409,8 @@ public class GameView {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     public ImageView createStageImage(String stageName) {
@@ -367,6 +435,7 @@ public class GameView {
         return imageView;
     }
 
+    // This is where the game screen is loaded MAIN WILL BE HERE
     public void loadGameScreen(String stageName, Stage primaryStage) {
 
         try {
@@ -488,9 +557,12 @@ public class GameView {
             mapPlaceholder.setAlignment(Pos.CENTER);
             mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
+
+            // Add all to the layout
+
             mapBorderPane.setTop(mapPlaceholder);
             mapBorderPane.setStyle("-fx-border-color: Yellow; -fx-border-width: 2; -fx-border-style: solid;");
-            
+
 
 
             // Add Stage name and Time above and below the map
@@ -502,20 +574,92 @@ public class GameView {
             // Add all to the layout
             borderPane.setCenter(mapBox);
             borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
+            
 
 
+//            // Create grid for the game
+            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+
+//            // Create keyboard actions handler
+            KeyBoradActionController ka = new KeyBoradActionController(gameView, grid);
+            // Fill grid with cells
+            Cell cell = null;
+            for (int row = 0; row < ROWS; row++) {
+                for (int column = 0; column < COLUMNS; column++) {
+                    cell = new Cell(column, row);
+                    ka.setupKeyboardActions(scene);
+                    grid.add(cell, column, row);
+                }
+            }
+
+//            // Create label for gem count
+            gemCountLabel = new Label("Gem Count: " + gemCount);
+            gemCountLabel.setStyle("-fx-font-size: 16px;");
+            gemCountLabel.setAlignment(Pos.TOP_LEFT);
+            gemCountLabel.setPadding(new Insets(10));
+
+//            // Create label for carbon footprint
+            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
+            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
+            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
+            carbonFootprintLabel.setPadding(new Insets(10));
+//
+//
+
+            
+            
+            
+            
+            
+            // Add Stage name and Time above and below the map
+            VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
+            mapBox.setAlignment(Pos.CENTER);
+            VBox.setMargin(mapPlaceholder, new Insets(0, 0, 70, 0));
+            VBox.setMargin(timeLabel, new Insets(0, 0, 60, 0));
+
+
+            // Settings
+            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+            primaryStage.getIcons().add(icon);
+            primaryStage.setTitle("Shared Mobility Application");
+            primaryStage.setWidth(WIDTH);
+            primaryStage.setHeight(HEIGHT);
+            primaryStage.setResizable(false);
+
+            // Initialise Player
+            playerUno = new Player(0,0,10,1,10,0);
+            ka = new KeyboardActionController(this, playerUno);
+
+            initializeMetroSystem();
+            mapBorderPane.getChildren().addAll(grid);
+            // Add all to the layout
+            borderPane.setCenter(mapBox);
+            borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
 
             // Set this layout in the scene
             Scene scene = new Scene(borderPane, 1496, 1117);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Welcome To " + stageName);
-            //primaryStage.setFullScreen(true);
+            primaryStage.setFullScreen(true);
             primaryStage.show();
 
+
+            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.g
+                    
         } catch (Exception e) {
             e.printStackTrace();
+
         }
+
+
     }
+        public int getRows() {
+            return ROWS;
+        }
+        public int getColumns() {
+            return COLUMNS;
+        }
 
     // Place the gem after the grid is filled and the player's position is initialized
     private void generateGems(Grid grid, int numberOfGems) {
@@ -542,6 +686,7 @@ public class GameView {
         //Previous buttons delete
         root.getChildren().remove(stageSelectionBox);
 
+        gameController = new GameController(this);
         //gameController Check
         gameController = new GameController();
         if (mediaPlayer != null) {

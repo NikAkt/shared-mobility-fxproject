@@ -51,6 +51,12 @@ public class Cell extends StackPane {
     public int getColumn() {
         return column;
     }
+    public void setColumn(int i ){
+        this.column = i;
+    }
+    public void setRow(int j ){
+        this.row = j;
+    }
 
     public String toString() {
         return this.column + "/" + this.row;

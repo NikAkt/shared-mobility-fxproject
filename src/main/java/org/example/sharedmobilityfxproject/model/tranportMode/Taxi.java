@@ -1,18 +1,36 @@
 package org.example.sharedmobilityfxproject.model.tranportMode;
 
 import org.example.sharedmobilityfxproject.model.motion;
+import org.example.sharedmobilityfxproject.model.Cell;
 
-public class Taxi extends TransportationMode implements motion {
+public class Taxi extends Cell {
     private int speed;
     private double carbonFootprintAmount;
     private final double carbonFootprintPerKm = 170; // Assuming this is the rate for a petrol car
-
-    public Taxi(int x, int y, int stamina, int GemCount, int speed) {
-        super(x, y, stamina, 10, 0, GemCount); // Assuming default speed is 10 and CO2 is 0 for initialization
-        this.speed = speed;
-        this.carbonFootprintAmount = 75; // Initial carbon footprint amount for Taxi
+    private int x;
+    private int y;
+    public int flagMove = 0;
+    public boolean arrived = false;
+    public boolean hailed = false;
+    public Taxi(int x, int y) {
+        super(x, y); // Assuming default speed is 10 and CO2 is 0 for initialization
+        // Initial carbon footprint amount for Taxi
+        this.getStyleClass().add("taxi");
+        this.x = x;
+        this.y = y;
     }
-
+    public void setX(int i ){
+        this.x = i;
+    }
+    public void setY(int j ){
+        this.y = j;
+    }
+    public int getX(){
+        return this.x;
+    }
+    public int getY(){
+        return this.y;
+    }
     // Overriding a method to calculate carbon footprint based on distance traveled.
     public double calculateCarbonFootprint(double distance) {
         double journeyCarbonFootprint = carbonFootprintPerKm * distance;
@@ -39,23 +57,4 @@ public class Taxi extends TransportationMode implements motion {
         this.carbonFootprintAmount = carbonFootprintAmount;
     }
 
-    @Override
-    public void moveUp() {
-
-    }
-
-    @Override
-    public void moveDown() {
-
-    }
-
-    @Override
-    public void moveLeft() {
-
-    }
-
-    @Override
-    public void moveRight() {
-
-    }
 }
