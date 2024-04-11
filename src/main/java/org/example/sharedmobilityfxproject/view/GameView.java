@@ -1,7 +1,5 @@
 package org.example.sharedmobilityfxproject.view;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.PauseTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -12,16 +10,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
@@ -44,14 +41,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
-import javafx.animation.PauseTransition;
 
 
 public class GameView {
@@ -71,7 +66,7 @@ public class GameView {
     public MediaPlayer mediaPlayer;
     public HBox topRow;
     public HBox bottomRow;
-    public Stage primaryStage;
+    private Stage primaryStage;
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
     public SceneController sceneController;
@@ -143,21 +138,13 @@ public class GameView {
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
-    public int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
 
-    public static void increaseGemCount() {
-        gemCount++;
-        updateGemCountLabel();
-    }
 
-    // From MAIN OF MERGE ENDING
-    public GameView() {
-    }
+    public static void showInitialScreen(Scene scene, Stage primaryStage) {
 
-    public void showInitialScreen(Stage primaryStage) {
-        gameController = new GameController(this);
+        Group root  = new Group(); //FXML
+        scene.setRoot(root);
+
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -165,7 +152,6 @@ public class GameView {
         ImageView imageView = new ImageView(logoImage);
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(100); // You can adjust this value as needed
-
 
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
@@ -177,12 +163,7 @@ public class GameView {
         // Create and configure the "Exit" button
         Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
         Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
-        //Font Set
 
-
-        //popup test
-        //educationalPopup();
-        // Apply initial styles
         applyButtonStyles(btnStartGame, false);
         applyButtonStyles(btnExit, false);
         applyButtonStyles(gameCredit, false);
@@ -278,6 +259,25 @@ public class GameView {
                     break;
             }
         });
+
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
+
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
+
+    // From MAIN OF MERGE ENDING
+    public GameView(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public void showInitialScreen(Stage primaryStage) {
+
     }
 
     public void showCredit(){
@@ -536,6 +536,7 @@ public class GameView {
 //            mapPlaceholder.setPrefSize(1200, 600);
 //            mapPlaceholder.setAlignment(Pos.CENTER);
 //            mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
+
             final Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(primaryStage);
@@ -723,7 +724,7 @@ public class GameView {
         root.getChildren().remove(stageSelectionBox);
         root.getChildren().remove(gameModeBox);
 
-        gameController = new GameController(this);
+        gameController = new GameController(this, scene, primaryStage);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -744,7 +745,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
-        gameController = new GameController(this); // #TODO: why is this here?
+        gameController = new GameController(this, scene, primaryStage); // #TODO: why is this here?
         root.getChildren().removeAll(buttonBox);
         Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
         Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
@@ -838,7 +839,7 @@ public class GameView {
         // 아무곳이나 클릭하면 팝업 닫기
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
-    public void applyButtonStyles(Button button, boolean focused) {
+    public static void applyButtonStyles(Button button, boolean focused) {
         String fontFamily = btnFont.getName(); // Get the font name from the Font object
         String fontSize = "24px";
         String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";

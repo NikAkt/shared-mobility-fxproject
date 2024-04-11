@@ -1,6 +1,8 @@
 package org.example.sharedmobilityfxproject;
 
 import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
@@ -27,9 +29,11 @@ public class Main extends Application {
         try {
             System.out.println("Game Started");
 
+            Group root = new Group();
+            Scene scene = new Scene(root,1496, 1117);
             GameView gameView = new GameView();
             gameView.showInitialScreen(primaryStage);
-            gameController = new GameController(gameView);
+            gameController = new GameController(gameView,scene,primaryStage);
 
 
         } catch (Exception e) {

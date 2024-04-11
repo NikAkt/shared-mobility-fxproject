@@ -1,10 +1,7 @@
 package org.example.sharedmobilityfxproject.controller;
 
-import javafx.fxml.FXML;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.control.ProgressBar;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -27,6 +24,7 @@ public class GameController {
 
 
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    public Scene scene;
     public GameView gameView;
     // ****JavaElement****
     public Stage primaryStage;
@@ -68,8 +66,16 @@ public class GameController {
     // ****Gem count****
     public static int gemCount = 0;
 
-    public GameController(GameView gameView) {
+    public GameController(GameView gameView, Scene scene, Stage primaryStage) {
         this.gameView = gameView;
+        this.scene = scene;
+        this.primaryStage = primaryStage;
+        initialise();
+
+    }
+
+    private void initialise(){
+        this.gameView.showInitialScreen(this.scene, this.primaryStage);
     }
 
     // Label to keep track of gem count
