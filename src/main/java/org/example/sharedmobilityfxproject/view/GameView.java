@@ -145,7 +145,8 @@ public class GameView {
     }
 
     // From MAIN OF MERGE ENDING
-    public GameView() {
+    public GameView(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
     private void initializeMetroSystem( ) {
         metroLayer = new StackPane();

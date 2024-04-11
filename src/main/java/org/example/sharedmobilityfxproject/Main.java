@@ -47,7 +47,7 @@ public class Main extends Application {
         try {
             System.out.println("Game Started");
 
-            GameView gameView = new GameView();
+            GameView gameView = new GameView(primaryStage);
             gameView.showInitialScreen(primaryStage);
             gameController = new GameController(gameView);
 

@@ -103,7 +103,7 @@ public class GameController {
     }
 
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        gameView = new GameView();
+        gameView = new GameView(primaryStage);
         Button stageButton = new Button(stage);
         if (!stage.equals("Dublin")) {
             ColorAdjust colorAdjust = new ColorAdjust();
