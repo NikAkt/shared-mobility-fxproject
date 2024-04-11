@@ -27,7 +27,7 @@ public class GameController {
 
 
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    public static GameView gameView;
+    public GameView gameView;
     // ****JavaElement****
     public Stage primaryStage;
     public Button btnStartGame;
@@ -165,7 +165,7 @@ public class GameController {
         carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
     }
 
-    public static void increaseGemCount() {
+    public void increaseGemCount() {
         gameView.gemCountLabel = new Label();
         gemCount++;
         gameView.gemCountLabel.setText("Gem Count: " + gemCount);

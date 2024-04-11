@@ -73,8 +73,9 @@ public class GameView {
 
     // **** Obstacles ****
     // List to keep track of all obstacles
-    public List<Obstacle> obstacles = new ArrayList<>();
+
     public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+    public Player playerUno;
 
     // Gem count
     static int gemCount = 0;
@@ -452,7 +453,6 @@ public class GameView {
 
 
             // This is where the keyboard action is initialized
-            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
 
 
             // Create label for gem count
@@ -463,12 +463,14 @@ public class GameView {
 
 
 
+            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
 
             // Initialise Player
-            Player playerUno = new Player(0,0,10,1,10,0);
+            playerUno = new Player(0,0,10,1,10,0);
 
 
-            ka = new KeyboardActionController(this, obstacles, finishCell, playerUno);
+            ka = new KeyboardActionController(this, playerUno);
+
 
             // Add background image, grid, and gem count label to the root StackPane
             root.getChildren().addAll(grid);
@@ -493,20 +495,7 @@ public class GameView {
     }
 
     // Place the gem after the grid is filled and the player's position is initialized
-    private void generateGems(Grid grid, int numberOfGems) {
-        for (int i = 0; i < numberOfGems; i++) {
-            int gemColumn;
-            int gemRow;
-            do {
-                gemColumn = (int) (Math.random() * COLUMNS);
-                gemRow = (int) (Math.random() * ROWS);
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
-
-            Gem gem = new Gem(gemColumn, gemRow);
-            grid.add(gem, gemColumn, gemRow);
-        }
-    }
 
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
         mdv.stop();
