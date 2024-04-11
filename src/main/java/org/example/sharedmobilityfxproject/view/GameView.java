@@ -157,7 +157,7 @@ public class GameView {
     }
 
     public void showInitialScreen(Stage primaryStage) {
-        GameController gameController = new GameController();
+        gameController = new GameController(this);
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
