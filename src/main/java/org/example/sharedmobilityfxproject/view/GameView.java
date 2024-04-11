@@ -755,24 +755,33 @@ public class GameView {
         // Create and configure the scene
         root.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case DOWN, UP:
+                case DOWN:
                     if (btnOnePlayer.isFocused()) {
                         btnTwoPlayer.requestFocus();
                     } else if (btnTwoPlayer.isFocused()) {
-                        backToMenu.requestFocus();
                     } else {
                         btnOnePlayer.requestFocus(); // Wrap around to the first button
                     }
 
-                    break;
 
+                    break;
+                case UP:
+                    if (btnOnePlayer.isFocused()) {
+                        btnTwoPlayer.requestFocus();
+                    } else if (btnTwoPlayer.isFocused()) {
+                    } else {
+                        btnOnePlayer.requestFocus(); // Wrap around to the first button
+                    }
+
+
+                    break;
                 case ENTER:
                     if (btnOnePlayer.isFocused()) {
                         btnOnePlayer.fire();
                     } else if (btnTwoPlayer.isFocused()) {
                         btnTwoPlayer.fire();
                     }else {
-                    break;
+                        break;
                     }
                 default:
                     break;
@@ -780,8 +789,6 @@ public class GameView {
         });
         return null;
     }
-
-    ;
 
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
