@@ -1,35 +1,57 @@
 package org.example.sharedmobilityfxproject.model;
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 public class Map {
-    private Image backgroundImage;
-    private ImageView backgroundImageView; // Reference to the ImageView
 
     /**
      * Initialises the map with a specified background image.
      */
     public Map() {
-        // Map constructor.
-        Image backgroundImage = new Image("https://www.narniaweb.com/wp-content/uploads/2009/08/NarniaMap-768x579.jpg");
-        this.backgroundImageView = new ImageView(backgroundImage);
     }
 
-    public void render(Pane pane) {
-        StackPane layout = new StackPane();
-        pane.getChildren().add(layout);
+    public static void main(String[] args) throws Exception {
+        // Load the image
+        File imageFile = new File("path_to_your_image.png");
+        BufferedImage image = ImageIO.read(imageFile);
+
+        // The grid size
+        int rows = 80;
+        int columns = 120;
+        int[][] mapArray = new int[rows][columns];
+
+        // Dimensions of each cell
+        int cellWidth = image.getWidth() / columns;
+        int cellHeight = image.getHeight() / rows;
+
+        // Process each cell
+        for (int row = 0; row < rows; row++) {
+            for (int column = 0; column < columns; column++) {
+                // Get the color of the center pixel in the current cell
+                int pixel = image.getRGB(column * cellWidth + cellWidth / 2, row * cellHeight + cellHeight / 2);
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
+
+                // Assign values based on color
+                if (red == 255 && green == 255 && blue == 255) {
+                    // White
+                    mapArray[row][column] = 0;
+                } else if (red == 0 && green == 255 && blue == 0) {
+                    // Green
+                    mapArray[row][column] = 1;
+                } else if (red == 128 && green == 128 && blue == 128) {
+                    // Grey
+                    mapArray[row][column] = 4;
+                } else {
+                    // Default case, might need to adjust based on actual image
+                    mapArray[row][column] = -1;
+                }
+            }
+        }
+
+        // Here you can now use mapArray as needed
     }
 }
