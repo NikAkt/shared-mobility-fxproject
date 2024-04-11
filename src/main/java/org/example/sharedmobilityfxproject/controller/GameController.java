@@ -1,9 +1,6 @@
 package org.example.sharedmobilityfxproject.controller;
-import org.example.sharedmobilityfxproject.controller.GameController;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -21,12 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.model.*;
-import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.view.GameView;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class GameController {
@@ -77,7 +71,8 @@ public class GameController {
     // ****Gem count****
     public static int gemCount = 0;
 
-    public GameController() {
+    public GameController(GameView gameView) {
+        this.gameView = gameView;
     }
 
     // Label to keep track of gem count
@@ -88,11 +83,9 @@ public class GameController {
     Label carbonFootprintLabel; // Label to display carbon footprint
 
     //Game Start initialise method
-    public void startGame(Stage primaryStage) {
+    public void startGame() {
         // Start game logic here
-        System.out.println("Game Started");
-        gameView = new GameView();
-        gameView.showInitialScreen(primaryStage);
+
     }
 
     public void setupKeyControls(Scene scene) {
