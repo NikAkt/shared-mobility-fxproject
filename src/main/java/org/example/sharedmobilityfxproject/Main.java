@@ -667,16 +667,17 @@ public class Main extends Application {
                 this.grid =metroGrid;
                 if(isMetroSceneActive){
                     primaryStage.setScene(metroScene);
+                    this.setupKeyboardActions(metroScene);
 
                 }
                 if(!isMetroSceneActive){
                     primaryStage.setScene(scene);
+                    this.setupKeyboardActions(scene);
                 }
 
                 metroLayer.requestFocus();
                 playerUno.setCellByCoords(this.grid,newColumn,newRow);
-                System.out.println("Player has entered a metro entrance" + this.grid);
-                this.setupKeyboardActions(metroScene);
+                System.out.println("Player has entered a metro entrance" + this.grid);this.setupKeyboardActions(metroScene);
 
             }
             // Check if the next cell is an obstacle
