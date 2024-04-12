@@ -1,6 +1,8 @@
 package org.example.sharedmobilityfxproject.model;
 
+import javafx.animation.TranslateTransition;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 /**
  * Grid class represents a two-dimensional grid of cells.
@@ -41,9 +43,30 @@ public class Grid extends Pane {
     }
 
     public void moveCell(Cell cell, int newColumn, int newRow) {
-         // Remove from old position
+        // Calculate the new position in pixels
+        double w = width / columns;
+        double h = height / rows;
+        double newX = w * newColumn;
+        double newY = h * newRow;
 
-        updateCellPosition(cell, newColumn, newRow); // Update visual position
+        // Create a translate transition
+        TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), cell);
+        transition.setToX(newX - cell.getLayoutX());
+        transition.setToY(newY - cell.getLayoutY());
+        transition.setOnFinished(event -> {
+            // Update the cell's logical position in the array after the animation completes
+            cells[cell.getRow()][cell.getColumn()] = null;
+            cells[newRow][newColumn] = cell;
+            cell.setColumn(newColumn);
+            cell.setRow(newRow);
+
+            // Update layout to match the logical position (optional if you want to reset layout coordinates post-animation)
+            cell.setLayoutX(newX);
+            cell.setLayoutY(newY);
+        });
+
+        // Start the animation
+        transition.play();
     }
 
     private void updateCellPosition(Cell cell, int column, int row) {

@@ -214,7 +214,7 @@ public class GameView {
 
         primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true); // Set the stage to full screen
+        primaryStage.setFullScreen(false); // Set the stage to full screen
         primaryStage.show();
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
