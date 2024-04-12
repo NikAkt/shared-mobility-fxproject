@@ -41,10 +41,35 @@ public class Grid extends Pane {
     }
 
     public void moveCell(Cell cell, int newColumn, int newRow) {
-         // Remove from old position
+        double w = width / columns;
+        double h = height / rows;
+        double newX = w * newColumn;
+        double newY = h * newRow;
 
-        updateCellPosition(cell, newColumn, newRow); // Update visual position
+        // Animate the move of the cell to the new coordinates
+        cell.animateMove(newX, newY);
+
+        // Remove the reference from the old position only if it's the same cell
+        // This avoids removing the cell reference if another cell has been moved to this position.
+        if (cells[cell.getRow()][cell.getColumn()] == cell) {
+            cells[cell.getRow()][cell.getColumn()] = null;
+        }
+
+        // Check if the new cell position is already occupied
+        if (cells[newRow][newColumn] != null) {
+            // Optionally handle the case where the new cell position is already occupied
+            // For example, you might want to merge cells, replace the content, or log an error
+        }
+
+        // Move the cell to the new position in the array
+        cells[newRow][newColumn] = cell; // Set new position
+
+        // Update the cell's internal coordinates
+        cell.setColumn(newColumn);
+        cell.setRow(newRow);
     }
+
+
 
     private void updateCellPosition(Cell cell, int column, int row) {
         double w = width / columns;

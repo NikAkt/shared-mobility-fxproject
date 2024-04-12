@@ -203,7 +203,7 @@ public class GameView {
         this.root.getChildren().add(mediaView);
 
         // Set up the scene with the StackPane and show the stage
-        Scene scene = new Scene(this.root, 1496, 1117); // Use the same size as the image for a full background
+        Scene scene = new Scene(this.root, 1200, 700); // Use the same size as the image for a full background
         gameController.setupKeyControls(scene);
 
         this.root.getChildren().add(buttonBox);

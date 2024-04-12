@@ -73,6 +73,7 @@ public class Player implements motion {
     }
 
     public void setCell(Cell cell) {
+
         this.playerCell = cell;
         this.x = cell.getColumn();
         this.y = cell.getRow();
