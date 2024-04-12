@@ -181,7 +181,7 @@ public class GameView {
 
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
-
+//
        mainBackground = new StackPane();
 
         // Create and configure the "Game Start" button
