@@ -54,6 +54,7 @@ public class GameView {
     // **** Class call ****
     public GameView gameView;
     public GameController gameController;
+    public KeyboardActionController ka;
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
@@ -138,8 +139,10 @@ public class GameView {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
-
-
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
     // From MAIN OF MERGE ENDING
     public GameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -436,173 +439,155 @@ public class GameView {
     // This is where the game screen is loaded MAIN WILL BE HERE
     public void loadGameScreen(String stageName, Stage primaryStage) {
 
+
         try {
-            // *****Game Story Popup*****
-            final Stage dialog = new Stage();
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.initOwner(primaryStage);
-            dialog.initStyle(StageStyle.UNDECORATED);
+//            final Stage dialog = new Stage();
+//            dialog.initModality(Modality.APPLICATION_MODAL);
+//            dialog.initOwner(primaryStage);
+//            dialog.initStyle(StageStyle.UNDECORATED);
+//
+//            // Start Pop up
+//            //right left margin 20px 씩
+//            //width 200 height 180
+//            VBox popupVbox = new VBox(10);
+//            popupVbox.setAlignment(Pos.CENTER);
+//            popupVbox.setPrefWidth(400);
+//            popupVbox.setPrefHeight(700);
+//            popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+//
+//            Label noticeLabel = new Label("Notice");
+//            noticeLabel.setFont(titleFont);
+//            noticeLabel.setAlignment(Pos.TOP_CENTER);
+//
+//            Label startMessageLabel = new Label(
+//                    "Eco and Friendly, who cherish the environment, are roaming the city." +
+//                            " collecting Gems needed for their journey. " +
+//                            "\nTry to gather the Gems in the most eco-friendly way possible."
+//            );
+//            startMessageLabel.setWrapText(true);
+//            startMessageLabel.setAlignment(Pos.CENTER);
+//            startMessageLabel.setFont(contentFont);
+//
+//            // Close Button
+//            Button closeButton = new Button("Let's Rock!");
+//            if (contentFont != null) {
+//                // 로드된 폰트를 버튼에 적용합니다.
+//                closeButton.setFont(btnFont);
+//            } else {
+//                System.out.println("Failed to load custom font. Using default font.");
+//            }
+//            closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+//            closeButton.setOnAction(e -> {
+//                dialog.close(); // Close the popup
+//                // Start the timer after the popup is closed
+//                PauseTransition wait = new PauseTransition(Duration.seconds(5));
+//                wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+//                wait.play();
+//            });
+//
+//            // Add labels and close button to VBox
+//            popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
+//            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
+//
+//// Scene and stage setup
+//            Scene dialogScene = new Scene(popupVbox);
+//            dialog.setScene(dialogScene);
+//            dialog.showAndWait();
+//
+//
+//            // **** Start Pop up ****
+//            BorderPane borderPane = new BorderPane();
+//
+//            // CO2 Parameter Bar (Vertical)
+//            ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
+//            co2Bar.setPrefWidth(60);
+//            co2Bar.setPrefHeight(600); // Adjust the height as needed
+//            co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
+//            VBox.setMargin(co2Bar, new Insets(0, 0, 0, 80)); // 상단 마진 설정
+//            // Wrap CO2 bar in VBox to align it vertically
+//            VBox co2Container = new VBox(co2Bar);
+//            co2Container.setAlignment(Pos.CENTER);
+//
+//            // Stamina Parameter
+//            ProgressBar staminaParameter = new ProgressBar(staminagauge); // Set to full stamina
+//            staminaParameter.setPrefHeight(60);
+//            staminaParameter.setPrefWidth(1200);
+//            staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
+//
+//            // "Stamina" 텍스트 생성
+////            Text staminaText = new Text("Stamina");
+////            staminaText.setFont(javafx.scene.text.Font.font(14)); // 폰트 크기 설정
+//
+//            // Wrap CO2 bar in VBox to align it vertically
+//            VBox staminaContainer = new VBox();
+////            staminaContainer.getChildren().add(staminaText);
+//            staminaContainer.getChildren().add(staminaParameter); // 상단에 텍스트 추가
+//            VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
+//            staminaContainer.setAlignment(Pos.CENTER); // 컨테이너 내의 항목을 중앙 정렬
+//
+//
+//            // Time countdown
+//            Label timeLabel = new Label();
+//            timeLabel.setAlignment(Pos.TOP_CENTER);
+//
+//            // Countdown logic
+//            IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
+//            new Timeline(
+//                    new KeyFrame(
+//                            Duration.seconds(timeSeconds.get()),
+//                            event -> gameOver(primaryStage),
+//                            new KeyValue(timeSeconds, 0)
+//                    )
+//            ).play();
+//
+//            timeSeconds.addListener((obs, oldVal, newVal) -> {
+//                timeLabel.setText("Time left: " + newVal + "s");
+//                timeLabel.setFont(javafx.scene.text.Font.font(40));
+//            });
+//            timeLabel.setAlignment(Pos.CENTER);
+//
+//            // Placeholder for the map
+//            Label mapPlaceholder = new Label();
+//            mapPlaceholder.setPrefSize(1200, 600);
+//            mapPlaceholder.setAlignment(Pos.CENTER);
+//            mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
-            // Start Pop up
-            VBox popupVbox = new VBox(10);
-            popupVbox.setAlignment(Pos.CENTER);
-            popupVbox.setPrefWidth(400);
-            popupVbox.setPrefHeight(700);
-            popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
 
-            Label noticeLabel = new Label("Notice");
-            noticeLabel.setFont(titleFont);
-            noticeLabel.setAlignment(Pos.TOP_CENTER);
-
-            Label startMessageLabel = new Label(
-                    "Eco and Friendly, who cherish the environment, are roaming the city." +
-                            " collecting Gems needed for their journey. " +
-                            "\nTry to gather the Gems in the most eco-friendly way possible."
-            );
-            startMessageLabel.setWrapText(true);
-            startMessageLabel.setAlignment(Pos.CENTER);
-            startMessageLabel.setFont(contentFont);
-
-            // Close Button
-            Button closeButton = new Button("Let's Rock!");
-            if (contentFont != null) {
-                closeButton.setFont(btnFont);
-            } else {
-                System.out.println("Failed to load custom font. Using default font.");
-            }
-            closeButton.setPrefSize(160, 80); // Set the preferred size of the button
-            closeButton.setOnAction(e -> {
-                dialog.close(); // Close the popup
-                // Start the timer after the popup is closed
-                PauseTransition wait = new PauseTransition(Duration.seconds(5));
-                wait.setOnFinished(event -> System.out.println("5 Seconds past"));
-                wait.play();
-            });
-            // Add labels and close button to VBox
-            popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
-            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
-
-            // Scene and stage setup
-            Scene dialogScene = new Scene(popupVbox);
-            dialog.setScene(dialogScene);
-            dialog.showAndWait();
-
-            //**** game Introduction Popup end ****
-
-
-            // **** GameContainer ****
-            // Can align top/right/left/bottom
-            BorderPane borderPane = new BorderPane();
-
-            // CO2 Parameter Bar (Vertical)
-            ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
-            co2Bar.setPrefWidth(60);
-            co2Bar.setPrefHeight(600); // Adjust the height as needed
-            co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
-            VBox.setMargin(co2Bar, new Insets(0, 0, 0, 80)); // 상단 마진 설정
-            // Wrap CO2 bar in VBox to align it vertically
-            VBox co2Container = new VBox(co2Bar);
-            co2Container.setAlignment(Pos.CENTER);
-
-            // Stamina Parameter
-            ProgressBar staminaParameter = new ProgressBar(staminagauge); // Set to full stamina
-            staminaParameter.setPrefHeight(60);
-            staminaParameter.setPrefWidth(1200);
-            staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
-
-
-
-            //StaminaBox
-            // "Stamina" text
-            Label staminaText = new Label("Stamina");
-            staminaText.setFont(javafx.scene.text.Font.font(14));
-            VBox staminaContainer = new VBox();
-            staminaContainer.getChildren().add(staminaText);
-            staminaContainer.getChildren().add(staminaParameter);
-            VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
-            staminaContainer.setAlignment(Pos.CENTER);
-
-
-            // **** Time configure ****
-            // Time countdown
-            Label timeLabel = new Label();
-            timeLabel.setAlignment(Pos.TOP_CENTER);
-
-            // Countdown logic
-            IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
-            new Timeline(
-                    new KeyFrame(
-                            Duration.seconds(timeSeconds.get()),
-                            event -> gameOver(primaryStage),
-                            new KeyValue(timeSeconds, 0)
-                    )
-            ).play();
-
-            timeSeconds.addListener((obs, oldVal, newVal) -> {
-                timeLabel.setText("Time left: " + newVal + "s");
-                timeLabel.setFont(btnFont);
-            });
-            timeLabel.setAlignment(Pos.CENTER);
-
-            // **** Time configure End ****
-
-
-            // ****Map BorderPane Setting ****
-            // Placeholder for the map
-            BorderPane mapBorderPane = new BorderPane();
-            Label mapPlaceholder = new Label(stageName);
-            mapPlaceholder.setPrefSize(1200, 600);
-            mapPlaceholder.setAlignment(Pos.CENTER);
-            mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
 
             // Add all to the layout
 
-            mapBorderPane.setTop(mapPlaceholder);
-            mapBorderPane.setStyle("-fx-border-color: Yellow; -fx-border-width: 2; -fx-border-style: solid;");
 
 
 
-            // Add Stage name and Time above and below the map
-            VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
-            mapBox.setAlignment(Pos.CENTER);
-            VBox.setMargin(mapPlaceholder, new Insets(0, 0, 70, 0));
-            VBox.setMargin(timeLabel, new Insets(0, 0, 60, 0));
-
-            // Add all to the layout
-            borderPane.setCenter(mapBox);
-            borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
-            
+            // Set this layout in the scene
+//            Scene scene = new Scene(borderPane, 1496, 1117);
+//            primaryStage.setScene(scene);
 
 
-//            // Create grid for the game
-            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+            // Create a StackPane to hold all elements
+//            Stage gridStage = new Stage();
+//            gridStage.initOwner(primaryStage);
+            StackPane root = new StackPane();
+            Scene scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
+//            gridStage.setScene(scene);
+//            Stage gridStage = new Stage();
+//            gridStage.initOwner(primaryStage);
+//            StackPane root = new StackPane();
+//            Scene scene = new Scene(root);
+//            primaryStage.setTitle("Welcome To " + stageName);
+//            primaryStage.setFullScreen(true);
+//            primaryStage.show();
 
-//            // Create keyboard actions handler
-            KeyboardActionController ka = new KeyboardActionController(gameView, grid);
-            // Fill grid with cells
-            Cell cell = null;
-            for (int row = 0; row < ROWS; row++) {
-                for (int column = 0; column < COLUMNS; column++) {
-                    cell = new Cell(column, row);
-                    ka.setupKeyboardActions(scene);
-                    grid.add(cell, column, row);
-                }
-            }
 
-//            // Create label for gem count
-            gemCountLabel = new Label("Gem Count: " + gemCount);
-            gemCountLabel.setStyle("-fx-font-size: 16px;");
-            gemCountLabel.setAlignment(Pos.TOP_LEFT);
-            gemCountLabel.setPadding(new Insets(10));
 
-//            // Create label for carbon footprint
-            carbonFootprintLabel = new Label("Carbon Footprint: " + carbonFootprint);
-            carbonFootprintLabel.setStyle("-fx-font-size: 16px;");
-            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-            carbonFootprintLabel.setPadding(new Insets(10));
-//
-//
+
+
+
+
+
+
+
 
 
             // Settings
@@ -613,27 +598,49 @@ public class GameView {
             primaryStage.setHeight(HEIGHT);
             primaryStage.setResizable(false);
 
-            // Initialise Player
-            playerUno = new Player(0,0,10,1,10,0);
-            //ka = new KeyboardActionController(this, playerUno);
 
-            initializeMetroSystem();
-            mapBorderPane.getChildren().addAll(grid);
-            // Add all to the layout
-            borderPane.setCenter(mapBox);
-            borderPane.setLeft(co2Container); // CO2 bar on the left side of the map
 
-            // Set this layout in the scene
-            Scene scene = new Scene(borderPane, 1496, 1117);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Welcome To " + stageName);
-            primaryStage.setFullScreen(true);
-            primaryStage.show();
+
+
+
+            // This is where the keyboard action is initialized
+
+
+
+
+            // Create label for gem count
+            gemCountLabel = new Label("Gem Count: " + gemCount);
+            gemCountLabel.setStyle("-fx-font-size: 16px;");
+            gemCountLabel.setAlignment(Pos.TOP_LEFT);
+            gemCountLabel.setPadding(new Insets(10));
+
+
+
+
 
 
             scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
-                    
+
+
+            // Initialise Player
+            playerUno = new Player(0,0,10,1,10,0);
+
+
+
+
+            ka = new KeyboardActionController(this, playerUno);
+
+
+
+
+            // Add background image, grid, and gem count label to the root StackPane
+            root.getChildren().addAll(grid);
+//            System.out.println(busS1.getX());
+            // create scene and set to stage
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+            primaryStage.setScene(scene);
+            primaryStage.show();
+            initializeMetroSystem();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -761,13 +768,10 @@ public class GameView {
         return null;
     }
 
-    public void updateGemCountLabel() {
+    public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
-    public static void increaseGemCount() {
-        gemCount++;
-        updateGemCountLabel();
-    }
+
     private void gameOver(Stage primarOveryStage) {
         // GameOver method
         final Stage dialog = new Stage();
