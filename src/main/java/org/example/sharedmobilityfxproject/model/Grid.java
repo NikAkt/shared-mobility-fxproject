@@ -1,6 +1,8 @@
 package org.example.sharedmobilityfxproject.model;
 
 import javafx.scene.layout.Pane;
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
 
 /**
  * Grid class represents a two-dimensional grid of cells.
@@ -40,45 +42,22 @@ public class Grid extends Pane {
         return cells[row][column];
     }
 
-    public void moveCell(Cell cell, int newColumn, int newRow) {
-        double w = width / columns;
-        double h = height / rows;
-        double newX = w * newColumn;
-        double newY = h * newRow;
-
-        // Animate the move of the cell to the new coordinates
-        cell.animateMove(newX, newY);
-
-        // Remove the reference from the old position only if it's the same cell
-        // This avoids removing the cell reference if another cell has been moved to this position.
-        if (cells[cell.getRow()][cell.getColumn()] == cell) {
-            cells[cell.getRow()][cell.getColumn()] = null;
-        }
-
-        // Check if the new cell position is already occupied
-        if (cells[newRow][newColumn] != null) {
-            // Optionally handle the case where the new cell position is already occupied
-            // For example, you might want to merge cells, replace the content, or log an error
-        }
-
-        // Move the cell to the new position in the array
-        cells[newRow][newColumn] = cell; // Set new position
-
-        // Update the cell's internal coordinates
-        cell.setColumn(newColumn);
-        cell.setRow(newRow);
+    public void moveCell(Cell cell, int column, int row){
+        updateCellPosition(cell,column, row);
     }
-
-
-
-    private void updateCellPosition(Cell cell, int column, int row) {
+    public void updateCellPosition(Cell cell, int column, int row) {
         double w = width / columns;
         double h = height / rows;
-        double x = w * column;
-        double y = h * row;
+        double newX = w * column;
+        double newY = h * row;
 
-        cell.setLayoutX(x);
-        cell.setLayoutY(y);
+
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(0.05), cell);
+            tt.setToX(newX);
+            tt.setToY(newY);
+            tt.play();
+
+
         cell.setPrefWidth(w);
         cell.setPrefHeight(h);
 
@@ -86,7 +65,6 @@ public class Grid extends Pane {
             getChildren().add(cell);
         }
     }
-
     public int getRows() {
         return rows;
     }
