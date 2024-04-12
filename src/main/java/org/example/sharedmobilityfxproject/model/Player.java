@@ -71,7 +71,12 @@ public class Player implements motion {
     public void initCell(Grid grid) {
         this.playerCell = grid.getCell(this.getCoordY(), this.getCoordX());
     }
-
+    public void setX(int i){
+        this.x =i;
+    }
+    public void setY(int j){
+        this.y = j;
+    }
     public void setCell(Cell cell) {
 
         this.playerCell = cell;
