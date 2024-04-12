@@ -282,32 +282,32 @@ public class KeyboardActionController {
     }
 
     public void setupKeyboardActions(KeyCode key) {
-            if(inTaxi){
-                switch (key) {
-                    case D -> movePlayer(1, 0);
-                    case A -> movePlayer(-1, 0);
-                    case W -> movePlayer(0, -1);
-                    case S -> movePlayer(0, 1);
-                    case T -> inTaxi =false;
-                    case E -> togglePlayerMovement();
-                    case C ->
-                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
-                }
-            } else if (playerMovementEnabled) {
-                switch (key) {
-                    case D -> movePlayer(1, 0);
-                    case A -> movePlayer(-1, 0);
-                    case W -> movePlayer(0, -1);
-                    case S -> movePlayer(0, 1);
-//                    case T -> hailTaxi();
-                    case E -> togglePlayerMovement();
-                }
-            } else if (key == KeyCode.E) {
-                togglePlayerMovement();
+        if(inTaxi){
+            switch (key) {
+                case D -> movePlayer(1, 0);
+                case A -> movePlayer(-1, 0);
+                case W -> movePlayer(0, -1);
+                case S -> movePlayer(0, 1);
+                case T -> inTaxi =false;
+                case E -> togglePlayerMovement();
+                case C ->
+                        System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
             }
+        } else if (playerMovementEnabled) {
+            switch (key) {
+                case D -> movePlayer(1, 0);
+                case A -> movePlayer(-1, 0);
+                case W -> movePlayer(0, -1);
+                case S -> movePlayer(0, 1);
+//                    case T -> hailTaxi();
+                case E -> togglePlayerMovement();
+            }
+        } else if (key == KeyCode.E) {
+            togglePlayerMovement();
+        }
     }
 
     private void moveBus(Bus bus, int newX, int newY) {
