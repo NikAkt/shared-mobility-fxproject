@@ -1,5 +1,12 @@
 package org.example.sharedmobilityfxproject.view;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -30,6 +37,8 @@ import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,8 +49,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
-
-
+import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
 public class GameView {
 
     // **** Class call ****
@@ -51,7 +59,6 @@ public class GameView {
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
-
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
@@ -131,16 +138,9 @@ public class GameView {
     boolean hailTaxi = false;
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
-        
-        
-    public GameView(Stage primaryStage) {
-            this.primaryStage = primaryStage;
-        }
-
-    public static void increaseGemCount() {
-        gemCount++;
-        updateGemCountLabel();
     }
+
+
 
     // From MAIN OF MERGE ENDING
     public GameView(Stage primaryStage) {
@@ -516,7 +516,7 @@ public class GameView {
 
             //StaminaBox
             // "Stamina" text
-            Text staminaText = new Text("Stamina");
+            Label staminaText = new Label("Stamina");
             staminaText.setFont(javafx.scene.text.Font.font(14));
             VBox staminaContainer = new VBox();
             staminaContainer.getChildren().add(staminaText);
@@ -581,7 +581,7 @@ public class GameView {
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
 //            // Create keyboard actions handler
-            KeyBoradActionController ka = new KeyBoradActionController(gameView, grid);
+            KeyboradActionController ka = new KeyboradActionController(gameView, grid);
             // Fill grid with cells
             Cell cell = null;
             for (int row = 0; row < ROWS; row++) {
@@ -605,17 +605,6 @@ public class GameView {
             carbonFootprintLabel.setPadding(new Insets(10));
 //
 //
-
-            
-            
-            
-            
-            
-            // Add Stage name and Time above and below the map
-            VBox mapBox = new VBox(timeLabel, mapPlaceholder, staminaParameter);
-            mapBox.setAlignment(Pos.CENTER);
-            VBox.setMargin(mapPlaceholder, new Insets(0, 0, 70, 0));
-            VBox.setMargin(timeLabel, new Insets(0, 0, 60, 0));
 
 
             // Settings
@@ -688,7 +677,6 @@ public class GameView {
 
         gameController = new GameController(this);
         //gameController Check
-        gameController = new GameController();
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -712,7 +700,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage) {
-        gameController = new GameController();
+        gameController = new GameController(this);
         root.getChildren().removeAll(buttonBox);
         ImageView imageView = new ImageView(logoImage);
         imageView.setPreserveRatio(true);
@@ -778,7 +766,10 @@ public class GameView {
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
-
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
     private void gameOver(Stage primarOveryStage) {
         // GameOver method
         final Stage dialog = new Stage();
