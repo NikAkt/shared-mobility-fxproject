@@ -50,6 +50,7 @@ import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
 import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
+
 public class GameView {
 
     // **** Class call ****
@@ -139,7 +140,10 @@ public class GameView {
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }
-
+    public static void increaseGemCount() {
+        gemCount++;
+        updateGemCountLabel();
+    }
 
 
     // From MAIN OF MERGE ENDING
@@ -634,7 +638,7 @@ public class GameView {
             primaryStage.show();
 
 
-            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.g
+            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
                     
         } catch (Exception e) {
             e.printStackTrace();
@@ -766,10 +770,7 @@ public class GameView {
     public void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
-    public static void increaseGemCount() {
-        gemCount++;
-        updateGemCountLabel();
-    }
+
     private void gameOver(Stage primarOveryStage) {
         // GameOver method
         final Stage dialog = new Stage();
