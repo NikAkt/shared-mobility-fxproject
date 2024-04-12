@@ -7,7 +7,6 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -47,10 +46,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         try {
             System.out.println("Game Started");
-            Group root = new Group();
-            Scene scene = new Scene(root,1496, 1117);
+
             GameView gameView = new GameView(primaryStage);
-            gameController = new GameController(gameView,scene,primaryStage);
+            gameView.showInitialScreen(primaryStage);
+            gameController = new GameController(gameView);
+
 
         } catch (Exception e) {
             e.printStackTrace();
