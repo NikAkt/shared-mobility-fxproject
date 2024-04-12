@@ -1,5 +1,4 @@
 package org.example.sharedmobilityfxproject.view;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.KeyFrame;
@@ -55,7 +54,6 @@ public class GameView {
     // **** Class call ****
     public GameView gameView;
     public GameController gameController;
-    public KeyboardActionController ka;
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
@@ -581,7 +579,7 @@ public class GameView {
             Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
 //            // Create keyboard actions handler
-            KeyboradActionController ka = new KeyboradActionController(gameView, grid);
+            KeyboardActionController ka = new KeyboardActionController(gameView, grid);
             // Fill grid with cells
             Cell cell = null;
             for (int row = 0; row < ROWS; row++) {
@@ -617,7 +615,7 @@ public class GameView {
 
             // Initialise Player
             playerUno = new Player(0,0,10,1,10,0);
-            ka = new KeyboardActionController(this, playerUno);
+            //ka = new KeyboardActionController(this, playerUno);
 
             initializeMetroSystem();
             mapBorderPane.getChildren().addAll(grid);
@@ -634,7 +632,7 @@ public class GameView {
             primaryStage.show();
 
 
-            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.g
+            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
                     
         } catch (Exception e) {
             e.printStackTrace();
