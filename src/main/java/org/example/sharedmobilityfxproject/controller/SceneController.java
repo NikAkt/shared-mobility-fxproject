@@ -22,25 +22,23 @@ import java.io.File;
 import java.io.IOException;
 
 public class SceneController {
+    private GameView gameView;
     public GameController gameController;
     private Stage stage;
     private Scene scene;
 //    private Parent root;
 
 
-    public SceneController(Stage stage) {
-        this.stage = stage;
-        this.scene = new Scene(new StackPane(), 1496, 1117); // 기본 Scene 설정
-
-        stage.setScene(this.scene);
+    public SceneController(GameView gameView) {
+        this.gameView = gameView;
     }
-    public void initFirstScene() { switchToMainMenu();}
 
+    public void initMainMenu() {
+        gameController = new GameController(this, gameView);
+
+    }
     public void switchToMainMenu() {
-        GameView mainMenuView = new GameView(this, "MainMenu",stage);
-        gameController = new GameController(mainMenuView);
-        stage.setScene(mainMenuView.getScene());
-        stage.show();
+
     }
     public void switchToStageChoose() {
         GameView mainMenuView = new GameView(this, "StageChoose",stage);
