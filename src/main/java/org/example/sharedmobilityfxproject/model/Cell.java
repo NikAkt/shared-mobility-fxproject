@@ -1,5 +1,6 @@
 package org.example.sharedmobilityfxproject.model;
-
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -31,7 +32,12 @@ public class Cell extends StackPane {
     public void unhighlight() {
         getStyleClass().remove("cell-highlight");
     }
-
+    public void animateMove(double newX, double newY) {
+        TranslateTransition transition = new TranslateTransition(Duration.seconds(0.075), this);
+        transition.setToX(newX - this.getLayoutX());
+        transition.setToY(newY - this.getLayoutY());
+        transition.play();
+    }
     public void hoverHighlight() {
         // ensure the style is only once in the style list
         getStyleClass().remove("cell-hover-highlight");

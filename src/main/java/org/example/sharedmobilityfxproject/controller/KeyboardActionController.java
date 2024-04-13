@@ -18,12 +18,11 @@ import java.util.List;
 
 
 
-public class GameController {
+public class KeyboardActionController {
 
-    private SceneController sceneController;
     //class call
-    public MainController mainController;
-    private GameView gameView;
+    public GameController gameController;
+    public GameView gameView;
     public Gem gem;
     public Cell currentCell; // Made public for access in start method
     public Cell playerUnosCell; // Made public for access in start method
@@ -51,17 +50,9 @@ public class GameController {
     }
 
     // Constructor to initialise grid
-    public GameController(SceneController sceneController, GameView gameView, Player playerUno) {
-        this.sceneController = sceneController;
+    public KeyboardActionController(GameView gameView, Player playerUno) {
         this.gameView = gameView;
         this.playerUno = playerUno;
-
-        this.sceneController.initGameScene();
-        this.startPlayingGame();
-    }
-
-    public void startPlayingGame(){
-
 
 
         // Fill the grid with cells
@@ -146,15 +137,14 @@ public class GameController {
         busStop busS6 = new busStop(4,64);
         busStop busS7 = new busStop(4,34);
 
-        metroStop metro1 = new metroStop(2,30);
-        gameView.grid.add(metro1,2,30);
-        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+
+        this.busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+        this.busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+        this.busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+        this.busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+        this.busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+        this.busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+        this.busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
 
 
         busStops.add(busS1);
@@ -167,43 +157,45 @@ public class GameController {
 
 
 
-        busman = new Bus(busStops,4, 4);
-        taximan = new Taxi (58,28);
-        for (int i = 0; i < busman.list().size(); i++){
-            busStop stop = busman.list().get(i);
+        this.busman = new Bus(busStops,4, 4);
+        this.taximan = new Taxi (58,28);
+        for (int i = 0; i < this.busman.list().size(); i++){
+            busStop stop = this.busman.list().get(i);
             gameView.grid.add(stop,stop.getX(), stop.getY());
         }
 
-        gameView.grid.add(busman,busman.getX(), busman.getY());// Example starting position
-        gameView.grid.add(taximan, taximan.getX(), taximan.getY());
+        gameView.grid.add(this.busman,this.busman.getX(), this.busman.getY());// Example starting position
+        gameView.grid.add(this.taximan, this.taximan.getX(), this.taximan.getY());
 
+        // Don't initialize currentCell here
 
         // Schedule the bus to move every second
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
-            busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
-            if(taximan.hailed&&!taximan.arrived){
-                moveTaxiTowardsPlayer(taximan);
+            busStop targetBusStop = this.busman.nextStop(); // Assuming this method correctly returns the next bus stop
+
+            if(this.taximan.hailed&&!this.taximan.arrived){
+                moveTaxiTowardsPlayer(this.taximan);
             }
-            if (!busman.isWaiting){
+            if (!this.busman.isWaiting){
 
 
-                moveBusTowardsBusStop(busman, targetBusStop);
+                moveBusTowardsBusStop(this.busman, targetBusStop);
 
                 // Here's the updated part
-                if (onBus) {
+                if (this.onBus) {
                     // Update player's coordinates to match the bus when the player is on the bus
-                    playerUno.setCellByCoords(gameView.grid, busman.getX(), busman.getY());
-                    System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
+                    this.playerUno.setCellByCoords(gameView.grid, this.busman.getX(), this.busman.getY());
+                    System.out.println("Player coordinates (on bus): " + this.playerUno.getCoordX() + ", " + this.playerUno.getCoordY());
                     //Increase carbon footprint amount as long as player is on the bus
                     double carbonFootprint = 0.2; //subject to change
 //                    gameController.updateCarbonFootprintLabel();
                 }}
             else{
-                if(busman.waitTime ==0){
-                    busman.waitASec();
+                if(this.busman.waitTime ==0){
+                    this.busman.waitASec();
                 }
                 else{
-                    busman.waitTime--;
+                    this.busman.waitTime--;
                 }
             }
         }));
@@ -211,15 +203,8 @@ public class GameController {
         busMovementTimeline.setCycleCount(Animation.INDEFINITE);
         busMovementTimeline.play();
 
-
-
         // give playerUno a cell goddamit
-        playerUno.initCell(gameView.grid);
-
-        gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
-        gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("Simple Game");
-        gameView.getPrimaryStage().show();
+        this.playerUno.initCell(gameView.grid);
     }
 
     private void generateGems(Grid grid, int numberOfGems) {
@@ -364,17 +349,17 @@ public class GameController {
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
             }}else if (playerMovementEnabled) {
-            switch (key) {
-                case D -> movePlayer(1, 0);
-                case A -> movePlayer(-1, 0);
-                case W -> movePlayer(0, -1);
-                case S -> movePlayer(0, 1);
-                case T -> hailTaxi();
-                case E -> togglePlayerMovement();
+                switch (key) {
+                    case D -> movePlayer(1, 0);
+                    case A -> movePlayer(-1, 0);
+                    case W -> movePlayer(0, -1);
+                    case S -> movePlayer(0, 1);
+                    case T -> hailTaxi();
+                    case E -> togglePlayerMovement();
+                }
+            } else if (key == KeyCode.E) {
+                togglePlayerMovement();
             }
-        } else if (key == KeyCode.E) {
-            togglePlayerMovement();
-        }
     }
     private void moveTaxi(Grid grid,Taxi bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
@@ -439,7 +424,7 @@ public class GameController {
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
-            playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
+           playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
             if (inTaxi) {

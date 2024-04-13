@@ -35,9 +35,14 @@ public class SceneController {
         gameView.getPrimaryStage().show();
     }
 
-    public  void switchToGameScene(){
+    public  void switchToGameScene() {
         System.out.println(" switchToGameScene in SceneController");
         gameView.selectStage();
+    }
+
+    public void initGameScene(){
+
+        gameView.setupGameScene();
 
     }
 //    public void switchToStageChoose() {

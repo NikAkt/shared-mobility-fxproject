@@ -89,14 +89,19 @@ public class MainController {
     public MainController(SceneController sceneController, GameView gameView) {
         this.gameView = gameView;
         this.sceneController = sceneController;
-        this.gameController = initGameController();
+//        this.gameController = initGameController();
 
-        this.startGame();
+        // this function will start the game when Gyuwon fixes his stuff but for right now it will be commented
+//        this.startGame();
+
     }
 
-    private GameController initGameController(){
-        return new GameController(sceneController, gameView);
-    }
+
+//    private GameController initGameController(){
+//        return new GameController(sceneController, gameView, playerUno);
+//    }
+
+
 
     public void startGame(){
         System.out.println("MainController startGame");

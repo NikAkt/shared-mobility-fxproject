@@ -1,6 +1,8 @@
 package org.example.sharedmobilityfxproject.model;
 
 import javafx.scene.layout.Pane;
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
 
 /**
  * Grid class represents a two-dimensional grid of cells.
@@ -40,20 +42,22 @@ public class Grid extends Pane {
         return cells[row][column];
     }
 
-    public void moveCell(Cell cell, int newColumn, int newRow) {
-         // Remove from old position
-
-        updateCellPosition(cell, newColumn, newRow); // Update visual position
+    public void moveCell(Cell cell, int column, int row){
+        updateCellPosition(cell,column, row);
     }
-
-    private void updateCellPosition(Cell cell, int column, int row) {
+    public void updateCellPosition(Cell cell, int column, int row) {
         double w = width / columns;
         double h = height / rows;
-        double x = w * column;
-        double y = h * row;
+        double newX = w * column;
+        double newY = h * row;
 
-        cell.setLayoutX(x);
-        cell.setLayoutY(y);
+
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(0.05), cell);
+            tt.setToX(newX);
+            tt.setToY(newY);
+            tt.play();
+
+
         cell.setPrefWidth(w);
         cell.setPrefHeight(h);
 
@@ -61,7 +65,6 @@ public class Grid extends Pane {
             getChildren().add(cell);
         }
     }
-
     public int getRows() {
         return rows;
     }

@@ -180,6 +180,34 @@ public class GameView {
 
     }
 
+    public void setupGameScene(){
+        StackPane root = new StackPane();
+        scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
+
+        // Settings
+        Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+        primaryStage.getIcons().add(icon);
+        primaryStage.setTitle("Shared Mobility Application");
+        primaryStage.setWidth(WIDTH);
+        primaryStage.setHeight(HEIGHT);
+        primaryStage.setResizable(false);
+
+        // Create label for gem count
+        gemCountLabel = new Label("Gem Count: " + gemCount);
+        gemCountLabel.setStyle("-fx-font-size: 16px;");
+        gemCountLabel.setAlignment(Pos.TOP_LEFT);
+        gemCountLabel.setPadding(new Insets(10));
+
+//            ka = new GameController(this, playerUno);
+
+        // Add background image, grid, and gem count label to the root StackPane
+        root.getChildren().addAll(grid);
+
+//            System.out.println(busS1.getX());
+        // create scene and set to stage
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+        initializeMetroSystem();
+    }
 
     public Button getBtnExit(){
         System.out.println("getBtnExit in GameView");
@@ -281,7 +309,7 @@ public class GameView {
         }
         metroStop under1 = new metroStop(2,30);
         metroGrid.add(under1,2,30);
-        playerUno.initCell(metroGrid);
+//        playerUno.initCell(metroGrid);
         Label testLabel = new Label("Metro System Active");
 
         metroLayer.getChildren().addAll(metroGrid,testLabel);
@@ -405,135 +433,135 @@ public class GameView {
     }
 
     // This is where the game screen is loaded MAIN WILL BE HERE
-//    public void loadGameScreen(String stageName, Stage primaryStage) {
-//        try {
-////            final Stage dialog = new Stage();
-////            dialog.initModality(Modality.APPLICATION_MODAL);
-////            dialog.initOwner(primaryStage);
-////            dialog.initStyle(StageStyle.UNDECORATED);
-////
-////            // Start Pop up
-////            //right left margin 20px 씩
-////            //width 200 height 180
-////            VBox popupVbox = new VBox(10);
-////            popupVbox.setAlignment(Pos.CENTER);
-////            popupVbox.setPrefWidth(400);
-////            popupVbox.setPrefHeight(700);
-////            popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
-////
-////            Label noticeLabel = new Label("Notice");
-////            noticeLabel.setFont(titleFont);
-////            noticeLabel.setAlignment(Pos.TOP_CENTER);
-////
-////            Label startMessageLabel = new Label(
-////                    "Eco and Friendly, who cherish the environment, are roaming the city." +
-////                            " collecting Gems needed for their journey. " +
-////                            "\nTry to gather the Gems in the most eco-friendly way possible."
-////            );
-////            startMessageLabel.setWrapText(true);
-////            startMessageLabel.setAlignment(Pos.CENTER);
-////            startMessageLabel.setFont(contentFont);
-////
-////            // Close Button
-////            Button closeButton = new Button("Let's Rock!");
-////            if (contentFont != null) {
-////                // 로드된 폰트를 버튼에 적용합니다.
-////                closeButton.setFont(btnFont);
-////            } else {
-////                System.out.println("Failed to load custom font. Using default font.");
-////            }
-////            closeButton.setPrefSize(160, 80); // Set the preferred size of the button
-////            closeButton.setOnAction(e -> {
-////                dialog.close(); // Close the popup
-////                // Start the timer after the popup is closed
-////                PauseTransition wait = new PauseTransition(Duration.seconds(5));
-////                wait.setOnFinished(event -> System.out.println("5 Seconds past"));
-////                wait.play();
-////            });
-////
-////            // Add labels and close button to VBox
-////            popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
-////            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
-////
-////// Scene and stage setup
-////            Scene dialogScene = new Scene(popupVbox);
-////            dialog.setScene(dialogScene);
-////            dialog.showAndWait();
-////
-////
-////            // **** Start Pop up ****
-////            BorderPane borderPane = new BorderPane();
-////
-////            // CO2 Parameter Bar (Vertical)
-////            ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
-////            co2Bar.setPrefWidth(60);
-////            co2Bar.setPrefHeight(600); // Adjust the height as needed
-////            co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
-////            VBox.setMargin(co2Bar, new Insets(0, 0, 0, 80)); // 상단 마진 설정
-////            // Wrap CO2 bar in VBox to align it vertically
-////            VBox co2Container = new VBox(co2Bar);
-////            co2Container.setAlignment(Pos.CENTER);
-////
-////            // Stamina Parameter
-////            ProgressBar staminaParameter = new ProgressBar(staminagauge); // Set to full stamina
-////            staminaParameter.setPrefHeight(60);
-////            staminaParameter.setPrefWidth(1200);
-////            staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
-////
-////            // "Stamina" 텍스트 생성
-//////            Text staminaText = new Text("Stamina");
-//////            staminaText.setFont(javafx.scene.text.Font.font(14)); // 폰트 크기 설정
-////
-////            // Wrap CO2 bar in VBox to align it vertically
-////            VBox staminaContainer = new VBox();
-//////            staminaContainer.getChildren().add(staminaText);
-////            staminaContainer.getChildren().add(staminaParameter); // 상단에 텍스트 추가
-////            VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
-////            staminaContainer.setAlignment(Pos.CENTER); // 컨테이너 내의 항목을 중앙 정렬
-////
-////
-////            // Time countdown
-////            Label timeLabel = new Label();
-////            timeLabel.setAlignment(Pos.TOP_CENTER);
-////
-////            // Countdown logic
-////            IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
-////            new Timeline(
-////                    new KeyFrame(
-////                            Duration.seconds(timeSeconds.get()),
-////                            event -> gameOver(primaryStage),
-////                            new KeyValue(timeSeconds, 0)
-////                    )
-////            ).play();
-////
-////            timeSeconds.addListener((obs, oldVal, newVal) -> {
-////                timeLabel.setText("Time left: " + newVal + "s");
-////                timeLabel.setFont(javafx.scene.text.Font.font(40));
-////            });
-////            timeLabel.setAlignment(Pos.CENTER);
-////
-////            // Placeholder for the map
-////            Label mapPlaceholder = new Label();
-////            mapPlaceholder.setPrefSize(1200, 600);
-////            mapPlaceholder.setAlignment(Pos.CENTER);
-////            mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
+    public void loadGameScreen(String stageName, Stage primaryStage) {
+        try {
+//            final Stage dialog = new Stage();
+//            dialog.initModality(Modality.APPLICATION_MODAL);
+//            dialog.initOwner(primaryStage);
+//            dialog.initStyle(StageStyle.UNDECORATED);
+//
+//            // Start Pop up
+//            //right left margin 20px 씩
+//            //width 200 height 180
+//            VBox popupVbox = new VBox(10);
+//            popupVbox.setAlignment(Pos.CENTER);
+//            popupVbox.setPrefWidth(400);
+//            popupVbox.setPrefHeight(700);
+//            popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+//
+//            Label noticeLabel = new Label("Notice");
+//            noticeLabel.setFont(titleFont);
+//            noticeLabel.setAlignment(Pos.TOP_CENTER);
+//
+//            Label startMessageLabel = new Label(
+//                    "Eco and Friendly, who cherish the environment, are roaming the city." +
+//                            " collecting Gems needed for their journey. " +
+//                            "\nTry to gather the Gems in the most eco-friendly way possible."
+//            );
+//            startMessageLabel.setWrapText(true);
+//            startMessageLabel.setAlignment(Pos.CENTER);
+//            startMessageLabel.setFont(contentFont);
+//
+//            // Close Button
+//            Button closeButton = new Button("Let's Rock!");
+//            if (contentFont != null) {
+//                // 로드된 폰트를 버튼에 적용합니다.
+//                closeButton.setFont(btnFont);
+//            } else {
+//                System.out.println("Failed to load custom font. Using default font.");
+//            }
+//            closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+//            closeButton.setOnAction(e -> {
+//                dialog.close(); // Close the popup
+//                // Start the timer after the popup is closed
+//                PauseTransition wait = new PauseTransition(Duration.seconds(5));
+//                wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+//                wait.play();
+//            });
+//
+//            // Add labels and close button to VBox
+//            popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
+//            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
+//
+//// Scene and stage setup
+//            Scene dialogScene = new Scene(popupVbox);
+//            dialog.setScene(dialogScene);
+//            dialog.showAndWait();
 //
 //
+//            // **** Start Pop up ****
+//            BorderPane borderPane = new BorderPane();
+//
+//            // CO2 Parameter Bar (Vertical)
+//            ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
+//            co2Bar.setPrefWidth(60);
+//            co2Bar.setPrefHeight(600); // Adjust the height as needed
+//            co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
+//            VBox.setMargin(co2Bar, new Insets(0, 0, 0, 80)); // 상단 마진 설정
+//            // Wrap CO2 bar in VBox to align it vertically
+//            VBox co2Container = new VBox(co2Bar);
+//            co2Container.setAlignment(Pos.CENTER);
+//
+//            // Stamina Parameter
+//            ProgressBar staminaParameter = new ProgressBar(staminagauge); // Set to full stamina
+//            staminaParameter.setPrefHeight(60);
+//            staminaParameter.setPrefWidth(1200);
+//            staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
+//
+//            // "Stamina" 텍스트 생성
+////            Text staminaText = new Text("Stamina");
+////            staminaText.setFont(javafx.scene.text.Font.font(14)); // 폰트 크기 설정
+//
+//            // Wrap CO2 bar in VBox to align it vertically
+//            VBox staminaContainer = new VBox();
+////            staminaContainer.getChildren().add(staminaText);
+//            staminaContainer.getChildren().add(staminaParameter); // 상단에 텍스트 추가
+//            VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0)); // 상단 마진 설정
+//            staminaContainer.setAlignment(Pos.CENTER); // 컨테이너 내의 항목을 중앙 정렬
 //
 //
-//            // Add all to the layout
+//            // Time countdown
+//            Label timeLabel = new Label();
+//            timeLabel.setAlignment(Pos.TOP_CENTER);
 //
+//            // Countdown logic
+//            IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
+//            new Timeline(
+//                    new KeyFrame(
+//                            Duration.seconds(timeSeconds.get()),
+//                            event -> gameOver(primaryStage),
+//                            new KeyValue(timeSeconds, 0)
+//                    )
+//            ).play();
 //
+//            timeSeconds.addListener((obs, oldVal, newVal) -> {
+//                timeLabel.setText("Time left: " + newVal + "s");
+//                timeLabel.setFont(javafx.scene.text.Font.font(40));
+//            });
+//            timeLabel.setAlignment(Pos.CENTER);
 //
-//
-//            // Set this layout in the scene
-////            Scene scene = new Scene(borderPane, 1496, 1117);
-////            primaryStage.setScene(scene);
-//
-//
-//            // Create a StackPane to hold all elements
-////            Stage gridStage = new Stage();
-////            gridStage.initOwner(primaryStage);
+//            // Placeholder for the map
+//            Label mapPlaceholder = new Label();
+//            mapPlaceholder.setPrefSize(1200, 600);
+//            mapPlaceholder.setAlignment(Pos.CENTER);
+//            mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
+
+
+
+
+            // Add all to the layout
+
+
+
+
+            // Set this layout in the scene
+//            Scene scene = new Scene(borderPane, 1496, 1117);
+//            primaryStage.setScene(scene);
+
+
+            // Create a StackPane to hold all elements
+//            Stage gridStage = new Stage();
+//            gridStage.initOwner(primaryStage);
 //            StackPane root = new StackPane();
 //            Scene scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
 ////            gridStage.setScene(scene);
@@ -550,8 +578,49 @@ public class GameView {
 //
 //
 //
+//            // Settings
+//            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+//            primaryStage.getIcons().add(icon);
+//            primaryStage.setTitle("Shared Mobility Application");
+//            primaryStage.setWidth(WIDTH);
+//            primaryStage.setHeight(HEIGHT);
+//            primaryStage.setResizable(false);
 //
 //
+//
+//            // This is where the keyboard action is initialized
+//            AnchorPane anchorPane = new AnchorPane();
+//
+//            // Create label for gem count
+//    // Create label for gem count
+//            gemCountLabel = new Label("Gem Count: " + gemCount);
+//            anchorPane.setTopAnchor(gemCountLabel, 10.0); // 10px from top
+//            anchorPane.setLeftAnchor(gemCountLabel, 10.0); // 10px from left
+//            anchorPane.getChildren().add(gemCountLabel);
+//            gemCountLabel.setStyle("-fx-font-size: 16px;");
+//
+//            // Add the AnchorPane to the root StackPane
+//            root.getChildren().add(anchorPane);
+//
+//
+//            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
+//
+//            // Initialise Player
+//            playerUno = new Player(0,0,10,1,10,0);
+//
+//
+//            ka = new KeyboardActionController(this, playerUno);
+//
+//
+//            // Add background image, grid, and gem count label to the root StackPane
+//            root.getChildren().addAll(grid);
+////            System.out.println(busS1.getX());
+//            // create scene and set to stage
+//            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+//            primaryStage.setScene(scene);
+//            primaryStage.show();
+
+
 //
 //
 //
@@ -566,37 +635,28 @@ public class GameView {
 //
 //
 //
-//
-//
-//
 //            // This is where the keyboard action is initialized
-//
-//
-//
+//            AnchorPane anchorPane = new AnchorPane();
 //
 //            // Create label for gem count
+//    // Create label for gem count
 //            gemCountLabel = new Label("Gem Count: " + gemCount);
+//            anchorPane.setTopAnchor(gemCountLabel, 10.0); // 10px from top
+//            anchorPane.setLeftAnchor(gemCountLabel, 10.0); // 10px from left
+//            anchorPane.getChildren().add(gemCountLabel);
 //            gemCountLabel.setStyle("-fx-font-size: 16px;");
-//            gemCountLabel.setAlignment(Pos.TOP_LEFT);
-//            gemCountLabel.setPadding(new Insets(10));
 //
-//
-//
-//
+//            // Add the AnchorPane to the root StackPane
+//            root.getChildren().add(anchorPane);
 //
 //
 //            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
-//
 //
 //            // Initialise Player
 //            playerUno = new Player(0,0,10,1,10,0);
 //
 //
-//
-//
-////            ka = new GameController(this, playerUno);
-//
-//
+//            ka = new KeyboardActionController(this, playerUno);
 //
 //
 //            // Add background image, grid, and gem count label to the root StackPane
@@ -607,11 +667,12 @@ public class GameView {
 //            primaryStage.setScene(scene);
 //            primaryStage.show();
 //            initializeMetroSystem();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//
-//        }
-//    }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
     public int getRows() {
         return ROWS;
     }
