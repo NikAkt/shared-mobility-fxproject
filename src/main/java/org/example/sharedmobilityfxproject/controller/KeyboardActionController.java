@@ -420,12 +420,12 @@ public class KeyboardActionController {
 
         }
         if (canMoveTo(newColumn, newRow)) {
-            playerUno.getCell().unhighlight();
+
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
-           playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
-            playerUno.getCell().highlight();
+           playerUno.setCell(gameView.grid.getCell(newColumn, newRow),gameView.grid);
+
             interactWithCell(playerUno.getCell());
             if (inTaxi) {
                 // Assuming taximan is accessible from here, or find a way to access it

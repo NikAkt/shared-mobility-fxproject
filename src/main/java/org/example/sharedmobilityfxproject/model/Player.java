@@ -1,5 +1,6 @@
 package org.example.sharedmobilityfxproject.model;
-
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
 public class Player implements motion {
     private int x; // x position
     private int y; // y position
@@ -77,12 +78,36 @@ public class Player implements motion {
     public void setY(int j){
         this.y = j;
     }
-    public void setCell(Cell cell) {
+    public void setCell(Cell newCell, Grid grid) {
+        if (this.playerCell != null) {
+            // Calculate the new position for the player animation to transition to
+            double cellWidth = grid.getWidth() / grid.getColumns();
+            double cellHeight = grid.getHeight() / grid.getRows();
+            double targetX = newCell.getColumn() * cellWidth - this.playerCell.getLayoutX(); // Change in X
+            double targetY = newCell.getRow() * cellHeight - this.playerCell.getLayoutY(); // Change in Y
 
-        this.playerCell = cell;
-        this.x = cell.getColumn();
-        this.y = cell.getRow();
+            // Unhighlight the old cell immediately
+            this.playerCell.unhighlight();
+
+            // Create and configure the translation transition for the visual representation of the player
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(0.1), this.playerCell);
+            tt.setByX(targetX);
+            tt.setByY(targetY);
+            tt.setOnFinished(event -> updatePosition(newCell)); // Update position once animation is complete
+            tt.play();
+        } else {
+            // If playerCell is not set, initialize it directly
+            updatePosition(newCell);
+        }
     }
+
+    public void updatePosition(Cell newCell) {
+        this.playerCell = newCell;
+        this.x = newCell.getColumn();
+        this.y = newCell.getRow();
+        this.playerCell.highlight(); // Highlight the new cell
+    }
+
 
     public void setCellByCoords(Grid grid, int x, int y) {
         this.playerCell.setColumn(x);
