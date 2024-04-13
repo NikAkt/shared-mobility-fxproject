@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
+import org.example.sharedmobilityfxproject.model.Player;
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bus;

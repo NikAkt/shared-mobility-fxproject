@@ -166,15 +166,15 @@ public class GameController {
     }
 
     public void increaseGemCount() {
-        gameView.gemCountLabel = new Label();
+        this.gameView.gemCountLabel = new Label();
         gemCount++;
-        gameView.gemCountLabel.setText("Gem Count: " + gemCount);
+        this.gameView.gemCountLabel.setText("Gem Count: " + gemCount);
     }
 
-//    public static void updateGemCountLabel() {
-//        System.out.print(gemCount);//works
-//        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
-//    }
+    public void updateGemCountLabel() {
+        System.out.print(gemCount);//works
+        this.gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
+    }
 
 
     public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
