@@ -18,7 +18,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
 
-import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,7 +62,6 @@ public class GameView {
     public Stage primaryStage;
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
-    public SceneController sceneController;
     // **** Variables Setting ****
     // Label to keep track of gem count
 
@@ -177,7 +175,7 @@ public class GameView {
         this.root.getChildren().add(mediaView);
 
         // Set up the scene with the StackPane and show the stage
-        Scene scene = new Scene(this.root, 1496, 1117); // Use the same size as the image for a full background
+        Scene scene = new Scene(this.root, 1000, 800); // Use the same size as the image for a full background
         gameController.setupKeyControls(scene);
 
         this.root.getChildren().add(buttonBox);

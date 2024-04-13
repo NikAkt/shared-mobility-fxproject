@@ -6,14 +6,12 @@ import javafx.stage.Stage;
 
 import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
-import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.Player;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 // Main class extends Application for JavaFX application
 public class Main extends Application {
 
-    public SceneController sceneController;
     public GameController gameController;
 
     // Label to keep track of total carbon footprint

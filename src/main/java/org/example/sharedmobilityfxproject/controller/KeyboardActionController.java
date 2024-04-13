@@ -220,6 +220,59 @@ public class KeyboardActionController {
             grid.add(gem, gemColumn, gemRow);
         }
     }
+    public void moveTaxiTowardsPlayer(Grid grid, Taxi bus) {
+
+        if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
+            inTaxi = true;
+
+        }
+//        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+        else {
+            if ((bus.getX() < playerUno.getCoordX() || bus.getX() > playerUno.getCoordX()) && bus.flagMove == 0) {
+//            System.out.println("----------- moving x ---------");
+                // Move horizontally towards the bus stop, if not blocked
+                int newX = bus.getX() + (bus.getX() < playerUno.getCoordX() ? 1 : -1);
+                if (canMoveBusTo(newX, bus.getY())) {
+                    moveTaxi(grid, bus, newX, bus.getY());
+                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() <playerUno.getCoordY() ? 1 : -1))) {
+                    // Move vertically as a fallback
+                    moveTaxi(grid, bus, bus.getX(), bus.getY() + (bus.getY() < playerUno.getCoordY() ? 1 : -1));
+                }
+            } else if (bus.getY() < playerUno.getCoordY() || bus.getY() > playerUno.getCoordY()) {
+//            System.out.println("----------- moving y ---------");
+                // Move vertically towards the bus stop, if not blocked
+                int newY = bus.getY() + (bus.getY() < playerUno.getCoordY() ? 1 : -1);
+                if (canMoveBusTo(bus.getX(), newY)) {
+
+                    moveTaxi(grid, bus, bus.getX(), newY);
+                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())) {
+                    // Move horizontally as a fallbackf
+                    if (bus.flagMove == 0) {
+                        bus.flagMove = 1;
+                    }
+                    moveTaxi(grid, bus, bus.getX() + +1, bus.getY());
+                }
+            }
+            //arriving at stop logic
+            else if (bus.getX() == playerUno.getCoordX() && bus.getY() == playerUno.getCoordY()) {
+                System.out.println("----------- Taxi arrived ---------");
+                bus.arrived = true;
+
+                if (bus.hailed && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
+                    System.out.println("----------- You just got in the taxia---------");
+                    inTaxi = true;
+
+                } else if (inTaxi) {
+
+                    System.out.println("----------- Press E to get off  ---------");
+                    inTaxi = true;
+
+                }
+            } else if (bus.getY() == playerUno.getCoordY()) {
+                bus.flagMove = 0;
+            }
+
+        }}
 
     public void moveBusTowardsBusStop(Bus bus, busStop stop) {
         // Calculate the Manhattan distance for both possible next steps
@@ -308,6 +361,16 @@ public class KeyboardActionController {
                 togglePlayerMovement();
             }
     }
+    private void moveTaxi(Grid grid,Taxi bus, int newX, int newY) {
+        // Move the bus to the new position (newX, newY) on the grid
+
+        grid.moveCell(bus, newX, newY);
+
+        bus.setX(newX);
+        bus.setY(newY);
+        //grid.add(cell,cell.getColumn(),cell.getRow());
+
+    }
 
     private void moveBus(Bus bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
@@ -378,14 +441,13 @@ public class KeyboardActionController {
     }
 
     private void hailTaxi() {
-        hailTaxi = !hailTaxi;
-        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
-//        if (hailTaxi) {
-//            carbonFootprint += 75;
-//            updateCarbonFootprintLabel();
-//        }
+        if (taximan.hailed) {
+            taximan.hailed = !taximan.hailed;
+        }
+        else{
+            taximan.hailed = true;
+        }
     }
-
     private void togglePlayerMovement() {
         if (onBus) {
             int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
