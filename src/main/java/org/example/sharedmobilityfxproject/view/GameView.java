@@ -57,9 +57,10 @@ public class GameView {
     public Main main;
     public boolean isMetroSceneActive =false;
     public VBox buttonBox;
-    public Button StartGameBtn;
+    public Button getGameStartbtn;
     public Button ExitBtn;
     public Button gameCreditbtn;
+    public Button stageBtn;
     public StackPane root;
     public MediaPlayer mediaPlayer;
     public HBox topRow;
@@ -161,7 +162,7 @@ public class GameView {
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
 
-        StartGameBtn = createButton("Game Start");
+        getGameStartbtn = createButton("Game Start");
         gameCreditbtn = createButton("Game Credit");
         ExitBtn = createButton("Exit");
 
@@ -169,7 +170,7 @@ public class GameView {
         gameCreditbtn.setFocusTraversable(true);
         ExitBtn.setFocusTraversable(true);
 
-        VBox buttonBox = new VBox(40,StartGameBtn,gameCreditbtn,ExitBtn);
+        VBox buttonBox = new VBox(40,getGameStartbtn,gameCreditbtn,ExitBtn);
         buttonBox.setAlignment(Pos.CENTER);
 
         StackPane root = new StackPane(mediaView,imageView, buttonBox);
@@ -181,15 +182,27 @@ public class GameView {
 
 
     public Button getBtnExit(){
+        System.out.println("getBtnExit in GameView");
         return ExitBtn;
     }
 
     public Button getGameCreditbtn(){
+        System.out.println("GameCreditBtn in GameView");
         return gameCreditbtn;
     }
 
+    public Button getGameStartbtn(){
+        System.out.println("GameStartBtn in GameView");
+        return getGameStartbtn;
+    }
+
+    public Button getGetStagebtn(){
+        System.out.println("GameStartBtn in GameView");
+        return stageBtn;
+    }
+
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, MediaPlayer mdv) {
-        Button stageButton = new Button(stage);
+        stageBtn = new Button(stage);
         if (!stage.equals("Dublin")) {
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(-1); // 채도를 -1로 설정하여 흑백으로 만듦
@@ -199,22 +212,16 @@ public class GameView {
             xMark.setFont(new Font("Arial", 100)); // "X"의 폰트와 크기 설정
             xMark.setStyle("-fx-text-fill: red;"); // "X"의 색상 설정
 
-
-            // 버튼의 그래픽을 스테이지 이미지와 "X" 마크로 설정
+            //Draw the X mark on the stage image
             StackPane buttonGraphic = new StackPane();
             buttonGraphic.getChildren().addAll(stageImage, xMark);
-            stageButton.setGraphic(buttonGraphic);
+            stageBtn.setGraphic(buttonGraphic);
         } else {
-            stageButton.setGraphic(stageImage);
+            stageBtn.setGraphic(stageImage);
         }
-
-
-        stageButton.setContentDisplay(ContentDisplay.TOP);
-        stageButton.setOnAction(event -> this.selectStage(stage, stageImage, stageSelectionBox,mediaView.getMediaPlayer()));
-        return stageButton;
+        stageBtn.setContentDisplay(ContentDisplay.TOP);
+        return stageBtn;
     }
-
-
 
 
     public Button createButton(String text) {
@@ -309,8 +316,6 @@ public class GameView {
     public void showStageSelectionScreen() {
         //bring the Stage in gameView
         try {
-
-
             System.out.println("ShowStageSelectionScreen in GameView");
             bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             bgmediaPlayer.play();
@@ -361,15 +366,14 @@ public class GameView {
                 }
             });
 
-            stageSelectionBox.requestFocus(); // 키 이벤트를 받을 수 있도록 포커스 설정
+            stageSelectionBox.requestFocus();
             stageSelectionBox.setAlignment(Pos.CENTER);
 
             //Add new StageSelectionBox
-            StackPane root = new StackPane(stageSelectionBox);
+            StackPane root = new StackPane(mediaView,stageSelectionBox);
             StackPane.setAlignment(stageSelectionBox, Pos.CENTER);
-            Scene scene = new Scene(root, 1496, 1117);
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            scene = new Scene(root, 1496, 1117);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -631,17 +635,12 @@ public class GameView {
         }
     }
 
-    public void selectStage(String stage, ImageView stageImage, VBox stageSelectionBox, MediaPlayer mediaPlayer) {
+    public void selectStage() {
         //This function is describing between Mapselection and MainGamePage
 
         //Video Stop(MineCraft)
-//        mdv.stop();
+        mediaView.getMediaPlayer().stop();
 
-        //Previous buttons delete
-        root.getChildren().remove(stageSelectionBox);
-
-//        mainController = new MainController(this, this);
-        //gameController Check
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -655,78 +654,9 @@ public class GameView {
         // This is where you would transition to the actual game play scene
         // For now, just printing out the selection
         // You might want to hide the stage selection screen and display the game screen, like so:
-        root.setVisible(false);
-        root.getChildren().removeAll(buttonBox, this.gameModeBox);
-
-        //Move to real GamePage
-//        loadGameScreen(stageName, actionEvent);
 
     }
 
-//    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage, StackPane stackPane) {
-////        mainController = new MainController(this, this);
-//
-//        root.getChildren().removeAll(buttonBox);
-//        ImageView imageView = new ImageView(logoImage);
-//        imageView.setPreserveRatio(true);
-//        imageView.setFitHeight(100); // You can adjust this value as needed
-//
-//        Button btnOnePlayer = createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
-//        Button btnTwoPlayer = createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
-//
-//        applyButtonStyles(btnOnePlayer, false);
-//        applyButtonStyles(btnTwoPlayer, false);
-//
-//        // Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
-//        applyButtonStyles(btnOnePlayer, btnOnePlayer.isFocused());
-//        applyButtonStyles(btnTwoPlayer, btnTwoPlayer.isFocused());
-//
-//        // Create the game mode selection box if not already created
-//        if (gameModeBox == null) {
-//            gameModeBox = new VBox(80, imageView,btnOnePlayer, btnTwoPlayer);
-//            gameModeBox.setAlignment(Pos.CENTER);
-//        }
-//        // Add the game mode box to the root stack pane, making it visible
-//        if (!root.getChildren().contains(gameModeBox)) {
-//            root.getChildren().add(gameModeBox);
-//        }
-//
-//        // Make the game mode selection box visible
-//        gameModeBox.setVisible(true);
-//        // Create and configure the scene
-//        root.setOnKeyPressed(event -> {
-//            switch (event.getCode()) {
-//                case DOWN:
-//                    if (btnOnePlayer.isFocused()) {
-//                        btnTwoPlayer.requestFocus();
-//                    } else if (btnTwoPlayer.isFocused()) {
-//                    } else {
-//                        btnOnePlayer.requestFocus(); // Wrap around to the first button
-//                    }
-//
-//                    break;
-//                case UP:
-//                    if (btnOnePlayer.isFocused()) {
-//                        btnTwoPlayer.requestFocus();
-//                    } else if (btnTwoPlayer.isFocused()) {
-//                    } else {
-//                        btnOnePlayer.requestFocus();
-//                    }
-//                    break;
-//                case ENTER:
-//                    if (btnOnePlayer.isFocused()) {
-//                        btnOnePlayer.fire();
-//                    } else if (btnTwoPlayer.isFocused()) {
-//                        btnTwoPlayer.fire();
-//                    }else {
-//                        break;
-//                    }
-//                default:
-//                    break;
-//            }
-//        });
-//        return null;
-//    }
 
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);

@@ -103,12 +103,19 @@ public class MainController {
         sceneController.initMainMenu();
 
         setupKeyControls(gameView.getScene());
-        gameView.StartGameBtn.setOnAction(event -> sceneController.switchStageChoose());
-        gameView.gameCreditbtn.setOnAction(event -> SceneController.switchToGameCredits());
-
+        //Main Menu
+        gameView.getGameStartbtn().requestFocus();
+        gameView.getGameStartbtn().setOnAction(event -> this.mapSelectionScene());
+        gameView.getGameCreditbtn().setOnAction(event -> SceneController.switchToGameCredits());
         gameView.getBtnExit().setOnAction(event -> System.exit(0));
 
-        gameView.getBtnExit().requestFocus();
+
+
+    }
+    public void mapSelectionScene(){
+        //Stage Selection
+        sceneController.switchStageChoose();
+        gameView.getGetStagebtn().setOnAction(event -> sceneController.switchToGameScene());
     }
     private void setupKeyControls(Scene scene) {
         scene.setOnKeyPressed(event -> {

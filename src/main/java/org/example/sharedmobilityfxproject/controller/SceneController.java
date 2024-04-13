@@ -27,11 +27,17 @@ public class SceneController {
         gameView.showCredit();
     }
 
-    public static void switchStageChoose() {
+    public  void switchStageChoose() {
         System.out.println("SwitchStageChoose in SceneController");
         gameView.showStageSelectionScreen();
+        gameView.getPrimaryStage().setScene(gameView.getScene());
+        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+        gameView.getPrimaryStage().show();
     }
-    public void switchToMainMenu() {
+
+    public  void switchToGameScene(){
+        System.out.println(" switchToGameScene in SceneController");
+        gameView.selectStage();
 
     }
 //    public void switchToStageChoose() {
