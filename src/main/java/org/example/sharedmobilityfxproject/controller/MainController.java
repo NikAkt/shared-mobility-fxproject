@@ -38,7 +38,6 @@ public class MainController {
     public Stage primaryStage;
     public Button btnStartGame;
     public VBox gameModeBox;
-    public Button btnExit;
     public VBox buttonBox;
     public VBox imgBox;
     public StackPane root;
@@ -91,10 +90,29 @@ public class MainController {
         this.gameView = gameView;
         this.sceneController = sceneController;
         this.gameController = initGameController();
+
+        this.startGame();
     }
 
     private GameController initGameController(){
         return new GameController(sceneController, gameView);
+    }
+
+    public void startGame(){
+        sceneController.initMainMenu();
+        setupKeyControls(gameView.getScene());
+        gameView.getBtnExit().setOnAction(event -> System.exit(0));
+        gameView.getBtnExit().requestFocus();
+    }
+    private void setupKeyControls(Scene scene) {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case ENTER:
+                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
+                    focusedButton.fire();
+                    break;
+            }
+        });
     }
 
     // Label to keep track of gem count
@@ -106,96 +124,22 @@ public class MainController {
     int carbonFootprint = 0;
     Label carbonFootprintLabel; // Label to display carbon footprint
 
-
-    //Game Start initialise method
-    public void startGame() {
-        // Start game logic here
-
-
-    }
-
-
-    public void setupKeyControls(Scene scene) {
-        scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.DOWN) {
-                if (btnStartGame.isFocused()) {
-                    btnExit.requestFocus();
-                }
-            } else if (event.getCode() == KeyCode.UP) {
-                if (btnExit.isFocused()) {
-                    btnStartGame.requestFocus();
-                }
-            }
-        });
-    }
-
-
-    public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        gameView = new GameView(primaryStage);
-        Button stageButton = new Button(stage);
-        if (!stage.equals("Dublin")) {
-            ColorAdjust colorAdjust = new ColorAdjust();
-            colorAdjust.setSaturation(-1); // 채도를 -1로 설정하여 흑백으로 만듦
-            stageImage.setEffect(colorAdjust);
-
-
-            Label xMark = new Label("X");
-            xMark.setFont(new Font("Arial", 100)); // "X"의 폰트와 크기 설정
-            xMark.setStyle("-fx-text-fill: red;"); // "X"의 색상 설정
-
-
-            // 버튼의 그래픽을 스테이지 이미지와 "X" 마크로 설정
-            StackPane buttonGraphic = new StackPane();
-            buttonGraphic.getChildren().addAll(stageImage, xMark);
-            stageButton.setGraphic(buttonGraphic);
-        } else {
-            stageButton.setGraphic(stageImage);
-        }
-
-
-        stageButton.setContentDisplay(ContentDisplay.TOP);
-        stageButton.setOnAction(event -> gameView.selectStage(stage, stageSelectionBox, gameModeBox, root, actionEvent, mdv));
-        return stageButton;
-    }
-
-
-    public Button createButton(String text, EventHandler<ActionEvent> action) {
-        Button button = new Button(text);
-        if (gameView.btnFont != null) {
-            button.setFont(gameView.btnFont);
-        } else {
-            System.out.println("Failed to load custom font. Using default font.");
-        }
-        button.setMinWidth(BUTTON_WIDTH);
-        button.setMaxWidth(BUTTON_WIDTH);
-        button.setOnAction(action);
-        button.setFocusTraversable(true);
+//    public void setupKeyControls(Scene scene) {
+//        scene.setOnKeyPressed(event -> {
+//            if (event.getCode() == KeyCode.DOWN) {
+//                if (btnStartGame.isFocused()) {
+//                    btnExit.requestFocus();
+//                }
+//            } else if (event.getCode() == KeyCode.UP) {
+//                if (btnExit.isFocused()) {
+//                    btnStartGame.requestFocus();
+//                }
+//            }
+//        });
+//    }
 
 
 
-
-        //hover colour change
-        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (isNowFocused) {
-                button.setStyle(focusedButtonStyle());
-            } else {
-                button.setStyle(normalButtonStyle());
-            }
-        });
-
-
-        return button;
-    }
-
-
-    public String normalButtonStyle() {
-        return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: rgba(255, 255, 240, 0.7); -fx-text-fill: black;";
-    }
-
-
-    public String focusedButtonStyle() {
-        return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
-    }
 
 
     ///CO2
