@@ -22,6 +22,11 @@ public class SceneController {
 
     }
     public void switchToMainMenu() {
+    }
+
+    public void initGameScene(){
+
+        gameView.setupGameScene();
 
     }
 //    public void switchToStageChoose() {
