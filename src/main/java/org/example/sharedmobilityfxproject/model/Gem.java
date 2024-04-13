@@ -1,20 +1,15 @@
 package org.example.sharedmobilityfxproject.model;
-import org.example.sharedmobilityfxproject.controller.GameController;
+import org.example.sharedmobilityfxproject.controller.MainController;
 
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import org.example.sharedmobilityfxproject.Main;
-import org.example.sharedmobilityfxproject.controller.GameController;
 
 
 import java.io.File;
-import java.util.Objects;
 
 public class Gem extends Cell {
     public boolean isCollected = false; // Flag to track if the gem has been collected
-    public GameController gameController;
+    public MainController mainController;
 
 
     // Constructor to initialise gem coordinates
