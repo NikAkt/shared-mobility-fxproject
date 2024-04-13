@@ -165,15 +165,16 @@ public class KeyboardActionController {
         }
 
         gameView.grid.add(this.busman,this.busman.getX(), this.busman.getY());// Example starting position
-        gameView.grid.add(taximan, taximan.getX(), taximan.getY());
+        gameView.grid.add(this.taximan, this.taximan.getX(), this.taximan.getY());
 
         // Don't initialize currentCell here
 
         // Schedule the bus to move every second
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
             busStop targetBusStop = this.busman.nextStop(); // Assuming this method correctly returns the next bus stop
-            if(taximan.hailed&&!taximan.arrived){
-                moveTaxiTowardsPlayer(taximan);
+
+            if(this.taximan.hailed&&!this.taximan.arrived){
+                moveTaxiTowardsPlayer(this.taximan);
             }
             if (!this.busman.isWaiting){
 
@@ -221,7 +222,7 @@ public class KeyboardActionController {
         }
     }
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus) {
-
+        System.out.println("moving taxi");
         if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
             inTaxi = true;
 
@@ -353,7 +354,7 @@ public class KeyboardActionController {
                     case A -> movePlayer(-1, 0);
                     case W -> movePlayer(0, -1);
                     case S -> movePlayer(0, 1);
-//                    case T -> hailTaxi();
+                    case T -> hailTaxi();
                     case E -> togglePlayerMovement();
                 }
             } else if (key == KeyCode.E) {
