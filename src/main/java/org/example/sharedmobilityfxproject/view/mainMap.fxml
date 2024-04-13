@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sharedmobilityfxproject.controller.GameController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sharedmobilityfxproject.controller.MainController">
    <children>
       <ProgressBar fx:id="Co2Parameter" layoutX="425.0" layoutY="167.0" prefHeight="20.0" prefWidth="284.0" progress="0.0" rotate="270.0" />
       <ProgressBar fx:id="StaminaParameter" layoutX="82.0" layoutY="352.0" prefHeight="20.0" prefWidth="416.0" progress="0.0" />
