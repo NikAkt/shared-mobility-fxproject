@@ -1,11 +1,6 @@
 package org.example.sharedmobilityfxproject.view;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -48,7 +43,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
-import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
+
 public class GameView {
 
     // **** Class call ****
@@ -135,6 +130,74 @@ public class GameView {
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+
+    private String viewType;
+
+
+    public GameView(SceneController sceneController, String viewType, Stage primaryStage) {
+        this.sceneController = sceneController;
+        this.viewType = viewType;
+        this.primaryStage = primaryStage;
+        this.gameController = new GameController(this);
+        StackPane pane = new StackPane();
+        this.scene = new Scene(pane, 1496, 1117);  // Scene 객체를 초기화
+        setupView(pane); //// Set different view depends on  viewType
+
+    }
+
+    private void setupView(Pane pane) {
+        switch (viewType){
+            case "MainMenu":
+                setupMainMenu(pane);
+                break;
+//            case "GamePlay":
+//                setupGamePlay(pane);
+//                break;
+//            case "GameOver":
+//                setupGameOver(pane);
+//                break;
+            default:
+                System.out.println("Unknown view type: " + viewType);
+
+        }
+    }
+
+    public Scene getScene(){
+        return this.scene;
+    }
+    public void setupMainMenu(Pane pane) {
+        GameController gameController = new GameController(this);
+        Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
+        Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
+        MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
+        MediaView mediaView = new MediaView(bgmediaPlayer);
+        ImageView imageView = new ImageView(logoImage);
+        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(100);
+        pane.getChildren().addAll(imageView);
+
+        bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        bgmediaPlayer.play();
+
+        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, mainBackground, bgmediaPlayer, logoImage,root));
+        Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
+        Button btnExit = gameController.createButton("Exit", event -> System.exit(0));
+
+        btnStartGame.setFocusTraversable(true);
+        gameCredit.setFocusTraversable(true);
+        btnExit.setFocusTraversable(true);
+
+        VBox buttonBox = new VBox(40, btnStartGame, gameCredit, btnExit);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        StackPane root = new StackPane(mediaView,imageView, buttonBox);
+        StackPane.setAlignment(buttonBox, Pos.CENTER);
+        pane.getChildren().addAll(root);
+        System.out.println("신확인"+this.scene);
+        setupKeyControls(this.scene, btnStartGame, gameCredit, btnExit);
+    }
+
+
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }
@@ -169,110 +232,8 @@ public class GameView {
         metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
 
     }
-    public void showInitialScreen(Stage primaryStage) {
-        gameController = new GameController(this);
-        Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
-        Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
-        MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
-        MediaView mediaView = new MediaView(bgmediaPlayer);
-        ImageView imageView = new ImageView(logoImage);
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(100); // You can adjust this value as needed
-
-        bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        bgmediaPlayer.play();
-//
-       mainBackground = new StackPane();
-
-        // Create and configure the "Game Start" button
-        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, mainBackground, bgmediaPlayer,logoImage));
-        // Create and configure the "Exit" button
-        Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
-        Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
-        //Font Set
-        btnStartGame.requestFocus();
-        applyButtonStyles(btnStartGame, false);
-        applyButtonStyles(btnExit, false);
-        applyButtonStyles(gameCredit, false);
-// Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
-        applyButtonStyles(btnExit, btnExit.isFocused());
-        applyButtonStyles(btnStartGame, gameCredit.isFocused());
-        applyButtonStyles(btnStartGame, btnStartGame.isFocused());
-        gameCredit.setFocusTraversable(true);
 
 
-        // Create a VBox for buttons
-        VBox imgBox = new VBox(20, imageView);
-        imgBox.setAlignment(Pos.TOP_RIGHT);
-        buttonBox = new VBox(40, imageView,btnStartGame,gameCredit, btnExit);
-        buttonBox.setAlignment(Pos.CENTER); // Align buttons to center
-
-
-        // Center the VBox in the StackPane
-        StackPane.setAlignment(buttonBox, Pos.CENTER);
-        StackPane.setAlignment(imgBox, Pos.CENTER);
-
-        mainBackground.getChildren().add(mediaView);
-
-        // Set up the scene with the StackPane and show the stage
-        Scene scene = new Scene(mainBackground, 1496, 1117); // Use the same size as the image for a full background
-        gameController.setupKeyControls(scene);
-
-        mainBackground.getChildren().add(buttonBox);
-        mainBackground.getChildren().add(imgBox);
-
-        // Set focus on the "Game Start" button initially
-            btnStartGame.setFont(btnFont);
-        btnStartGame.requestFocus();
-
-        primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
-        primaryStage.setScene(scene);
-        //primaryStage.setFullScreen(true); // Set the stage to full screen
-        primaryStage.show();
-        btnStartGame.requestFocus();
-        gameCredit.setOnAction(event -> {
-            System.out.println("gameCredit action handler called"); // For debugging
-            // Other action handling code
-        });
-        scene.setOnKeyPressed(event -> {
-            System.out.println("Key pressed: " + event.getCode()); // For debugging
-            switch (event.getCode()) {
-                case DOWN:
-                    System.out.println("Down key pressed"); // For debugging
-                    if (btnStartGame.isFocused()) {
-                        gameCredit.requestFocus();
-                    } else if (gameCredit.isFocused()) {
-                        btnExit.requestFocus();
-                    }
-                    break;
-                case UP:
-                    System.out.println("Up key pressed"); // For debugging
-                    if (btnExit.isFocused()) {
-                        gameCredit.requestFocus();
-                    } else if (gameCredit.isFocused()) {
-                        btnStartGame.requestFocus();
-                    }
-                    break;
-                case ENTER:
-                    System.out.println("Enter key pressed"); // For debugging
-                    if (btnStartGame.isFocused()) {
-                        System.out.println("Start Game Selected"); // For debugging
-                        btnStartGame.fire();
-                    } else if (btnExit.isFocused()) {
-                        System.out.println("Exit Selected"); // For debugging
-                        btnExit.fire();
-                    } else if (gameCredit.isFocused()) {
-                        System.out.println("Credits Selected"); // For debugging
-                        gameCredit.fire();
-                        showCredit();
-                    }
-                    break;
-                default:
-                    System.out.println("Other key pressed"); // For debugging
-                    break;
-            }
-        });
-    }
     public void showCredit(){
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -328,26 +289,26 @@ public class GameView {
         dialog.showAndWait();
     }
 
-    
-      /*
-    swithc
-    if flag true
-        swith\ch scene
-        flag = !flag
-     */
-        public void switchSceneToMetro(){
-            if(isMetroSceneActive){
-                primaryStage.setScene(metroScene);
+
+    /*
+  swithc
+  if flag true
+      swith\ch scene
+      flag = !flag
+   */
+    public void switchSceneToMetro(){
+        if(isMetroSceneActive){
+            primaryStage.setScene(metroScene);
 
 
-            }
-            if(!isMetroSceneActive){
-                primaryStage.setScene(scene);
-
-            }
         }
-    
-    
+        if(!isMetroSceneActive){
+            primaryStage.setScene(scene);
+
+        }
+    }
+
+
     public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv, StackPane root) {
         try {
             List<Button> allButtons = new ArrayList<>();
@@ -648,12 +609,12 @@ public class GameView {
 
 
     }
-        public int getRows() {
-            return ROWS;
-        }
-        public int getColumns() {
-            return COLUMNS;
-        }
+    public int getRows() {
+        return ROWS;
+    }
+    public int getColumns() {
+        return COLUMNS;
+    }
 
     // Place the gem after the grid is filled and the player's position is initialized
     private void generateGems(Grid grid, int numberOfGems) {
@@ -704,8 +665,9 @@ public class GameView {
 
     }
 
-    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage) {
+    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage, StackPane stackPane) {
         gameController = new GameController(this);
+
         root.getChildren().removeAll(buttonBox);
         ImageView imageView = new ImageView(logoImage);
         imageView.setPreserveRatio(true);
@@ -759,7 +721,7 @@ public class GameView {
                     } else if (btnTwoPlayer.isFocused()) {
                         btnTwoPlayer.fire();
                     }else {
-                    break;
+                        break;
                     }
                 default:
                     break;
@@ -879,5 +841,22 @@ public class GameView {
         }
     }
 
-
+    private void setupKeyControls(Scene scene, Button btnStartGame, Button gameCredit, Button btnExit) {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DOWN:
+                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
+                    else if (gameCredit.isFocused()) btnExit.requestFocus();
+                    break;
+                case UP:
+                    if (btnExit.isFocused()) gameCredit.requestFocus();
+                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
+                    break;
+                case ENTER:
+                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
+                    focusedButton.fire();
+                    break;
+            }
+        });
+    }
 }

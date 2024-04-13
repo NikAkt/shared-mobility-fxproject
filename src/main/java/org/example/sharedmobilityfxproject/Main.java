@@ -39,25 +39,21 @@ public class Main extends Application {
     // Label to keep track of total carbon footprint
     Label carbonFootprintLabel; // Label to display carbon footprint
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
             System.out.println("Game Started");
-
-            GameView gameView = new GameView(primaryStage);
-            gameView.showInitialScreen(primaryStage);
-            gameController = new GameController(gameView);
-
+            sceneController = new SceneController(primaryStage);
+            sceneController.initFirstScene();
+            primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
+            primaryStage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
-
-
-/////////////////////////////////////////////////////////////////////
