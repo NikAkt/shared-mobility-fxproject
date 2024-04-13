@@ -138,7 +138,6 @@ public class GameView {
         this.sceneController = sceneController;
         this.viewType = viewType;
         this.primaryStage = primaryStage;
-        this.gameController = new GameController(this);
         StackPane pane = new StackPane();
         this.scene = new Scene(pane, 1496, 1117);  // Scene 객체를 초기화
         setupView(pane); //// Set different view depends on  viewType

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class SceneController {
+    public GameController gameController;
     private Stage stage;
     private Scene scene;
 //    private Parent root;
@@ -30,12 +31,14 @@ public class SceneController {
     public SceneController(Stage stage) {
         this.stage = stage;
         this.scene = new Scene(new StackPane(), 1496, 1117); // 기본 Scene 설정
+
         stage.setScene(this.scene);
     }
     public void initFirstScene() { switchToMainMenu();}
 
     public void switchToMainMenu() {
         GameView mainMenuView = new GameView(this, "MainMenu",stage);
+        gameController = new GameController(mainMenuView);
         stage.setScene(mainMenuView.getScene());
         stage.show();
     }
