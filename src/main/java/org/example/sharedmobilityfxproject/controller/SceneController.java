@@ -1,29 +1,12 @@
 package org.example.sharedmobilityfxproject.controller;
 
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.view.GameView;
 
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
-
 public class SceneController {
     private GameView gameView;
-    public GameController gameController;
+    public MainController mainController;
     private Stage stage;
     private Scene scene;
 //    private Parent root;
@@ -34,7 +17,8 @@ public class SceneController {
     }
 
     public void initMainMenu() {
-        gameController = new GameController(this, gameView);
+        gameView.getPrimaryStage().setTitle("Simple Game");
+        gameView.getPrimaryStage().show();
 
     }
     public void switchToMainMenu() {
