@@ -16,7 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
+import org.example.sharedmobilityfxproject.controller.GameController;
 
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
@@ -27,7 +27,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
-import org.example.sharedmobilityfxproject.controller.GameController;
+import org.example.sharedmobilityfxproject.controller.MainController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
 import java.io.File;
@@ -48,8 +48,8 @@ public class GameView {
 
     // **** Class call ****
     public GameView gameView;
-    public GameController gameController;
-    public KeyboardActionController ka;
+    public MainController mainController;
+    public GameController ka;
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
@@ -135,7 +135,6 @@ public class GameView {
 
 
     public GameView(Stage primaryStage) {
-        this.viewType = viewType;
         this.primaryStage = primaryStage;
     }
 
@@ -161,10 +160,9 @@ public class GameView {
     }
 
     public Scene getScene(){
-        return this.scene;
+        return scene;
     }
-    public void setupMainMenu(Pane pane) {
-        GameController gameController = new GameController(this, this);
+    public void setupMainMenu() {
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -172,14 +170,15 @@ public class GameView {
         ImageView imageView = new ImageView(logoImage);
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(100);
-        pane.getChildren().addAll(imageView);
+
+
 
         bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         bgmediaPlayer.play();
 
-        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, mainBackground, bgmediaPlayer, logoImage,root));
-        Button gameCredit = gameController.createButton("Game Credit", event -> showCredit());
-        Button btnExit = gameController.createButton("Exit", event -> System.exit(0));
+        Button btnStartGame = mainController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, mainBackground, bgmediaPlayer, logoImage,root));
+        Button gameCredit = mainController.createButton("Game Credit", event -> showCredit());
+        Button btnExit = mainController.createButton("Exit", event -> System.exit(0));
 
         btnStartGame.setFocusTraversable(true);
         gameCredit.setFocusTraversable(true);
@@ -190,8 +189,10 @@ public class GameView {
 
         StackPane root = new StackPane(mediaView,imageView, buttonBox);
         StackPane.setAlignment(buttonBox, Pos.CENTER);
-        pane.getChildren().addAll(root);
-        System.out.println("신확인"+this.scene);
+
+        scene = new Scene(root, 1496,1117);
+
+        System.out.println("Scene"+this.scene);
         setupKeyControls(this.scene, btnStartGame, gameCredit, btnExit);
     }
 
@@ -204,10 +205,7 @@ public class GameView {
         gemCount++;
         updateGemCountLabel();
     }
-    // From MAIN OF MERGE ENDING
-    public GameView(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
+
     private void initializeMetroSystem() {
         metroLayer = new StackPane();
         metroLayer.setStyle("-fx-background-color: #CCCCCC;");
@@ -322,7 +320,7 @@ public class GameView {
                 //List up the stages
                 for (String stage : topStages) {
                     ImageView stageImage = createStageImage(stage);
-                    Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    Button stageButton = mainController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
                     stageButton.setFont(btnFont);
                     topRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
@@ -330,7 +328,7 @@ public class GameView {
 
                 for (String stage : bottomStages) {
                     ImageView stageImage = createStageImage(stage);
-                    Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    Button stageButton = mainController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
                     stageButton.setFont(btnFont);
                     bottomRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
@@ -587,7 +585,7 @@ public class GameView {
 
 
 
-            ka = new KeyboardActionController(this, playerUno);
+//            ka = new GameController(this, playerUno);
 
 
 
@@ -639,7 +637,7 @@ public class GameView {
         //Previous buttons delete
         root.getChildren().remove(stageSelectionBox);
 
-        gameController = new GameController(this, this);
+        mainController = new MainController(this, this);
         //gameController Check
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -664,15 +662,15 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage, StackPane stackPane) {
-        gameController = new GameController(this, this);
+        mainController = new MainController(this, this);
 
         root.getChildren().removeAll(buttonBox);
         ImageView imageView = new ImageView(logoImage);
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(100); // You can adjust this value as needed
 
-        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
-        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
+        Button btnOnePlayer = mainController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
+        Button btnTwoPlayer = mainController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
 
         applyButtonStyles(btnOnePlayer, false);
         applyButtonStyles(btnTwoPlayer, false);
