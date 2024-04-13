@@ -400,13 +400,13 @@ public class KeyboardActionController {
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
+            if (inTaxi) {
+                // Assuming taximan is accessible from here, or find a way to access it
+                moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
+            }
         }
-        if (inTaxi) {
-            // Assuming taximan is accessible from here, or find a way to access it
-            moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
-        }
     }
 
     private boolean canMoveTo(int x, int y) {
