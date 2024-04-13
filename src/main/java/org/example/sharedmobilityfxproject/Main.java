@@ -43,11 +43,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            System.out.println("Game Started");
-            sceneController = new SceneController(primaryStage);
-            sceneController.initFirstScene();
-            primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
-            primaryStage.show();
+            GameView gameView = new GameView(primaryStage);
+            SceneController sceneController = new SceneController(gameView);
 
         } catch (Exception e) {
             e.printStackTrace();
