@@ -31,6 +31,7 @@ public class GameController {
 
 
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
+    private SceneController sceneController;
     public GameView gameView;
     // ****JavaElement****
     public Stage primaryStage;
@@ -85,8 +86,9 @@ public class GameController {
     public static int gemCount = 0;
 
 
-    public GameController(GameView gameView) {
+    public GameController(SceneController sceneController, GameView gameView) {
         this.gameView = gameView;
+        this.sceneController = sceneController;
     }
 
 
