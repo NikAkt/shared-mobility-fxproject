@@ -20,6 +20,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.model.*;
+import org.example.sharedmobilityfxproject.model.tranportMode.Bicycle;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 import java.util.ArrayList;
@@ -91,7 +92,8 @@ public class MainController {
 
 
     private GameController initGameController() {
-        Player playerUno = new Player(0, 0, 10, 1, 10, 0);
+        Player playerUno = new Player(0, 0, 100, 1, 10);
+        Bicycle cycleman = new Bicycle();
         return new GameController(sceneController, gameView, playerUno);
     }
 

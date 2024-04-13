@@ -3,13 +3,14 @@ package org.example.sharedmobilityfxproject.model;
 public class Player implements motion {
     private int x; // x position
     private int y; // y position
-    private int stamina; // stamina
     private int speed; // speed
     private double co2; // co2 produced
     private Cell playerCell;
     public boolean isUnderground= false;
+    public double staminaDrain=1;
+    public double stamina;
 
-    public Player(int x, int y,int stamina,int speed,double co2,int gems) {
+    public Player(int x, int y,int stamina,int speed,double co2) {
         this.x = x;
         this.y = y;
         this.stamina=100;
@@ -23,7 +24,7 @@ public class Player implements motion {
     public int getCoordY() {
         return this.y;
     }
-    public int getStamina() {
+    public double getStamina() {
         return stamina;
     }
     public void setSpeed(int speed) {
@@ -38,7 +39,7 @@ public class Player implements motion {
     public void setCo2(double co2) {
         this.co2=co2;
     }
-    public void setStamina(int stamina) {
+    public void setStamina(double stamina) {
         this.stamina=stamina;
     }
     @Override
@@ -95,6 +96,11 @@ public class Player implements motion {
         return this.playerCell;
     }
 
-
+    public double getStaminaDrain(){
+        return this.staminaDrain;
+    }
+    public void setStaminaDrain(double staminaDrain){
+        this.staminaDrain=staminaDrain;
+    }
 
 }
