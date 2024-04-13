@@ -236,6 +236,59 @@ public class GameController {
             grid.add(gem, gemColumn, gemRow);
         }
     }
+    public void moveTaxiTowardsPlayer(Grid grid, Taxi bus) {
+        System.out.println("moving taxi");
+        if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
+            inTaxi = true;
+
+        }
+//        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+        else {
+            if ((bus.getX() < playerUno.getCoordX() || bus.getX() > playerUno.getCoordX()) && bus.flagMove == 0) {
+//            System.out.println("----------- moving x ---------");
+                // Move horizontally towards the bus stop, if not blocked
+                int newX = bus.getX() + (bus.getX() < playerUno.getCoordX() ? 1 : -1);
+                if (canMoveBusTo(newX, bus.getY())) {
+                    moveTaxi(grid, bus, newX, bus.getY());
+                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() <playerUno.getCoordY() ? 1 : -1))) {
+                    // Move vertically as a fallback
+                    moveTaxi(grid, bus, bus.getX(), bus.getY() + (bus.getY() < playerUno.getCoordY() ? 1 : -1));
+                }
+            } else if (bus.getY() < playerUno.getCoordY() || bus.getY() > playerUno.getCoordY()) {
+//            System.out.println("----------- moving y ---------");
+                // Move vertically towards the bus stop, if not blocked
+                int newY = bus.getY() + (bus.getY() < playerUno.getCoordY() ? 1 : -1);
+                if (canMoveBusTo(bus.getX(), newY)) {
+
+                    moveTaxi(grid, bus, bus.getX(), newY);
+                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())) {
+                    // Move horizontally as a fallbackf
+                    if (bus.flagMove == 0) {
+                        bus.flagMove = 1;
+                    }
+                    moveTaxi(grid, bus, bus.getX() + +1, bus.getY());
+                }
+            }
+            //arriving at stop logic
+            else if (bus.getX() == playerUno.getCoordX() && bus.getY() == playerUno.getCoordY()) {
+                System.out.println("----------- Taxi arrived ---------");
+                bus.arrived = true;
+
+                if (bus.hailed && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
+                    System.out.println("----------- You just got in the taxia---------");
+                    inTaxi = true;
+
+                } else if (inTaxi) {
+
+                    System.out.println("----------- Press E to get off  ---------");
+                    inTaxi = true;
+
+                }
+            } else if (bus.getY() == playerUno.getCoordY()) {
+                bus.flagMove = 0;
+            }
+
+        }}
 
     public void moveBusTowardsBusStop(Bus bus, busStop stop) {
         // Calculate the Manhattan distance for both possible next steps
@@ -281,12 +334,12 @@ public class GameController {
             System.out.println("now going towards :"+bus.nextStop());
             if(!playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
                 System.out.println("----------- You just got on the bus ---------");
-                onBus = true;
+                this.onBus = true;
 
-            }else if(onBus){
+            }else if(this.onBus){
                 System.out.println("----------- You arrived at  ---------"+stop);
                 System.out.println("----------- Press E to get off  ---------");
-                onBus = true;
+                this.onBus = true;
 
             }
         }
@@ -297,34 +350,42 @@ public class GameController {
     }
 
     public void setupKeyboardActions(KeyCode key) {
-            if(inTaxi){
-                switch (key) {
-                    case D -> movePlayer(1, 0);
-                    case A -> movePlayer(-1, 0);
-                    case W -> movePlayer(0, -1);
-                    case S -> movePlayer(0, 1);
-                    case T -> inTaxi =false;
-                    case E -> togglePlayerMovement();
-                    case C ->
-                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
-                }
-            } else if (playerMovementEnabled) {
-                switch (key) {
-                    case D -> movePlayer(1, 0);
-                    case A -> movePlayer(-1, 0);
-                    case W -> movePlayer(0, -1);
-                    case S -> movePlayer(0, 1);
-//                    case T -> hailTaxi();
-                    case E -> togglePlayerMovement();
-                }
-            } else if (key == KeyCode.E) {
-                togglePlayerMovement();
+        if(this.inTaxi){
+            switch (key) {
+                case D -> movePlayer(2, 0);
+                case A -> movePlayer(-2, 0);
+                case W -> movePlayer(0, -2);
+                case S -> movePlayer(0, 2);
+                case T -> this.inTaxi =false;
+                case E -> togglePlayerMovement();
+                case C ->
+                        System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+            }}else if (playerMovementEnabled) {
+            switch (key) {
+                case D -> movePlayer(1, 0);
+                case A -> movePlayer(-1, 0);
+                case W -> movePlayer(0, -1);
+                case S -> movePlayer(0, 1);
+                case T -> hailTaxi();
+                case E -> togglePlayerMovement();
             }
+        } else if (key == KeyCode.E) {
+            togglePlayerMovement();
+        }
     }
+    private void moveTaxi(Grid grid,Taxi bus, int newX, int newY) {
+        // Move the bus to the new position (newX, newY) on the grid
 
+        grid.moveCell(bus, newX, newY);
+
+        bus.setX(newX);
+        bus.setY(newY);
+        //grid.add(cell,cell.getColumn(),cell.getRow());
+
+    }
 
     private void moveBus(Bus bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
@@ -375,19 +436,23 @@ public class GameController {
         }
         if (canMoveTo(newColumn, newRow)) {
             playerUno.getCell().unhighlight();
+            playerUno.setX(newColumn);
+            playerUno.setY(newRow);
+//            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
             if (inTaxi) {
                 // Assuming taximan is accessible from here, or find a way to access it
-                moveTaxi(taximan, newColumn, newRow);
+                moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
             }
         }
+
     }
 
     private boolean canMoveTo(int x, int y) {
-        return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
+        return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
 
     private void interactWithCell(Cell cell) {
@@ -421,15 +486,14 @@ public class GameController {
         pause.play();
     }
 
-//    private void hailTaxi() {
-//        hailTaxi = !hailTaxi;
-//        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
-//        if (hailTaxi) {
-//            carbonFootprint += 75;
-//            updateCarbonFootprintLabel();
-//        }
-//    }
-
+    private void hailTaxi() {
+        if (taximan.hailed) {
+            taximan.hailed = !taximan.hailed;
+        }
+        else{
+            taximan.hailed = true;
+        }
+    }
     private void togglePlayerMovement() {
         if (onBus) {
             int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
