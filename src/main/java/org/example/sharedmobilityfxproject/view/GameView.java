@@ -134,14 +134,13 @@ public class GameView {
     private String viewType;
 
 
-    public GameView(SceneController sceneController, String viewType, Stage primaryStage) {
-        this.sceneController = sceneController;
+    public GameView(Stage primaryStage) {
         this.viewType = viewType;
         this.primaryStage = primaryStage;
-        StackPane pane = new StackPane();
-        this.scene = new Scene(pane, 1496, 1117);  // Scene 객체를 초기화
-        setupView(pane); //// Set different view depends on  viewType
+    }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     private void setupView(Pane pane) {
@@ -165,7 +164,7 @@ public class GameView {
         return this.scene;
     }
     public void setupMainMenu(Pane pane) {
-        GameController gameController = new GameController(this);
+        GameController gameController = new GameController(this, this);
         Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
         Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
         MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -640,7 +639,7 @@ public class GameView {
         //Previous buttons delete
         root.getChildren().remove(stageSelectionBox);
 
-        gameController = new GameController(this);
+        gameController = new GameController(this, this);
         //gameController Check
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -665,7 +664,7 @@ public class GameView {
     }
 
     public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage, StackPane stackPane) {
-        gameController = new GameController(this);
+        gameController = new GameController(this, this);
 
         root.getChildren().removeAll(buttonBox);
         ImageView imageView = new ImageView(logoImage);
