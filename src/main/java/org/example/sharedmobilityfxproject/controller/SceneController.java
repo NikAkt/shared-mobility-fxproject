@@ -7,8 +7,6 @@ import org.example.sharedmobilityfxproject.view.GameView;
 public class SceneController {
     private GameView gameView;
     public MainController mainController;
-    private Stage stage;
-    private Scene scene;
 //    private Parent root;
 
 
@@ -17,6 +15,8 @@ public class SceneController {
     }
 
     public void initMainMenu() {
+        gameView.setupMainMenu();
+        gameView.getPrimaryStage().setScene(gameView.getScene());
         gameView.getPrimaryStage().setTitle("Simple Game");
         gameView.getPrimaryStage().show();
 
@@ -24,24 +24,19 @@ public class SceneController {
     public void switchToMainMenu() {
 
     }
-    public void switchToStageChoose() {
-        GameView mainMenuView = new GameView(this, "StageChoose",stage);
-        stage.setScene(mainMenuView.getScene());
-    }
-    public void switchToGameView() {
-        GameView gameView = new GameView(this, "GamePlay",stage);
-        stage.setScene(gameView.getScene());
-    }
-    public void switchToGameOver() {
-        GameView gameOverView = new GameView(this, "GameOver",stage);
-        stage.setScene(gameOverView.getScene());
-    }
+//    public void switchToStageChoose() {
+//        GameView mainMenuView = new GameView(this, "StageChoose",stage);
+//        stage.setScene(mainMenuView.getScene());
+//    }
+//    public void switchToGameView() {
+//        GameView gameView = new GameView(this, "GamePlay",stage);
+//        stage.setScene(gameView.getScene());
+//    }
+//    public void switchToGameOver() {
+//        GameView gameOverView = new GameView(this, "GameOver",stage);
+//        stage.setScene(gameOverView.getScene());
+//    }
 
-
-    public void switchScene(String sceneName) {
-        GameView newView = new GameView(this, sceneName,stage);
-        stage.setScene(newView.getScene());
-    }
 
 //    public void loadGameMap(ActionEvent event) throws IOException {
 //        System.out.println("loadGameMap");
