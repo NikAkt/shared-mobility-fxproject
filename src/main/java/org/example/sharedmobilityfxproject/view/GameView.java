@@ -188,6 +188,7 @@ public class GameView {
         btnExit.setFocusTraversable(true);
 
 //        VBox buttonBox = new VBox(40, btnStartGame, gameCredit, btnExit);
+        VBox buttonBox = new VBox(40,btnExit);
         buttonBox.setAlignment(Pos.CENTER);
 
         StackPane root = new StackPane(mediaView,imageView, buttonBox);
@@ -197,7 +198,6 @@ public class GameView {
 
         System.out.println("Scene"+this.scene);
 //        setupKeyControls(this.scene, btnStartGame, gameCredit, btnExit);
-        setupKeyControls(this.scene, btnExit);
     }
     public Button getBtnExit(){
         return btnExit;
@@ -900,40 +900,23 @@ public class GameView {
         }
     }
 
-    private void setupKeyControls(Scene scene, Button btnStartGame) {
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case DOWN:
-                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
-                    else if (gameCredit.isFocused()) btnExit.requestFocus();
-                    break;
-                case UP:
-                    if (btnExit.isFocused()) gameCredit.requestFocus();
-                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
-                    break;
-                case ENTER:
-                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
-                    focusedButton.fire();
-                    break;
-            }
-        });
-    }
-    private void setupKeyControls(Scene scene, Button btnStartGame) {
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case DOWN:
-                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
-                    else if (gameCredit.isFocused()) btnExit.requestFocus();
-                    break;
-                case UP:
-                    if (btnExit.isFocused()) gameCredit.requestFocus();
-                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
-                    break;
-                case ENTER:
-                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
-                    focusedButton.fire();
-                    break;
-            }
-        });
-    }
+//    private void setupKeyControls(Scene scene, Button btnStartGame) {
+//        scene.setOnKeyPressed(event -> {
+//            switch (event.getCode()) {
+//                case DOWN:
+//                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
+//                    else if (gameCredit.isFocused()) btnExit.requestFocus();
+//                    break;
+//                case UP:
+//                    if (btnExit.isFocused()) gameCredit.requestFocus();
+//                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
+//                    break;
+//                case ENTER:
+//                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
+//                    focusedButton.fire();
+//                    break;
+//            }
+//        });
+//    }
+
 }

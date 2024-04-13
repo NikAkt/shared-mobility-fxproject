@@ -54,6 +54,7 @@ public class GameController {
     public GameController(SceneController sceneController, GameView gameView) {
         this.sceneController = sceneController;
         this.gameView = gameView;
+
 //        this.playerUno = playerUno;
 
 
