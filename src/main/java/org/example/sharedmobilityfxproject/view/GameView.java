@@ -550,10 +550,10 @@ public class GameView {
             mediaPlayer.stop();
         }
 
-        Media gameMusic = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
-        mediaPlayer = new MediaPlayer(gameMusic);
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
-        mediaPlayer.play(); // Start playing the new background music
+//        Media gameMusic = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
+//        mediaPlayer = new MediaPlayer(gameMusic);
+//        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
+//        mediaPlayer.play(); // Start playing the new background music
         // This is where you would transition to the actual game play scene
         // For now, just printing out the selection
         System.out.println("You have selected the stage: " + stageName);
