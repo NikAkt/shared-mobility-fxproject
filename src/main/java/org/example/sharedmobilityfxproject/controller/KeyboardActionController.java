@@ -37,7 +37,7 @@ public class KeyboardActionController {
 
     public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
-
+    public boolean hailTaxi = false;
     public Cell finishCell;
     public Taxi taximan;
     public Bus busman;
@@ -301,7 +301,7 @@ public class KeyboardActionController {
                     case A -> movePlayer(-1, 0);
                     case W -> movePlayer(0, -1);
                     case S -> movePlayer(0, 1);
-//                    case T -> hailTaxi();
+                  case T -> hailTaxi();
                     case E -> togglePlayerMovement();
                 }
             } else if (key == KeyCode.E) {
@@ -377,14 +377,14 @@ public class KeyboardActionController {
         pause.play();
     }
 
-//    private void hailTaxi() {
-//        hailTaxi = !hailTaxi;
-//        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
+    private void hailTaxi() {
+        hailTaxi = !hailTaxi;
+        currentCell.setStyle(hailTaxi ? "-fx-background-color: yellow;" : "-fx-background-color: blue;");
 //        if (hailTaxi) {
 //            carbonFootprint += 75;
 //            updateCarbonFootprintLabel();
 //        }
-//    }
+    }
 
     private void togglePlayerMovement() {
         if (onBus) {
