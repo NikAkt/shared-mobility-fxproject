@@ -35,7 +35,7 @@ public class SceneController {
         gameView.getPrimaryStage().show();
     }
 
-    public  void switchToGameScene() {
+    public void switchToMapSelectionScene() {
         System.out.println(" switchToGameScene in SceneController");
         gameView.selectStage();
     }
@@ -43,7 +43,9 @@ public class SceneController {
     public void initGameScene(){
 
         gameView.setupGameScene();
-
+        gameView.getPrimaryStage().setScene(gameView.getScene());
+        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+        gameView.getPrimaryStage().show();
     }
 //    public void switchToStageChoose() {
 //        GameView mainMenuView = new GameView(this, "StageChoose",stage);

@@ -21,13 +21,12 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.model.*;
 import org.example.sharedmobilityfxproject.view.GameView;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 
 public class MainController {
-
-
 
 
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
@@ -68,18 +67,12 @@ public class MainController {
     public VBox stageSelectionBox;
 
 
-
-
     // Finish cell
     private Cell finishCell;
     // Boolean flag to track if the game has finished
     static boolean gameFinished = false;
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
-
-
-
-
 
 
     // ****Gem count****
@@ -89,21 +82,21 @@ public class MainController {
     public MainController(SceneController sceneController, GameView gameView) {
         this.gameView = gameView;
         this.sceneController = sceneController;
-//        this.gameController = initGameController();
+        this.gameController = initGameController();
 
-        // this function will start the game when Gyuwon fixes his stuff but for right now it will be commented
-//        this.startGame();
+        //this function will start the game when Gyuwon fixes his stuff but for right now it will be commented
+        this.startGame();
 
     }
 
 
-//    private GameController initGameController(){
-//        return new GameController(sceneController, gameView, playerUno);
-//    }
+    private GameController initGameController() {
+        Player playerUno = new Player(0, 0, 10, 1, 10, 0);
+        return new GameController(sceneController, gameView, playerUno);
+    }
 
 
-
-    public void startGame(){
+    public void startGame() {
         System.out.println("MainController startGame");
         sceneController.initMainMenu();
 
@@ -115,13 +108,15 @@ public class MainController {
         gameView.getBtnExit().setOnAction(event -> System.exit(0));
 
 
-
     }
-    public void mapSelectionScene(){
+
+    public void mapSelectionScene() {
         //Stage Selection
         sceneController.switchStageChoose();
-        gameView.getGetStagebtn().setOnAction(event -> sceneController.switchToGameScene());
+        gameView.getGetStagebtn().setOnAction(event -> gameController.startPlayingGame());
+
     }
+
     private void setupKeyControls(Scene scene) {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -134,8 +129,6 @@ public class MainController {
     }
 
     // Label to keep track of gem count
-
-
 
 
     // ****Carbon footprint****
@@ -157,9 +150,6 @@ public class MainController {
 //    }
 
 
-
-
-
     ///CO2
     public void updateCarbonFootprintLabel() {
         carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
@@ -177,8 +167,6 @@ public class MainController {
 //        System.out.print(gemCount);//works
 //        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
 //    }
-
-
 
 
     public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {

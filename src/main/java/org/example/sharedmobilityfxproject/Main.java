@@ -23,14 +23,7 @@ public class Main extends Application {
             System.out.println("Main Start");
             GameView gameView = new GameView(primaryStage);
             SceneController sceneController = new SceneController(gameView);
-            // This is for main menu commenting until GYUWON FIXES
-//            MainController mainController = new MainController(sceneController, gameView);
-
-            // Initialise Player
-            Player playerUno = new Player(0,0,10,1,10,0);
-
-            // Pass every control to GameController it initializes directly the game auto
-            GameController gameController = new GameController(sceneController, gameView, playerUno);
+            MainController mainController = new MainController(sceneController, gameView);
 
         } catch (Exception e) {
             e.printStackTrace();

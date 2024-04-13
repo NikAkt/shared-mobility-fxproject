@@ -229,6 +229,7 @@ public class GameView {
         return stageBtn;
     }
 
+
     public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, MediaPlayer mdv) {
         stageBtn = new Button(stage);
         if (!stage.equals("Dublin")) {
@@ -359,21 +360,21 @@ public class GameView {
                 String[] bottomStages = {"Vilnius", "Back"};
 
                 //List up the stages
-                for (String stage : topStages) {
-                    ImageView stageImage = createStageImage(stage);
-                    Button stageButton = createStageButton(stage, stageImage, stageSelectionBox, mediaView.getMediaPlayer());
+//                for (String stage : topStages) {
+                    ImageView stageImage = createStageImage("Dublin");
+                    Button stageButton = createStageButton("Dublin", stageImage, stageSelectionBox, mediaView.getMediaPlayer());
                     stageButton.setFont(btnFont);
                     topRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
-                }
+//                }
 
-                for (String stage : bottomStages) {
-                    ImageView stageImage = createStageImage(stage);
-                    Button stageButton = createStageButton(stage, stageImage, stageSelectionBox, mediaView.getMediaPlayer());
-                    stageButton.setFont(btnFont);
-                    bottomRow.getChildren().add(stageButton);
-                    allButtons.add(stageButton);
-                }
+//                for (String stage : bottomStages) {
+//                    ImageView stageImage = createStageImage(stage);
+//                    Button stageButton = createStageButton(stage, stageImage, stageSelectionBox, mediaView.getMediaPlayer());
+//                    stageButton.setFont(btnFont);
+//                    bottomRow.getChildren().add(stageButton);
+//                    allButtons.add(stageButton);
+//                }
             }
 
             stageSelectionBox = new VBox(100, topRow, bottomRow);

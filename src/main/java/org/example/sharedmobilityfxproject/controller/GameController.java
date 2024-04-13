@@ -56,13 +56,11 @@ public class GameController {
         this.gameView = gameView;
         this.playerUno = playerUno;
 
-        this.sceneController.initGameScene();
-        this.startPlayingGame();
     }
 
     public void startPlayingGame(){
-
-
+        sceneController.initGameScene();
+System.out.println("GameController startPlayingGame");
 
         // Fill the grid with cells
         for (int row = 0; row < gameView.getRows(); row++) {
@@ -217,9 +215,7 @@ public class GameController {
         playerUno.initCell(gameView.grid);
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
-        gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("Simple Game");
-        gameView.getPrimaryStage().show();
+
     }
 
     private void generateGems(Grid grid, int numberOfGems) {
