@@ -157,15 +157,15 @@ public class KeyboardActionController {
 
 
 
-        this.busman = new Bus(busStops,4, 4);
-        this.taximan = new Taxi (58,28);
-        for (int i = 0; i < this.busman.list().size(); i++){
-            busStop stop = this.busman.list().get(i);
-            gameView.grid.add(stop,stop.getX(), stop.getY());
-        }
-
-        gameView.grid.add(this.busman,this.busman.getX(), this.busman.getY());// Example starting position
-        gameView.grid.add(this.taximan, this.taximan.getX(), this.taximan.getY());
+//        this.busman = new Bus(busStops,4, 4);
+//        this.taximan = new Taxi (58,28);
+//        for (int i = 0; i < this.busman.list().size(); i++){
+//            busStop stop = this.busman.list().get(i);
+//            gameView.grid.add(stop,stop.getX(), stop.getY());
+//        }
+//
+//        gameView.grid.add(this.busman,this.busman.getX(), this.busman.getY());// Example starting position
+//        gameView.grid.add(this.taximan, this.taximan.getX(), this.taximan.getY());
 
         // Don't initialize currentCell here
 
