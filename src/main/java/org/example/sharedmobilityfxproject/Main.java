@@ -18,6 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
+            System.out.println("Main Start");
             GameView gameView = new GameView(primaryStage);
             SceneController sceneController = new SceneController(gameView);
             MainController mainController = new MainController(sceneController, gameView);

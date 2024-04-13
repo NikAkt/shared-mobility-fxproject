@@ -99,9 +99,15 @@ public class MainController {
     }
 
     public void startGame(){
+        System.out.println("MainController startGame");
         sceneController.initMainMenu();
+
         setupKeyControls(gameView.getScene());
+        gameView.StartGameBtn.setOnAction(event -> sceneController.switchStageChoose());
+        gameView.gameCreditbtn.setOnAction(event -> SceneController.switchToGameCredits());
+
         gameView.getBtnExit().setOnAction(event -> System.exit(0));
+
         gameView.getBtnExit().requestFocus();
     }
     private void setupKeyControls(Scene scene) {

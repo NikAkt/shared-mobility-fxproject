@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 public class SceneController {
-    private GameView gameView;
+    private static GameView gameView;
     public MainController mainController;
 //    private Parent root;
 
@@ -15,11 +15,21 @@ public class SceneController {
     }
 
     public void initMainMenu() {
+        System.out.println("initMainMenu");
         gameView.setupMainMenu();
         gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("Simple Game");
+        gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();
 
+    }
+    public static void switchToGameCredits(){
+        System.out.println("switchToGameCredits in SceneController");
+        gameView.showCredit();
+    }
+
+    public static void switchStageChoose() {
+        System.out.println("SwitchStageChoose in SceneController");
+        gameView.showStageSelectionScreen();
     }
     public void switchToMainMenu() {
 
