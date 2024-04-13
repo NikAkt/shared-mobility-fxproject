@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import org.example.sharedmobilityfxproject.controller.GameController;
 import org.example.sharedmobilityfxproject.controller.MainController;
 import org.example.sharedmobilityfxproject.controller.SceneController;
+import org.example.sharedmobilityfxproject.model.Player;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 // Main class extends Application for JavaFX application
@@ -20,7 +22,14 @@ public class Main extends Application {
         try {
             GameView gameView = new GameView(primaryStage);
             SceneController sceneController = new SceneController(gameView);
-            MainController mainController = new MainController(sceneController, gameView);
+            // This is for main menu commenting until GYUWON FIXES
+//            MainController mainController = new MainController(sceneController, gameView);
+
+            // Initialise Player
+            Player playerUno = new Player(0,0,10,1,10,0);
+
+            // Pass every control to GameController it initializes directly the game auto
+            GameController gameController = new GameController(sceneController, gameView, playerUno);
 
         } catch (Exception e) {
             e.printStackTrace();
