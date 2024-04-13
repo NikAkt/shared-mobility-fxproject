@@ -336,10 +336,10 @@ public class KeyboardActionController {
     public void setupKeyboardActions(KeyCode key) {
         if(this.inTaxi){
             switch (key) {
-                case D -> movePLayer(2, 0);
-                case A -> movePLayer(-2, 0);
-                case W -> movePLayer(0, -2);
-                case S -> movePLayer(0, 2);
+                case D -> movePlayer(2, 0);
+                case A -> movePlayer(-2, 0);
+                case W -> movePlayer(0, -2);
+                case S -> movePlayer(0, 2);
                 case T -> this.inTaxi =false;
                 case E -> togglePlayerMovement();
                 case C ->
@@ -400,6 +400,11 @@ public class KeyboardActionController {
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
+
+        }
+        if (inTaxi) {
+            // Assuming taximan is accessible from here, or find a way to access it
+            moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
         }
     }
