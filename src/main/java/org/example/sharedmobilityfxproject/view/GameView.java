@@ -451,14 +451,18 @@ public class GameView {
 
 
             // This is where the keyboard action is initialized
-
+            AnchorPane anchorPane = new AnchorPane();
 
             // Create label for gem count
+    // Create label for gem count
             gemCountLabel = new Label("Gem Count: " + gemCount);
+            anchorPane.setTopAnchor(gemCountLabel, 10.0); // 10px from top
+            anchorPane.setLeftAnchor(gemCountLabel, 10.0); // 10px from left
+            anchorPane.getChildren().add(gemCountLabel);
             gemCountLabel.setStyle("-fx-font-size: 16px;");
-            gemCountLabel.setAlignment(Pos.TOP_LEFT);
-            gemCountLabel.setPadding(new Insets(10));
 
+            // Add the AnchorPane to the root StackPane
+            root.getChildren().add(anchorPane);
 
 
             scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
