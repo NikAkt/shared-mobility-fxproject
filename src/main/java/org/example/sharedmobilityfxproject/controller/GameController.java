@@ -20,6 +20,7 @@ import java.util.List;
 
 public class GameController {
 
+    private SceneController sceneController;
     //class call
     public MainController mainController;
     public GameView gameView;
@@ -56,259 +57,259 @@ public class GameController {
 //        this.playerUno = playerUno;
 
 
-        // Fill the grid with cells
-        for (int row = 0; row < gameView.getRows(); row++) {
-            for (int column = 0; column < gameView.getColumns(); column++) {
-                Cell cell = new Cell(column, row);
-                gameView.grid.add(cell, column, row);
-            }
-        }
-
-        // Create label for carbon footprint
-//            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
-//            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
-//            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-//            carbonFootprintLabel.setPadding(new Insets(10));
-
-        // Create a VBox to hold the gem count label
-//            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
-//            vbox.setAlignment(Pos.TOP_LEFT);
-
-
-        // Initialise Obstacles for x = 0
-        // Initialise Obstacles
-        // Initialise Obstacles
-//            obstacles = new ArrayList<>();
-
-        // Define the size of the obstacle blocks and the gap between them
-        int obstacleWidth = 5;
-        int obstacleHeight = 3;
-        int gap = 5;
-
-
-        // Calculate the number of obstacle blocks in each direction
-        int numBlocksX = (gameView.getColumns() - 2 * gap) / (obstacleWidth + gap);
-        int numBlocksY = (gameView.getRows() - 2 * gap) / (obstacleHeight + gap);
-
-
-        // For each block position
-        for (int bx = 0; bx < numBlocksX; bx++) {
-            for (int by = 0; by < numBlocksY; by++) {
-                // Calculate the top-left corner of the block
-                int x = gap + bx * (obstacleWidth + gap);
-                int y = gap + by * (obstacleHeight + gap);
-
-                // Create the obstacle block
-                for (int i = 0; i < obstacleWidth; i++) {
-                    for (int j = 0; j < obstacleHeight; j++) {
-                        obstacles.add(new Obstacle(gameView.grid, x + i, y + j));
-                        List<Integer> coordinatePair = new ArrayList<>();
-
-                        coordinatePair.add(x + i);
-                        coordinatePair.add(y + j);
-                    }
-                }
-            }
-        }
-        obstacleCoordinates = new ArrayList<>();
-
-        for (Obstacle obstacle : obstacles) {
-            obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
-        }
-        System.out.println("Obstacle Coordinates: ");
-
-        generateGems(gameView.grid, 5); // Replace 5 with the number of gems you want to generate
-
-        // Place the finish cell after the grid is filled and the player's position is initialised
-        int finishColumn;
-        int finishRow;
-        finishColumn=102;
-        finishRow=58;
-
-        finishCell = new Cell(finishColumn, finishRow);
-        finishCell.getStyleClass().add("finish");
-        gameView.grid.add(finishCell, finishColumn, finishRow);
-
-        //bus SHITE
-        busStop busS1 = new busStop(4,4);
-        busStop busS2 = new busStop(110,4);
-        busStop busS3 = new busStop(57,25);
-        busStop busS4 = new busStop(110,64);
-        busStop busS5 = new busStop(57,64);
-        busStop busS6 = new busStop(4,64);
-        busStop busS7 = new busStop(4,34);
-
-        metroStop metro1 = new metroStop(2,30);
-        this.gameView.grid.add(metro1,2,30);
-        this.busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-        this.busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-        this.busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-        this.busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-        this.busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-        this.busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-        this.busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
-
-
-        busStops.add(busS1);
-        busStops.add(busS2);
-        busStops.add(busS3);
-        busStops.add(busS4);
-        busStops.add(busS5);
-        busStops.add(busS6);
-        busStops.add(busS7);
-
-
-
-        this.busman = new Bus(busStops,4, 4);
-        this.taximan = new Taxi (58,28);
-        for (int i = 0; i < this.busman.list().size(); i++){
-            busStop stop = this.busman.list().get(i);
-            gameView.grid.add(stop,stop.getX(), stop.getY());
-        }
-
-        gameView.grid.add(this.busman,this.busman.getX(), this.busman.getY());// Example starting position
-        gameView.grid.add(taximan, taximan.getX(), taximan.getY());
-
-        // Don't initialize currentCell here
-
-        // Schedule the bus to move every second
-        Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
-            busStop targetBusStop = this.busman.nextStop(); // Assuming this method correctly returns the next bus stop
-            if(taximan.hailed&&!taximan.arrived){
-                moveTaxiTowardsPlayer(taximan);
-            }
-            if (!this.busman.isWaiting){
-
-
-                moveBusTowardsBusStop(this.busman, targetBusStop);
-
-                // Here's the updated part
-                if (this.onBus) {
-                    // Update player's coordinates to match the bus when the player is on the bus
-                    this.playerUno.setCellByCoords(gameView.grid, this.busman.getX(), this.busman.getY());
-                    System.out.println("Player coordinates (on bus): " + this.playerUno.getCoordX() + ", " + this.playerUno.getCoordY());
-                    //Increase carbon footprint amount as long as player is on the bus
-                    double carbonFootprint = 0.2; //subject to change
-//                    gameController.updateCarbonFootprintLabel();
-                }}
-            else{
-                if(this.busman.waitTime ==0){
-                    this.busman.waitASec();
-                }
-                else{
-                    this.busman.waitTime--;
-                }
-            }
-        }));
-
-        busMovementTimeline.setCycleCount(Animation.INDEFINITE);
-        busMovementTimeline.play();
-
-        // give playerUno a cell goddamit
-        this.playerUno.initCell(gameView.grid);
-    }
-
-    private void generateGems(Grid grid, int numberOfGems) {
-        for (int i = 0; i < numberOfGems; i++) {
-            int gemColumn;
-            int gemRow;
-            do {
-                gemColumn = (int) (Math.random() * gameView.getColumns());
-                gemRow = (int) (Math.random() * gameView.getRows());
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
-
-
-            Gem gem = new Gem(gemColumn, gemRow);
-            grid.add(gem, gemColumn, gemRow);
-        }
-    }
-
-    public void moveBusTowardsBusStop(Bus bus, busStop stop) {
-        // Calculate the Manhattan distance for both possible next steps
-        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
-        int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
-//        System.out.println("--------------------");
-//        System.out.println(stop.getX()+"   "+ stop.getY());
-
-//        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
-        if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
-//            System.out.println("----------- moving x ---------");
-            // Move horizontally towards the bus stop, if not blocked
-            int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
-            if (canMoveBusTo(newX, bus.getY())) {
-                moveBus(bus, newX, bus.getY());
-            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1))) {
-                // Move vertically as a fallback
-                moveBus(bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
-            }
-        }
-
-        else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
-//            System.out.println("----------- moving y ---------");
-            // Move vertically towards the bus stop, if not blocked
-            int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
-            if (canMoveBusTo(bus.getX(), newY)) {
-
-                moveBus(bus, bus.getX(), newY);
-            }
-            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
-                // Move horizontally as a fallback
-                if (bus.flagMove == 0){
-                    bus.flagMove =1;
-                }
-                moveBus(bus, bus.getX() + +1, bus.getY());
-            }
-        }
-        //arriving at stop logic
-        else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
-            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
-            bus.waitASec();
-            bus.list().add(bus.list().remove(0));
-            System.out.println("now going towards :"+bus.nextStop());
-            if(!playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
-                System.out.println("----------- You just got on the bus ---------");
-                this.onBus = true;
-
-            }else if(this.onBus){
-                System.out.println("----------- You arrived at  ---------"+stop);
-                System.out.println("----------- Press E to get off  ---------");
-                this.onBus = true;
-
-            }
-        }
-        else if (bus.getY()==stop.getY()) {
-            bus.flagMove=0;
-        }
-
-    }
-
-    public void setupKeyboardActions(KeyCode key) {
-            if(inTaxi){
-                switch (key) {
-                    case D -> movePlayer(1, 0);
-                    case A -> movePlayer(-1, 0);
-                    case W -> movePlayer(0, -1);
-                    case S -> movePlayer(0, 1);
-                    case T -> inTaxi =false;
-                    case E -> togglePlayerMovement();
-                    case C ->
-                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
-                }
-            } else if (playerMovementEnabled) {
-                switch (key) {
-                    case D -> movePlayer(1, 0);
-                    case A -> movePlayer(-1, 0);
-                    case W -> movePlayer(0, -1);
-                    case S -> movePlayer(0, 1);
-//                    case T -> hailTaxi();
-                    case E -> togglePlayerMovement();
-                }
-            } else if (key == KeyCode.E) {
-                togglePlayerMovement();
-            }
+//        // Fill the grid with cells
+//        for (int row = 0; row < gameView.getRows(); row++) {
+//            for (int column = 0; column < gameView.getColumns(); column++) {
+//                Cell cell = new Cell(column, row);
+//                gameView.grid.add(cell, column, row);
+//            }
+//        }
+//
+//        // Create label for carbon footprint
+////            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
+////            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
+////            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
+////            carbonFootprintLabel.setPadding(new Insets(10));
+//
+//        // Create a VBox to hold the gem count label
+////            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
+////            vbox.setAlignment(Pos.TOP_LEFT);
+//
+//
+//        // Initialise Obstacles for x = 0
+//        // Initialise Obstacles
+//        // Initialise Obstacles
+////            obstacles = new ArrayList<>();
+//
+//        // Define the size of the obstacle blocks and the gap between them
+//        int obstacleWidth = 5;
+//        int obstacleHeight = 3;
+//        int gap = 5;
+//
+//
+//        // Calculate the number of obstacle blocks in each direction
+//        int numBlocksX = (gameView.getColumns() - 2 * gap) / (obstacleWidth + gap);
+//        int numBlocksY = (gameView.getRows() - 2 * gap) / (obstacleHeight + gap);
+//
+//
+//        // For each block position
+//        for (int bx = 0; bx < numBlocksX; bx++) {
+//            for (int by = 0; by < numBlocksY; by++) {
+//                // Calculate the top-left corner of the block
+//                int x = gap + bx * (obstacleWidth + gap);
+//                int y = gap + by * (obstacleHeight + gap);
+//
+//                // Create the obstacle block
+//                for (int i = 0; i < obstacleWidth; i++) {
+//                    for (int j = 0; j < obstacleHeight; j++) {
+//                        obstacles.add(new Obstacle(gameView.grid, x + i, y + j));
+//                        List<Integer> coordinatePair = new ArrayList<>();
+//
+//                        coordinatePair.add(x + i);
+//                        coordinatePair.add(y + j);
+//                    }
+//                }
+//            }
+//        }
+//        obstacleCoordinates = new ArrayList<>();
+//
+//        for (Obstacle obstacle : obstacles) {
+//            obstacleCoordinates.add(new int[]{obstacle.getColumn(), obstacle.getRow()});
+//        }
+//        System.out.println("Obstacle Coordinates: ");
+//
+//        generateGems(gameView.grid, 5); // Replace 5 with the number of gems you want to generate
+//
+//        // Place the finish cell after the grid is filled and the player's position is initialised
+//        int finishColumn;
+//        int finishRow;
+//        finishColumn=102;
+//        finishRow=58;
+//
+//        finishCell = new Cell(finishColumn, finishRow);
+//        finishCell.getStyleClass().add("finish");
+//        gameView.grid.add(finishCell, finishColumn, finishRow);
+//
+//        //bus SHITE
+//        busStop busS1 = new busStop(4,4);
+//        busStop busS2 = new busStop(110,4);
+//        busStop busS3 = new busStop(57,25);
+//        busStop busS4 = new busStop(110,64);
+//        busStop busS5 = new busStop(57,64);
+//        busStop busS6 = new busStop(4,64);
+//        busStop busS7 = new busStop(4,34);
+//
+//        metroStop metro1 = new metroStop(2,30);
+//        this.gameView.grid.add(metro1,2,30);
+//        this.busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+//        this.busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+//        this.busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+//        this.busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+//        this.busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+//        this.busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+//        this.busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+//
+//
+//        busStops.add(busS1);
+//        busStops.add(busS2);
+//        busStops.add(busS3);
+//        busStops.add(busS4);
+//        busStops.add(busS5);
+//        busStops.add(busS6);
+//        busStops.add(busS7);
+//
+//
+//
+//        this.busman = new Bus(busStops,4, 4);
+//        this.taximan = new Taxi (58,28);
+//        for (int i = 0; i < this.busman.list().size(); i++){
+//            busStop stop = this.busman.list().get(i);
+//            gameView.grid.add(stop,stop.getX(), stop.getY());
+//        }
+//
+//        gameView.grid.add(this.busman,this.busman.getX(), this.busman.getY());// Example starting position
+//        gameView.grid.add(taximan, taximan.getX(), taximan.getY());
+//
+//        // Don't initialize currentCell here
+//
+//        // Schedule the bus to move every second
+//        Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
+//            busStop targetBusStop = this.busman.nextStop(); // Assuming this method correctly returns the next bus stop
+//            if(taximan.hailed&&!taximan.arrived){
+//                moveTaxiTowardsPlayer(taximan);
+//            }
+//            if (!this.busman.isWaiting){
+//
+//
+//                moveBusTowardsBusStop(this.busman, targetBusStop);
+//
+//                // Here's the updated part
+//                if (this.onBus) {
+//                    // Update player's coordinates to match the bus when the player is on the bus
+//                    this.playerUno.setCellByCoords(gameView.grid, this.busman.getX(), this.busman.getY());
+//                    System.out.println("Player coordinates (on bus): " + this.playerUno.getCoordX() + ", " + this.playerUno.getCoordY());
+//                    //Increase carbon footprint amount as long as player is on the bus
+//                    double carbonFootprint = 0.2; //subject to change
+////                    gameController.updateCarbonFootprintLabel();
+//                }}
+//            else{
+//                if(this.busman.waitTime ==0){
+//                    this.busman.waitASec();
+//                }
+//                else{
+//                    this.busman.waitTime--;
+//                }
+//            }
+//        }));
+//
+//        busMovementTimeline.setCycleCount(Animation.INDEFINITE);
+//        busMovementTimeline.play();
+//
+//        // give playerUno a cell goddamit
+//        this.playerUno.initCell(gameView.grid);
+//    }
+//
+//    private void generateGems(Grid grid, int numberOfGems) {
+//        for (int i = 0; i < numberOfGems; i++) {
+//            int gemColumn;
+//            int gemRow;
+//            do {
+//                gemColumn = (int) (Math.random() * gameView.getColumns());
+//                gemRow = (int) (Math.random() * gameView.getRows());
+//            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+//
+//
+//            Gem gem = new Gem(gemColumn, gemRow);
+//            grid.add(gem, gemColumn, gemRow);
+//        }
+//    }
+//
+//    public void moveBusTowardsBusStop(Bus bus, busStop stop) {
+//        // Calculate the Manhattan distance for both possible next steps
+//        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
+//        int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
+////        System.out.println("--------------------");
+////        System.out.println(stop.getX()+"   "+ stop.getY());
+//
+////        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
+//        if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
+////            System.out.println("----------- moving x ---------");
+//            // Move horizontally towards the bus stop, if not blocked
+//            int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
+//            if (canMoveBusTo(newX, bus.getY())) {
+//                moveBus(bus, newX, bus.getY());
+//            } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1))) {
+//                // Move vertically as a fallback
+//                moveBus(bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
+//            }
+//        }
+//
+//        else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
+////            System.out.println("----------- moving y ---------");
+//            // Move vertically towards the bus stop, if not blocked
+//            int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
+//            if (canMoveBusTo(bus.getX(), newY)) {
+//
+//                moveBus(bus, bus.getX(), newY);
+//            }
+//            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
+//                // Move horizontally as a fallback
+//                if (bus.flagMove == 0){
+//                    bus.flagMove =1;
+//                }
+//                moveBus(bus, bus.getX() + +1, bus.getY());
+//            }
+//        }
+//        //arriving at stop logic
+//        else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
+//            System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
+//            bus.waitASec();
+//            bus.list().add(bus.list().remove(0));
+//            System.out.println("now going towards :"+bus.nextStop());
+//            if(!playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
+//                System.out.println("----------- You just got on the bus ---------");
+//                this.onBus = true;
+//
+//            }else if(this.onBus){
+//                System.out.println("----------- You arrived at  ---------"+stop);
+//                System.out.println("----------- Press E to get off  ---------");
+//                this.onBus = true;
+//
+//            }
+//        }
+//        else if (bus.getY()==stop.getY()) {
+//            bus.flagMove=0;
+//        }
+//
+//    }
+//
+//    public void setupKeyboardActions(KeyCode key) {
+//            if(inTaxi){
+//                switch (key) {
+//                    case D -> movePlayer(1, 0);
+//                    case A -> movePlayer(-1, 0);
+//                    case W -> movePlayer(0, -1);
+//                    case S -> movePlayer(0, 1);
+//                    case T -> inTaxi =false;
+//                    case E -> togglePlayerMovement();
+//                    case C ->
+//                            System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+//                                    "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+//                                    "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+//                                    "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+//                }
+//            } else if (playerMovementEnabled) {
+//                switch (key) {
+//                    case D -> movePlayer(1, 0);
+//                    case A -> movePlayer(-1, 0);
+//                    case W -> movePlayer(0, -1);
+//                    case S -> movePlayer(0, 1);
+////                    case T -> hailTaxi();
+//                    case E -> togglePlayerMovement();
+//                }
+//            } else if (key == KeyCode.E) {
+//                togglePlayerMovement();
+//            }
     }
 
     private void moveBus(Bus bus, int newX, int newY) {
