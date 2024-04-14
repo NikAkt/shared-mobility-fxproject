@@ -176,7 +176,7 @@ public class GameView {
         StackPane root = new StackPane(mediaView,imageView, buttonBox);
         StackPane.setAlignment(buttonBox, Pos.CENTER);
 
-        scene = new Scene(root, 1496,1117);
+        scene = new Scene(root, WIDTH,HEIGHT);
 
     }
 
@@ -401,7 +401,7 @@ public class GameView {
             //Add new StageSelectionBox
             StackPane root = new StackPane(mediaView,stageSelectionBox);
             StackPane.setAlignment(stageSelectionBox, Pos.CENTER);
-            scene = new Scene(root, 1496, 1117);
+            scene = new Scene(root, WIDTH, HEIGHT);
 
 
         } catch (Exception e) {
@@ -797,7 +797,7 @@ public class GameView {
 
                 Label educationalMsgLabel = new Label();
                 educationalMsgLabel.setText(randomMessage);
-                educationalMsgLabel.setWrapText(true);
+                educationalMsgLabel.setWrapText(false);
                 educationalMsgLabel.setAlignment(Pos.CENTER);
                 educationalMsgLabel.setFont(contentFont);
 
