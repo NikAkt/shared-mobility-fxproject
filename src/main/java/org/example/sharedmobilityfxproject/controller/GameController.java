@@ -461,7 +461,7 @@ public class GameController {
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow),gameView.grid);
 
-            interactWithCell(playerUno.getCell());
+            interactWithCell(gameView.grid.getCell(newColumn,newRow));
             if (inTaxi) {
                 // Assuming taximan is accessible from here, or find a way to access it
                 moveTaxi(gameView.grid, taximan, newColumn, newRow);
@@ -476,7 +476,7 @@ public class GameController {
     }
 
     private void interactWithCell(Cell cell) {
-        System.out.println("interacting with type "+ cell.getClass());
+        System.out.println("Interacting with cell at: " + cell.getColumn() + ", " + cell.getRow());
         if ("gem".equals(cell.getUserData())) {
             collectGem(cell);
         } else if (cell instanceof busStop) {
