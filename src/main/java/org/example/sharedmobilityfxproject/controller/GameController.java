@@ -13,12 +13,19 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 
 
 public class GameController {
+    private  boolean playerTimeout = true;
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private SceneController sceneController;
     //class call
@@ -44,7 +51,21 @@ public class GameController {
     public Bus busman;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
+    private Timer timer = new Timer();  // Create a Timer object
 
+    private void enableMovementAfterDelay() {
+        playerTimeout = false;  // Disable further moves immediately when this method is called
+        int delayInMilliseconds = (int) (playerUno.speedTime * 1000);  // Convert seconds to milliseconds
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // This will run in a background thread, make sure to run UI updates on the JavaFX thread
+                javafx.application.Platform.runLater(() -> {
+                    playerTimeout = true;  // Re-enable moves after the specified time
+                });
+            }
+        }, delayInMilliseconds);
+    }
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -363,7 +384,7 @@ public class GameController {
                                 "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
-            }}else if (playerMovementEnabled) {
+            }}else if (playerMovementEnabled&&playerTimeout) {
             switch (key) {
                 case D -> movePlayer(1, 0);
                 case A -> movePlayer(-1, 0);
@@ -371,7 +392,7 @@ public class GameController {
                 case S -> movePlayer(0, 1);
                 case T -> hailTaxi();
                 case E -> togglePlayerMovement();
-            }
+            }enableMovementAfterDelay();
         } else if (key == KeyCode.E) {
             togglePlayerMovement();
         }
@@ -408,7 +429,7 @@ public class GameController {
     }
 
     private void movePlayer(int dx, int dy) {
-        System.out.println(playerUno);
+
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
@@ -435,12 +456,11 @@ public class GameController {
 
         }
         if (canMoveTo(newColumn, newRow)) {
-            playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
-            playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
-            playerUno.getCell().highlight();
+            playerUno.setCell(gameView.grid.getCell(newColumn, newRow),gameView.grid);
+
             interactWithCell(playerUno.getCell());
             if (inTaxi) {
                 // Assuming taximan is accessible from here, or find a way to access it
@@ -456,6 +476,7 @@ public class GameController {
     }
 
     private void interactWithCell(Cell cell) {
+        System.out.println("interacting with type "+ cell.getClass());
         if ("gem".equals(cell.getUserData())) {
             collectGem(cell);
         } else if (cell instanceof busStop) {
