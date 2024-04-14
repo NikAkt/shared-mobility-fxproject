@@ -20,6 +20,7 @@ import javafx.scene.input.KeyCode;
 
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -43,6 +44,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
+
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -135,7 +137,6 @@ public class GameView {
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
 
-
     public GameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initializeStageClearFlags();
@@ -149,6 +150,7 @@ public class GameView {
         stageClearFlags.put("Vilnius", false);
         stageClearFlags.put("Istanbul", false);
     }
+
     public boolean isStageCleared(String stage) {
         return stageClearFlags.getOrDefault(stage, false);
     }
@@ -175,9 +177,9 @@ public class GameView {
         gameCreditbtn.setFocusTraversable(true);
         ExitBtn.setFocusTraversable(true);
 
-        applyButtonStyles(getGameStartbtn,false);
-        applyButtonStyles(gameCreditbtn,false);
-        applyButtonStyles(ExitBtn,false);
+        applyButtonStyles(getGameStartbtn, false);
+        applyButtonStyles(gameCreditbtn, false);
+        applyButtonStyles(ExitBtn, false);
 
         VBox buttonBox = new VBox(40, getGameStartbtn, gameCreditbtn, ExitBtn);
         buttonBox.setAlignment(Pos.CENTER);
@@ -192,6 +194,131 @@ public class GameView {
     }
 
     public void setupGameScene(String stageName) {
+        // **** Game Setup ****
+        mainGameSetting();
+
+        // **** Start Main Game ****
+        StackPane mapStackPane = new StackPane();
+        Scale scaleTransform = new Scale();
+        scaleTransform.setX(0.7); // Scale down X to 80% of its size
+        scaleTransform.setY(0.7); // Scale down Y to 80% of its size
+        grid.getTransforms().add(scaleTransform);
+
+        mapStackPane.setPadding(new Insets(40)); // Reset any existing padding
+        mapStackPane.setAlignment(Pos.BOTTOM_LEFT); // Align the grid to the bottom-left within its container
+        mapStackPane.setMaxSize(1280, 720); // Set the maximum size of the grid if necessary
+
+
+        ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
+        co2Bar.setPrefWidth(40);
+        co2Bar.setPrefHeight(550); // Adjust the height as needed
+        co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
+
+        // CO2 Level
+        Label co2TextLabel = new Label("CO2:" + co2Gauge);
+        co2TextLabel.setFont(new Font("Arial", 16));
+        co2TextLabel.setFont(contentFont);
+
+        VBox co2VBox = new VBox(co2Bar, co2TextLabel);
+
+        HBox co2HBox = new HBox(co2VBox); // Add the VBox to the HBox
+        co2HBox.setAlignment(Pos.CENTER_LEFT); // Set alignment to center left
+        HBox.setHgrow(co2VBox, Priority.ALWAYS); // Allow the VBox to grow as needed
+        HBox.setMargin(co2VBox, new Insets(30, 0, 0, 10));
+
+        // "Stamina" text
+        Text staminaText = new Text("Stamina:" +
+                " " + staminagauge);
+
+        staminaText.setFont(javafx.scene.text.Font.font(14));
+        staminaText.setFont(contentFont);
+
+        ProgressBar staminaBar = new ProgressBar(staminagauge);
+        staminaBar.setPrefWidth(1100); // Adjust width as needed
+        staminaBar.setPrefHeight(40); // Adjust height as needed
+        staminaBar.setStyle("-fx-accent: yellow;");
+
+        // Stamina container setup
+        VBox staminaContainer = new VBox(staminaText, staminaBar);
+        staminaContainer.setAlignment(Pos.BOTTOM_CENTER);
+        StackPane.setMargin(staminaContainer, new Insets(0, 0, 20, 0)); // Add margin at the bottom if needed
+
+        // Stage Name
+        Text mapNameTest = new Text("Welcome to " + stageName);
+        mapNameTest.setFont(contentFont);
+
+        // Time countdown
+        Label timeLabel = new Label();
+        timeLabel.setAlignment(Pos.TOP_CENTER);
+
+        // Countdown logic
+        IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
+        new Timeline(
+                new KeyFrame(
+                        Duration.seconds(timeSeconds.get()),
+                        event -> gameOver(primaryStage),
+                        new KeyValue(timeSeconds, 0)
+                )
+        ).play();
+
+        timeSeconds.addListener((obs, oldVal, newVal) -> {
+            timeLabel.setText("Time left: " + newVal + "s");
+            timeLabel.setFont(javafx.scene.text.Font.font(40));
+            timeLabel.setFont(contentFont);
+        });
+        timeLabel.setAlignment(Pos.CENTER);
+
+        VBox timeContainer = new VBox(mapNameTest, timeLabel);
+        timeContainer.setAlignment(Pos.TOP_CENTER);
+        StackPane.setMargin(timeContainer, new Insets(20, 0, 0, 0));
+
+        // Create label for gem count
+        gemCountLabel = new Label("Gem Count: " + gemCount);
+        gemCountLabel.setFont(contentFont);
+        gemCountLabel.setAlignment(Pos.TOP_LEFT);
+        gemCountLabel.setPadding(new Insets(10));
+
+        VBox gemContainer = new VBox(gemCountLabel);
+        gemContainer.setAlignment(Pos.TOP_RIGHT);
+
+        // StackPane setup
+        StackPane stackRoot = new StackPane();
+        stackRoot.setAlignment(Pos.TOP_RIGHT); // Align all children to the top-right
+        stackRoot.setPadding(new Insets(0)); // Reset any existing padding
+
+        StackPane.setMargin(mapStackPane, new Insets(40, 0, 45, 120));
+
+
+
+        mapStackPane.getChildren().clear(); // Remove all current children
+        mapStackPane.getChildren().add(grid); // Assuming 'grid' is already defined as a Node
+        stackRoot.getChildren().add(gemContainer);
+        stackRoot.getChildren().add(timeContainer);
+        stackRoot.getChildren().add(co2HBox);
+        stackRoot.getChildren().add(staminaContainer);
+        stackRoot.getChildren().add(mapStackPane);
+
+        // Settings
+        Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+        primaryStage.getIcons().add(icon);
+        primaryStage.setTitle("Shared Mobility Application");
+        primaryStage.setWidth(WIDTH);
+        primaryStage.setHeight(HEIGHT);
+        primaryStage.setResizable(false);
+        scene = new Scene(stackRoot, WIDTH, HEIGHT);
+
+
+
+        // create scene and set to stage
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+        initializeMetroSystem();
+
+        primaryStage.setScene(scene);
+        primaryStage.show(); // This is crucial to actually display the window
+
+    }
+
+    public void mainGameSetting() {
         //Stop the video
         mediaView.getMediaPlayer().stop();
 
@@ -255,76 +382,6 @@ public class GameView {
         Scene dialogScene = new Scene(popupVbox);
         dialog.setScene(dialogScene);
         dialog.showAndWait();
-
-        // **** Start Main Game ****
-        ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
-        co2Bar.setPrefWidth(60);
-        co2Bar.setPrefHeight(600); // Adjust the height as needed
-        co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
-        VBox.setMargin(co2Bar, new Insets(0, 0, 0, 80)); // 상단 마진 설정
-        // Wrap CO2 bar in VBox to align it vertically
-        VBox co2Container = new VBox(co2Bar);
-        co2Container.setAlignment(Pos.CENTER);
-
-        // Stamina Parameter
-        ProgressBar staminaParameter = new ProgressBar(staminagauge); // Set to full stamina
-        staminaParameter.setPrefHeight(60);
-        staminaParameter.setPrefWidth(1200);
-        staminaParameter.setStyle("-fx-accent: yellow;"); // Set the fill color to red
-
-        // "Stamina" text
-        Text staminaText = new Text("Stamina");
-        staminaText.setFont(javafx.scene.text.Font.font(14));
-
-        // Wrap CO2 bar in VBox to align it vertically
-        VBox staminaContainer = new VBox();
-        //            staminaContainer.getChildren().add(staminaText);
-        staminaContainer.getChildren().add(staminaParameter);
-        VBox.setMargin(staminaContainer, new Insets(50, 0, 0, 0));
-        staminaContainer.setAlignment(Pos.CENTER);
-
-        // Time countdown
-        Label timeLabel = new Label();
-        timeLabel.setAlignment(Pos.TOP_CENTER);
-
-        // Countdown logic
-        IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
-        new Timeline(
-                new KeyFrame(
-                        Duration.seconds(timeSeconds.get()),
-                        event -> gameOver(primaryStage),
-                        new KeyValue(timeSeconds, 0)
-                )
-        ).play();
-
-        timeSeconds.addListener((obs, oldVal, newVal) -> {
-            timeLabel.setText("Time left: " + newVal + "s");
-            timeLabel.setFont(javafx.scene.text.Font.font(40));
-        });
-        timeLabel.setAlignment(Pos.CENTER);
-
-        BorderPane borderRoot = new BorderPane();
-        borderRoot.setCenter(grid);
-
-        scene = new Scene(borderRoot, 1496, 1117);
-
-        // Settings
-        Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
-        primaryStage.getIcons().add(icon);
-        primaryStage.setTitle("Shared Mobility Application");
-        primaryStage.setWidth(WIDTH);
-        primaryStage.setHeight(HEIGHT);
-        primaryStage.setResizable(false);
-
-        // Create label for gem count
-        gemCountLabel = new Label("Gem Count: " + gemCount);
-        gemCountLabel.setStyle("-fx-font-size: 16px;");
-        gemCountLabel.setAlignment(Pos.TOP_LEFT);
-        gemCountLabel.setPadding(new Insets(10));
-
-        // create scene and set to stage
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
-        initializeMetroSystem();
     }
 
     public Button getBtnExit() {
@@ -393,7 +450,6 @@ public class GameView {
         });
 
 
-
         return button;
     }
 
@@ -451,7 +507,6 @@ public class GameView {
 
         }
     }
-
 
     public void showStageSelectionScreen() {
         //bring the Stage in gameView
