@@ -27,12 +27,15 @@ public class SceneController {
         gameView.showCredit();
     }
 
-    public  void switchStageChoose() {
+    public void switchStageChoose() {
         System.out.println("SwitchStageChoose in SceneController");
         gameView.showStageSelectionScreen();
         gameView.getPrimaryStage().setScene(gameView.getScene());
         gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();
+    }
+    public void mapClearCheck(String msg) {
+        gameView.showStageAlert(msg);
     }
 
     public void switchToMapSelectionScene() {
@@ -47,19 +50,6 @@ public class SceneController {
         gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();
     }
-//    public void switchToStageChoose() {
-//        GameView mainMenuView = new GameView(this, "StageChoose",stage);
-//        stage.setScene(mainMenuView.getScene());
-//    }
-//    public void switchToGameView() {
-//        GameView gameView = new GameView(this, "GamePlay",stage);
-//        stage.setScene(gameView.getScene());
-//    }
-//    public void switchToGameOver() {
-//        GameView gameOverView = new GameView(this, "GameOver",stage);
-//        stage.setScene(gameOverView.getScene());
-//    }
-
 
 //    public void loadGameMap(ActionEvent event) throws IOException {
 //        System.out.println("loadGameMap");
