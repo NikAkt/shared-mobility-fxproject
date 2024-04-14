@@ -58,9 +58,9 @@ public class GameController {
 
     }
 
-    public void startPlayingGame(){
-        sceneController.initGameScene();
-System.out.println("GameController startPlayingGame");
+    public void startPlayingGame(String stageName) {
+        sceneController.initGameScene(stageName);
+        System.out.println("GameController startPlayingGame");
 
         // Fill the grid with cells
         for (int row = 0; row < gameView.getRows(); row++) {

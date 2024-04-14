@@ -103,17 +103,17 @@ public class MainController {
         setupKeyControls(gameView.getScene());
         //Main Menu
         gameView.getGameStartbtn().requestFocus();
-        gameView.getGameStartbtn().setOnAction(event -> this.mapSelectionScene());
         gameView.getGameCreditbtn().setOnAction(event -> SceneController.switchToGameCredits());
         gameView.getBtnExit().setOnAction(event -> System.exit(0));
-
+        gameView.getGameStartbtn().setOnAction(event -> this.mapSelectionScene());
 
     }
 
     public void mapSelectionScene() {
         //Stage Selection
+
         sceneController.switchStageChoose();
-        gameView.getGetStagebtn().setOnAction(event -> gameController.startPlayingGame());
+        gameView.getGetStagebtn().setOnAction(event -> gameController.startPlayingGame(gameView.stageName));
 
     }
 

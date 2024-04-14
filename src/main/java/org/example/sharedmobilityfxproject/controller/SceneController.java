@@ -40,9 +40,9 @@ public class SceneController {
         gameView.selectStage();
     }
 
-    public void initGameScene(){
-
-        gameView.setupGameScene();
+    public void initGameScene(String stageName) {
+        System.out.println("initGameScene in SceneController");
+        gameView.setupGameScene(stageName);
         gameView.getPrimaryStage().setScene(gameView.getScene());
         gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();
