@@ -191,7 +191,7 @@ System.out.println("GameController startPlayingGame");
 
 
 
-        busman = new Bus(busStops,4, 4);
+        busman = new Bus(busStops,3, 4);
         taximan = new Taxi (58,28);
         cycleman= new Bicycle(10,4);
         for (int i = 0; i < busman.list().size(); i++){
@@ -395,7 +395,7 @@ System.out.println("GameController startPlayingGame");
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
             }
         }
-        else if(onBicycle){
+        else if(onBicycle&&playerMovementEnabled&&playerTimeout){
             System.out.println("Bicycle time: "+cycleman.bikeTime+" you are still on bike");
             switch (key) {
                 case D -> movePlayer(5, 0);
@@ -407,7 +407,7 @@ System.out.println("GameController startPlayingGame");
                                 "\nPlayer is currently " + (onBicycle ? "on bicycle." : "not on the bicycle.") +
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
-            }
+            }enableMovementAfterDelay();
         }
         else if (playerMovementEnabled&&playerTimeout) {
             switch (key) {
@@ -507,8 +507,9 @@ System.out.println("GameController startPlayingGame");
     }
 
     private void interactWithCell(Cell cell) {
-        System.out.println("Interacting with cell at: " + cell.getColumn() + ", " + cell.getRow());
+
         if ("gem".equals(cell.getUserData())) {
+            System.out.println("Interacting with gem ");
             collectGem(cell);
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
@@ -517,7 +518,7 @@ System.out.println("GameController startPlayingGame");
         } else if (cell instanceof Bicycle) {
             System.out.println("You just got on the bike");
             onBicycle = true;
-            cycleman.bikeTime=25;
+            cycleman.bikeTime=300;
             System.out.println(onBicycle
             );
         }
