@@ -1,9 +1,15 @@
 package org.example.sharedmobilityfxproject.model;
-
+import javafx.animation.TranslateTransition;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 public class Player implements motion {
     private int x; // x position
     private int y; // y position
     private int speed; // speed
+    public double speedTime = .5;
+    private Node playerVisual;
     private double co2; // co2 produced
     private Cell playerCell;
     public boolean isUnderground= false;
@@ -16,6 +22,9 @@ public class Player implements motion {
         this.stamina=100;
         this.speed=10;
         this.co2=0;
+        this.playerVisual = new Circle(5, Color.BLUE);
+
+
     }
 
     public int getCoordX() {
@@ -78,12 +87,83 @@ public class Player implements motion {
     public void setY(int j){
         this.y = j;
     }
-    public void setCell(Cell cell) {
+    public void setCell(Cell newCell, Grid grid) {
+        // Retrieve grid dimensions
+        double cellWidth = grid.getWidth() / grid.getColumns();
+        double cellHeight = grid.getHeight() / grid.getRows();
 
-        this.playerCell = cell;
-        this.x = cell.getColumn();
-        this.y = cell.getRow();
+        // Reset translation before any new setup
+        playerVisual.setTranslateX(0);
+        playerVisual.setTranslateY(0);
+
+        if (this.playerCell != null) {
+            // Calculate the starting positions based on grid cells directly
+            double startX = this.playerCell.getColumn() * cellWidth;
+            double startY = this.playerCell.getRow() * cellHeight;
+            double endX = newCell.getColumn() * cellWidth;
+            double endY = newCell.getRow() * cellHeight;
+
+            // Calculate translation distances
+            double translateX = endX - startX;
+            double translateY = endY - startY;
+
+            // Set the visual to the current logical position before starting animation
+            playerVisual.relocate(startX, startY);
+
+            // Create a translation transition
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(speedTime), playerVisual);
+            tt.setByX(translateX);
+            tt.setByY(translateY);
+            tt.setOnFinished(event -> {
+                // After animation, ensure the logical state matches the visual state
+                this.playerCell = newCell;
+                this.x = newCell.getColumn();
+                this.y = newCell.getRow();
+
+                // Visual is already in place, ensure it's part of the new cell
+                if (!newCell.getChildren().contains(playerVisual)) {
+                    newCell.getChildren().add(playerVisual);
+                }
+
+                // Reset translations to ensure the visual does not drift
+                playerVisual.setTranslateX(0);
+                playerVisual.setTranslateY(0);
+               // Highlight the new cell
+            });
+            tt.play();
+
+            // Unhighlight the old cell
+            this.playerCell.unhighlight();
+        } else {
+            // Set the player cell if not previously set
+            updatePosition(newCell);
+
+            newCell.getChildren().add(playerVisual); // Add visual to the new cell
+            // Highlight the new cell
+        }
     }
+
+
+    private Node getPlayerVisual(Grid grid) {
+        // This method should return the Node that visually represents the player.
+        // It might be a subnode of the cell or a completely separate Node depending on your design.
+        // Here's a simple example:
+        if (this.playerVisual == null) {
+            this.playerVisual = new Circle(grid.getWidth() / grid.getColumns(), Color.BLUE); // Just an example, customize as needed
+            this.playerCell.getChildren().add(this.playerVisual);
+        }
+        return this.playerVisual;
+
+    }
+
+
+    public void updatePosition(Cell newCell) {
+        this.playerCell = newCell;
+        this.x = newCell.getColumn();
+        this.y = newCell.getRow();
+        this.playerCell.highlight(); // Highlight the new cell
+    }
+
 
     public void setCellByCoords(Grid grid, int x, int y) {
         this.playerCell.setColumn(x);

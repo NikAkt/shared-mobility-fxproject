@@ -14,12 +14,19 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 
 public class GameController {
+    private  boolean playerTimeout = true;
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private SceneController sceneController;
     //class call
@@ -47,7 +54,21 @@ public class GameController {
     public Bicycle cycleman;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
+    private Timer timer = new Timer();  // Create a Timer object
 
+    private void enableMovementAfterDelay() {
+        playerTimeout = false;  // Disable further moves immediately when this method is called
+        int delayInMilliseconds = (int) (playerUno.speedTime * 1000);  // Convert seconds to milliseconds
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // This will run in a background thread, make sure to run UI updates on the JavaFX thread
+                javafx.application.Platform.runLater(() -> {
+                    playerTimeout = true;  // Re-enable moves after the specified time
+                });
+            }
+        }, delayInMilliseconds);
+    }
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -59,6 +80,8 @@ public class GameController {
         this.gameView = gameView;
         this.playerUno = playerUno;
 
+        this.sceneController.initGameScene();
+        this.startPlayingGame();
     }
 
     public void startPlayingGame(){
@@ -386,7 +409,7 @@ System.out.println("GameController startPlayingGame");
                                 "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
             }
         }
-        else if (playerMovementEnabled) {
+        else if (playerMovementEnabled&&playerTimeout) {
             switch (key) {
                 case D -> movePlayer(1, 0);
                 case A -> movePlayer(-1, 0);
@@ -394,8 +417,11 @@ System.out.println("GameController startPlayingGame");
                 case S -> movePlayer(0, 1);
                 case T -> hailTaxi();
                 case E -> togglePlayerMovement();
-            }
+            }enableMovementAfterDelay();
+        } else if (key == KeyCode.E) {
+            togglePlayerMovement();
         }
+
 
         else if (key == KeyCode.E) {
             togglePlayerMovement();
@@ -433,7 +459,7 @@ System.out.println("GameController startPlayingGame");
     }
 
     private void movePlayer(int dx, int dy) {
-        System.out.println(playerUno);
+
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
@@ -464,9 +490,9 @@ System.out.println("GameController startPlayingGame");
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
-            playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
-            playerUno.getCell().highlight();
-            interactWithCell(playerUno.getCell());
+            playerUno.setCell(gameView.grid.getCell(newColumn, newRow),gameView.grid);
+
+            interactWithCell(gameView.grid.getCell(newColumn,newRow));
             if (inTaxi) {
                 // Assuming taximan is accessible from here, or find a way to access it
                 moveTaxi(gameView.grid, taximan, newColumn, newRow);
@@ -481,6 +507,7 @@ System.out.println("GameController startPlayingGame");
     }
 
     private void interactWithCell(Cell cell) {
+        System.out.println("Interacting with cell at: " + cell.getColumn() + ", " + cell.getRow());
         if ("gem".equals(cell.getUserData())) {
             collectGem(cell);
         } else if (cell instanceof busStop) {

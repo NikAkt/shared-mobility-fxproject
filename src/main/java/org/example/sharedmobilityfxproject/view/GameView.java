@@ -32,10 +32,7 @@ import org.example.sharedmobilityfxproject.model.Cell;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
