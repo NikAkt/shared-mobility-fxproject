@@ -92,8 +92,7 @@ public class MainController {
 
 
     private GameController initGameController() {
-        Player playerUno = new Player(0, 0, 100, 1, 10);
-        Bicycle cycleman = new Bicycle();
+        Player playerUno = new Player(0, 0, 100, 1, 10);;
         return new GameController(sceneController, gameView, playerUno);
     }
 

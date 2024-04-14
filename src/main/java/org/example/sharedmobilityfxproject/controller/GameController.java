@@ -9,6 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
+import org.example.sharedmobilityfxproject.model.tranportMode.Bicycle;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
@@ -34,6 +35,7 @@ public class GameController {
     public boolean playerMovementEnabled = true;
     public boolean onBus = false;
     public boolean inTaxi = false;
+    public boolean onBicycle= false;
     public Player playerUno;
 
     public List<Obstacle> obstacles = new ArrayList<>();
@@ -42,6 +44,7 @@ public class GameController {
     public Cell finishCell;
     public Taxi taximan;
     public Bus busman;
+    public Bicycle cycleman;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
 
@@ -167,6 +170,7 @@ System.out.println("GameController startPlayingGame");
 
         busman = new Bus(busStops,4, 4);
         taximan = new Taxi (58,28);
+        cycleman= new Bicycle(10,4);
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop,stop.getX(), stop.getY());
@@ -174,13 +178,20 @@ System.out.println("GameController startPlayingGame");
 
         gameView.grid.add(busman,busman.getX(), busman.getY());// Example starting position
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
-
+        gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
 
         // Schedule the bus to move every second
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
             busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
             if(taximan.hailed&&!taximan.arrived){
                 moveTaxiTowardsPlayer(taximan);
+            }if (onBicycle) {
+                if (cycleman.bikeTime == 0) {
+                    onBicycle = false;
+                }
+                if (cycleman.bikeTime >= 1) {
+                    cycleman.bikeTime -= 1;
+                }
             }
             if (!busman.isWaiting){
 
@@ -359,7 +370,23 @@ System.out.println("GameController startPlayingGame");
                                 "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
-            }}else if (playerMovementEnabled) {
+            }
+        }
+        else if(onBicycle){
+            System.out.println("Bicycle time: "+cycleman.bikeTime+" you are still on bike");
+            switch (key) {
+                case D -> movePlayer(5, 0);
+                case A -> movePlayer(-5, 0);
+                case W -> movePlayer(0, -5);
+                case S -> movePlayer(0, 5);
+                case C ->
+                        System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                "\nPlayer is currently " + (onBicycle ? "on bicycle." : "not on the bicycle.") +
+                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
+            }
+        }
+        else if (playerMovementEnabled) {
             switch (key) {
                 case D -> movePlayer(1, 0);
                 case A -> movePlayer(-1, 0);
@@ -368,7 +395,9 @@ System.out.println("GameController startPlayingGame");
                 case T -> hailTaxi();
                 case E -> togglePlayerMovement();
             }
-        } else if (key == KeyCode.E) {
+        }
+
+        else if (key == KeyCode.E) {
             togglePlayerMovement();
         }
     }
@@ -458,6 +487,12 @@ System.out.println("GameController startPlayingGame");
             interactWithBusStop((busStop) cell);
         } else if (cell == finishCell) {
             finishGame();
+        } else if (cell instanceof Bicycle) {
+            System.out.println("You just got on the bike");
+            onBicycle = true;
+            cycleman.bikeTime=25;
+            System.out.println(onBicycle
+            );
         }
     }
 
