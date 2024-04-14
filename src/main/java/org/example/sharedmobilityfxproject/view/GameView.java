@@ -1,13 +1,14 @@
 package org.example.sharedmobilityfxproject.view;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
@@ -16,7 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.example.sharedmobilityfxproject.controller.KeyboardActionController;
+import org.example.sharedmobilityfxproject.controller.GameController;
 
 import org.example.sharedmobilityfxproject.controller.SceneController;
 import org.example.sharedmobilityfxproject.model.*;
@@ -27,14 +28,16 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.Main;
-import org.example.sharedmobilityfxproject.controller.GameController;
+import org.example.sharedmobilityfxproject.controller.MainController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import java.util.Random;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -42,21 +45,21 @@ import javafx.scene.layout.VBox;
 import org.example.sharedmobilityfxproject.model.Player;
 import javafx.animation.PauseTransition;
 
-
 public class GameView {
 
     // **** Class call ****
-    public GameController gameController;
-    public KeyboardActionController ka;
+    public GameView gameView;
+    public MainController mainController;
+    public GameController ka;
     public Gem gem;
     public Obstacle obstacle;
     public Timer timer;
-
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
     public boolean isMetroSceneActive =false;
     public VBox buttonBox;
+    public Button btnExit;
     public StackPane root;
     public MediaPlayer mediaPlayer;
     public HBox topRow;
@@ -74,10 +77,9 @@ public class GameView {
 
     // **** Obstacles ****
     // List to keep track of all obstacles
-
+    public List<Obstacle> obstacles;
     public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
     public Player playerUno;
-
     // Gem count
     static int gemCount = 0;
     // Carbon footprint
@@ -86,6 +88,7 @@ public class GameView {
 
     // **** Stamina ****
     int staminagauge;
+    public StackPane mainBackground;
 
     {
         staminagauge = 0;
@@ -102,19 +105,14 @@ public class GameView {
 
     //Grid setting
     // Boolean flag to control hover cursor visibility
-//    boolean showHoverCursor = true;
-//    private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-//    private static final int ROWS = 30;
-//    private static final int COLUMNS = 60;
-//    private static final double WIDTH = 800;
-//    private static final double HEIGHT = 600;
+
+    public static final double BUTTON_WIDTH = 200;
 
     // **** Font Setting ****
     public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
+    public Font creditFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 50);
     public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
     public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
-
-
     // From MAIN OF MERGE STARTS
 
     // Boolean flag to control hover cursor visibility
@@ -135,6 +133,168 @@ public class GameView {
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
+
+    private String viewType;
+
+
+    public GameView(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+//    private void setupView(Pane pane) {
+//        switch (viewType){
+//            case "MainMenu":
+//                setupMainMenu();
+//                break;
+////            case "GamePlay":
+////                setupGamePlay(pane);
+////                break;
+////            case "GameOver":
+////                setupGameOver(pane);
+////                break;
+//            default:
+//                System.out.println("Unknown view type: " + viewType);
+//
+//        }
+//    }
+
+    public Scene getScene(){
+        return scene;
+    }
+
+    public void setupMainMenu() {
+        Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
+        Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
+        MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
+        MediaView mediaView = new MediaView(bgmediaPlayer);
+        ImageView imageView = new ImageView(logoImage);
+        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(100);
+
+
+
+        bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        bgmediaPlayer.play();
+
+//        Button btnStartGame = createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, mainBackground, bgmediaPlayer, logoImage,root));
+//        Button gameCredit = createButton("Game Credit", event -> showCredit());
+        btnExit = createButton("Exit");
+
+//        btnStartGame.setFocusTraversable(true);
+//        gameCredit.setFocusTraversable(true);
+        btnExit.setFocusTraversable(true);
+
+//        VBox buttonBox = new VBox(40, btnStartGame, gameCredit, btnExit);
+        VBox buttonBox = new VBox(40,btnExit);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        StackPane root = new StackPane(mediaView,imageView, buttonBox);
+        StackPane.setAlignment(buttonBox, Pos.CENTER);
+
+        scene = new Scene(root, 1496,1117);
+
+        System.out.println("Scene"+this.scene);
+//        setupKeyControls(this.scene, btnStartGame, gameCredit, btnExit);
+    }
+
+    public void setupGameScene(){
+        StackPane root = new StackPane();
+        scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
+
+        // Settings
+        Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+        primaryStage.getIcons().add(icon);
+        primaryStage.setTitle("Shared Mobility Application");
+        primaryStage.setWidth(WIDTH);
+        primaryStage.setHeight(HEIGHT);
+        primaryStage.setResizable(false);
+
+        // Create label for gem count
+        gemCountLabel = new Label("Gem Count: " + gemCount);
+        gemCountLabel.setStyle("-fx-font-size: 16px;");
+        gemCountLabel.setAlignment(Pos.TOP_LEFT);
+        gemCountLabel.setPadding(new Insets(10));
+
+//            ka = new GameController(this, playerUno);
+
+        // Add background image, grid, and gem count label to the root StackPane
+        root.getChildren().addAll(grid);
+
+//            System.out.println(busS1.getX());
+        // create scene and set to stage
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+        initializeMetroSystem();
+    }
+
+    public Button getBtnExit(){
+        return btnExit;
+    }
+    public Button createStageButton(String stage, ImageView stageImage, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
+        Button stageButton = new Button(stage);
+        if (!stage.equals("Dublin")) {
+            ColorAdjust colorAdjust = new ColorAdjust();
+            colorAdjust.setSaturation(-1); // 채도를 -1로 설정하여 흑백으로 만듦
+            stageImage.setEffect(colorAdjust);
+
+
+            Label xMark = new Label("X");
+            xMark.setFont(new Font("Arial", 100)); // "X"의 폰트와 크기 설정
+            xMark.setStyle("-fx-text-fill: red;"); // "X"의 색상 설정
+
+
+            // 버튼의 그래픽을 스테이지 이미지와 "X" 마크로 설정
+            StackPane buttonGraphic = new StackPane();
+            buttonGraphic.getChildren().addAll(stageImage, xMark);
+            stageButton.setGraphic(buttonGraphic);
+        } else {
+            stageButton.setGraphic(stageImage);
+        }
+
+
+        stageButton.setContentDisplay(ContentDisplay.TOP);
+        stageButton.setOnAction(event -> this.selectStage(stage, stageSelectionBox, gameModeBox, root, actionEvent, mdv));
+        return stageButton;
+    }
+
+
+    public Button createButton(String text) {
+        Button button = new Button(text);
+        if (this.btnFont != null) {
+            button.setFont(this.btnFont);
+        } else {
+            System.out.println("Failed to load custom font. Using default font.");
+        }
+        button.setMinWidth(BUTTON_WIDTH);
+        button.setMaxWidth(BUTTON_WIDTH);
+        button.setFocusTraversable(true);
+        //hover colour change
+        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                button.setStyle(focusedButtonStyle());
+            } else {
+                button.setStyle(normalButtonStyle());
+            }
+        });
+
+
+        return button;
+    }
+
+
+    public String normalButtonStyle() {
+        return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: rgba(255, 255, 240, 0.7); -fx-text-fill: black;";
+    }
+
+
+    public String focusedButtonStyle() {
+        return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: dodgerblue; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
+    }
+
+
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }
@@ -144,11 +304,7 @@ public class GameView {
         updateGemCountLabel();
     }
 
-    // From MAIN OF MERGE ENDING
-    public GameView(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-    private void initializeMetroSystem( ) {
+    private void initializeMetroSystem() {
         metroLayer = new StackPane();
         metroLayer.setStyle("-fx-background-color: #CCCCCC;");
         metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
@@ -162,7 +318,7 @@ public class GameView {
         }
         metroStop under1 = new metroStop(2,30);
         metroGrid.add(under1,2,30);
-        playerUno.initCell(metroGrid);
+//        playerUno.initCell(metroGrid);
         Label testLabel = new Label("Metro System Active");
 
         metroLayer.getChildren().addAll(metroGrid,testLabel);
@@ -170,83 +326,70 @@ public class GameView {
         metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
 
     }
-    public void showInitialScreen(Stage primaryStage) {
-        gameController = new GameController(this);
-        Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
-        Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
-        MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
-        MediaView mediaView = new MediaView(bgmediaPlayer);
-        ImageView imageView = new ImageView(logoImage);
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(100); // You can adjust this value as needed
 
-        bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        bgmediaPlayer.play();
 
-        this.root = new StackPane();
-        // Create and configure the "Game Start" button
-        Button btnStartGame = gameController.createButton("Game Start", event -> showPlayerModeSelection(primaryStage, buttonBox, root, bgmediaPlayer));
-        // Create and configure the "Exit" button
-        Button btnExit = gameController.createButton("Exit", event -> primaryStage.close());
-        //Font Set
+    public void showCredit(){
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(this.primaryStage);
+        dialog.initStyle(StageStyle.UNDECORATED);
 
-        // Create a VBox for buttons
-        buttonBox = new VBox(20, btnStartGame, btnExit, imageView);
-        VBox imgBox = new VBox(20, imageView);
-        buttonBox.setAlignment(Pos.CENTER); // Align buttons to center
-        imgBox.setAlignment(Pos.TOP_CENTER);
+        VBox popupVbox = new VBox(10);
+        popupVbox.setAlignment(Pos.CENTER);
+        popupVbox.setPrefWidth(450);
+        popupVbox.setPrefHeight(700);
+        popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
 
-        // Center the VBox in the StackPane
-        StackPane.setAlignment(buttonBox, Pos.CENTER);
-        StackPane.setAlignment(imgBox, Pos.CENTER);
+        Label noticeLabel = new Label("Game Credit");
+        noticeLabel.setFont(creditFont);
+        noticeLabel.setAlignment(Pos.TOP_CENTER);
 
-        this.root.getChildren().add(mediaView);
+        Label startMessageLabel = new Label(
+                "COMP30820 -JAVA Programming\n" +
+                        "          My Dearest team mates\n          OilWrestlingLovers :)" +
+                        " \n          Nick aktoudianakis" +"\n          MustaFa Yilmaz"+"\n          Eamonn Walsh"+"\n          and \n          Gyuwon Jung"
 
-        // Set up the scene with the StackPane and show the stage
-        Scene scene = new Scene(this.root, WIDTH, HEIGHT); // Use the same size as the image for a full background
-        gameController.setupKeyControls(scene);
+        );
+        startMessageLabel.setWrapText(true);
+        startMessageLabel.setAlignment(Pos.CENTER);
+        startMessageLabel.setFont(contentFont);
 
-        this.root.getChildren().add(buttonBox);
-        this.root.getChildren().add(imgBox);
-
-        // Set focus on the "Game Start" button initially
-        btnStartGame.requestFocus();
-
-        primaryStage.setTitle("WayBackHome by OilWrestlingLovers");
-        primaryStage.setScene(scene);
-        primaryStage.setFullScreen(false); // Set the stage to full screen
-        primaryStage.show();
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case DOWN:
-                    if (btnStartGame.isFocused()) {
-                        btnExit.requestFocus();
-                    }
-                    break;
-                case UP:
-                    if (btnExit.isFocused()) {
-                        btnStartGame.requestFocus();
-                    }
-                    break;
-                case ENTER:
-                    if (btnStartGame.isFocused()) {
-                        btnStartGame.fire();
-                    } else if (btnExit.isFocused()) {
-                        btnExit.fire();
-                    }
-                    break;
-                default:
-                    break;
-            }
+        // Close Button
+        Button closeButton = new Button("Close");
+        if (contentFont != null) {
+            closeButton.setFont(btnFont);
+        } else {
+            System.out.println("Failed to load custom font. Using default font.");
+        }
+        closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+        closeButton.setOnAction(e -> {
+            dialog.close(); // Close the popup
+            // Start the timer after the popup is closed
+            PauseTransition wait = new PauseTransition(Duration.seconds(5));
+            wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+            wait.play();
         });
+        // Add labels and close button to VBox
+        popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
+        VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
 
+// Scene and stage setup
+        Scene dialogScene = new Scene(popupVbox);
+        dialog.setOnShown(event -> {
+            dialog.setX(this.primaryStage.getX() + this.primaryStage.getWidth() / 2 - dialog.getWidth() / 2);
+            dialog.setY(this.primaryStage.getY() + this.primaryStage.getHeight() / 2 - dialog.getHeight() / 2);
+        });
+        dialog.setScene(dialogScene);
+        dialog.showAndWait();
     }
+
+
     /*
-    swithc
-    if flag true
-        swith\ch scene
-        flag = !flag
-     */
+  swithc
+  if flag true
+      swith\ch scene
+      flag = !flag
+   */
     public void switchSceneToMetro(){
         if(isMetroSceneActive){
             primaryStage.setScene(metroScene);
@@ -258,7 +401,9 @@ public class GameView {
 
         }
     }
-    public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv) {
+
+
+    public void showStageSelectionScreen(Stage actionEvent, MediaPlayer mdv, StackPane root) {
         try {
             List<Button> allButtons = new ArrayList<>();
             if (topRow == null && bottomRow == null) {
@@ -270,16 +415,19 @@ public class GameView {
                 String[] topStages = {"Dublin", "Athens", "Seoul", "Istanbul"};
                 String[] bottomStages = {"Vilnius", "Back"};
 
+                //List up the stages
                 for (String stage : topStages) {
                     ImageView stageImage = createStageImage(stage);
-                    Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    Button stageButton = createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    stageButton.setFont(btnFont);
                     topRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
                 }
 
                 for (String stage : bottomStages) {
                     ImageView stageImage = createStageImage(stage);
-                    Button stageButton = gameController.createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    Button stageButton = createStageButton(stage, stageImage, stageSelectionBox, gameModeBox, root, actionEvent, mdv);
+                    stageButton.setFont(btnFont);
                     bottomRow.getChildren().add(stageButton);
                     allButtons.add(stageButton);
                 }
@@ -305,11 +453,13 @@ public class GameView {
             });
 
             stageSelectionBox.requestFocus(); // 키 이벤트를 받을 수 있도록 포커스 설정
-
             stageSelectionBox.setAlignment(Pos.CENTER);
             gameModeBox.setVisible(false);
 
+            //Remove previous page's btns
             root.getChildren().removeAll(buttonBox, gameModeBox);
+
+            //Add new StageSelectionBox
             root.getChildren().add(stageSelectionBox);
 
         } catch (Exception e) {
@@ -321,15 +471,14 @@ public class GameView {
 
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
-            case "Seoul" -> "/images/seoul.jpg"; // 서울 이미지 경로
-            case "Athens" -> "/images/athens.png"; // 아테네 이미지 경로
-            case "Dublin" -> "/images/dublin.png"; // 더블린 이미지 경로
-            case "Vilnius" -> "/images/vilnius.png"; // 더블린 이미지 경로
-            case "Istanbul" -> "/images/istanbul.png"; // 더블린 이미지 경로
-            case "Home" -> "/images/home.png"; // 더블린 이미지 경로
+            case "Seoul" -> "/images/seoul.jpg";
+            case "Athens" -> "/images/athens.png";
+            case "Dublin" -> "/images/dublin.png";
+            case "Vilnius" -> "/images/vilnius.png";
+            case "Istanbul" -> "/images/istanbul.png";
+            case "Home" -> "/images/home.png";
             case "Back" -> "/images/home.png";
             default ->
-                // 기본 이미지 또는 에러 처리
                     "/images/Way_Back_Home.png.png";
         };
         Image is = new Image(new File("src/main/resources/" + imagePath).toURI().toString());
@@ -344,7 +493,6 @@ public class GameView {
 
     // This is where the game screen is loaded MAIN WILL BE HERE
     public void loadGameScreen(String stageName, Stage primaryStage) {
-
         try {
 //            final Stage dialog = new Stage();
 //            dialog.initModality(Modality.APPLICATION_MODAL);
@@ -458,81 +606,131 @@ public class GameView {
 //            mapPlaceholder.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");
 
 
+
+
             // Add all to the layout
+
+
 
 
             // Set this layout in the scene
 //            Scene scene = new Scene(borderPane, 1496, 1117);
 //            primaryStage.setScene(scene);
 
+
             // Create a StackPane to hold all elements
 //            Stage gridStage = new Stage();
 //            gridStage.initOwner(primaryStage);
-            StackPane root = new StackPane();
-            Scene scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
-//            gridStage.setScene(scene);
-//            Stage gridStage = new Stage();
-//            gridStage.initOwner(primaryStage);
 //            StackPane root = new StackPane();
-//            Scene scene = new Scene(root);
-//            primaryStage.setTitle("Welcome To " + stageName);
-//            primaryStage.setFullScreen(true);
+//            Scene scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
+////            gridStage.setScene(scene);
+////            Stage gridStage = new Stage();
+////            gridStage.initOwner(primaryStage);
+////            StackPane root = new StackPane();
+////            Scene scene = new Scene(root);
+////            primaryStage.setTitle("Welcome To " + stageName);
+////            primaryStage.setFullScreen(true);
+////            primaryStage.show();
+//
+//
+//
+//
+//
+//
+//            // Settings
+//            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+//            primaryStage.getIcons().add(icon);
+//            primaryStage.setTitle("Shared Mobility Application");
+//            primaryStage.setWidth(WIDTH);
+//            primaryStage.setHeight(HEIGHT);
+//            primaryStage.setResizable(false);
+//
+//
+//
+//            // This is where the keyboard action is initialized
+//            AnchorPane anchorPane = new AnchorPane();
+//
+//            // Create label for gem count
+//    // Create label for gem count
+//            gemCountLabel = new Label("Gem Count: " + gemCount);
+//            anchorPane.setTopAnchor(gemCountLabel, 10.0); // 10px from top
+//            anchorPane.setLeftAnchor(gemCountLabel, 10.0); // 10px from left
+//            anchorPane.getChildren().add(gemCountLabel);
+//            gemCountLabel.setStyle("-fx-font-size: 16px;");
+//
+//            // Add the AnchorPane to the root StackPane
+//            root.getChildren().add(anchorPane);
+//
+//
+//            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
+//
+//            // Initialise Player
+//            playerUno = new Player(0,0,10,1,10,0);
+//
+//
+//            ka = new KeyboardActionController(this, playerUno);
+//
+//
+//            // Add background image, grid, and gem count label to the root StackPane
+//            root.getChildren().addAll(grid);
+////            System.out.println(busS1.getX());
+//            // create scene and set to stage
+//            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+//            primaryStage.setScene(scene);
 //            primaryStage.show();
 
 
-
-
-
-
-            // Settings
-            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
-            primaryStage.getIcons().add(icon);
-            primaryStage.setTitle("Shared Mobility Application");
-            primaryStage.setWidth(WIDTH);
-            primaryStage.setHeight(HEIGHT);
-            primaryStage.setResizable(false);
-
-
-
-            // This is where the keyboard action is initialized
-            AnchorPane anchorPane = new AnchorPane();
-
-            // Create label for gem count
-    // Create label for gem count
-            gemCountLabel = new Label("Gem Count: " + gemCount);
-            anchorPane.setTopAnchor(gemCountLabel, 10.0); // 10px from top
-            anchorPane.setLeftAnchor(gemCountLabel, 10.0); // 10px from left
-            anchorPane.getChildren().add(gemCountLabel);
-            gemCountLabel.setStyle("-fx-font-size: 16px;");
-
-            // Add the AnchorPane to the root StackPane
-            root.getChildren().add(anchorPane);
-
-
-            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
-
-            // Initialise Player
-            playerUno = new Player(0,0,10,1,10,0);
-
-
-            ka = new KeyboardActionController(this, playerUno);
-
-
-            // Add background image, grid, and gem count label to the root StackPane
-            root.getChildren().addAll(grid);
-//            System.out.println(busS1.getX());
-            // create scene and set to stage
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.show();
-            initializeMetroSystem();
+//
+//
+//
+//
+//            // Settings
+//            Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+//            primaryStage.getIcons().add(icon);
+//            primaryStage.setTitle("Shared Mobility Application");
+//            primaryStage.setWidth(WIDTH);
+//            primaryStage.setHeight(HEIGHT);
+//            primaryStage.setResizable(false);
+//
+//
+//
+//            // This is where the keyboard action is initialized
+//            AnchorPane anchorPane = new AnchorPane();
+//
+//            // Create label for gem count
+//    // Create label for gem count
+//            gemCountLabel = new Label("Gem Count: " + gemCount);
+//            anchorPane.setTopAnchor(gemCountLabel, 10.0); // 10px from top
+//            anchorPane.setLeftAnchor(gemCountLabel, 10.0); // 10px from left
+//            anchorPane.getChildren().add(gemCountLabel);
+//            gemCountLabel.setStyle("-fx-font-size: 16px;");
+//
+//            // Add the AnchorPane to the root StackPane
+//            root.getChildren().add(anchorPane);
+//
+//
+//            scene.setOnKeyPressed(e -> ka.setupKeyboardActions(e.getCode()));
+//
+//            // Initialise Player
+//            playerUno = new Player(0,0,10,1,10,0);
+//
+//
+//            ka = new KeyboardActionController(this, playerUno);
+//
+//
+//            // Add background image, grid, and gem count label to the root StackPane
+//            root.getChildren().addAll(grid);
+////            System.out.println(busS1.getX());
+//            // create scene and set to stage
+//            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+//            primaryStage.setScene(scene);
+//            primaryStage.show();
+//            initializeMetroSystem();
 
         } catch (Exception e) {
             e.printStackTrace();
 
         }
-
-
     }
     public int getRows() {
         return ROWS;
@@ -542,85 +740,118 @@ public class GameView {
     }
 
     // Place the gem after the grid is filled and the player's position is initialized
+    private void generateGems(Grid grid, int numberOfGems) {
+        for (int i = 0; i < numberOfGems; i++) {
+            int gemColumn;
+            int gemRow;
+            do {
+                gemColumn = (int) (Math.random() * COLUMNS);
+                gemRow = (int) (Math.random() * ROWS);
+            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
+
+            Gem gem = new Gem(gemColumn, gemRow);
+            grid.add(gem, gemColumn, gemRow);
+        }
+    }
 
     public void selectStage(String stageName, VBox stageSelectionBox, VBox gameModeBox, StackPane root, Stage actionEvent, MediaPlayer mdv) {
-        mdv.stop();
-        root.getChildren().remove(stageSelectionBox);
-        root.getChildren().remove(gameModeBox);
+        //This function is describing between Mapselection and MainGamePage
 
-        gameController = new GameController(this);
+        //Video Stop(MineCraft)
+        mdv.stop();
+
+        //Previous buttons delete
+        root.getChildren().remove(stageSelectionBox);
+
+//        mainController = new MainController(this, this);
+        //gameController Check
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
 
-//        Media gameMusic = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
-//        mediaPlayer = new MediaPlayer(gameMusic);
-//        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
-//        mediaPlayer.play(); // Start playing the new background music
+        //New Music Load
+        Media gameMusic1 = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(gameMusic1);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
+        mediaPlayer.play(); // Start playing the new background music
+
         // This is where you would transition to the actual game play scene
         // For now, just printing out the selection
         System.out.println("You have selected the stage: " + stageName);
         // You might want to hide the stage selection screen and display the game screen, like so:
         root.setVisible(false);
         root.getChildren().removeAll(buttonBox, this.gameModeBox);
-        loadGameScreen(stageName, actionEvent);
+
+        //Move to real GamePage
+//        loadGameScreen(stageName, actionEvent);
 
     }
 
-    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv) {
-        gameController = new GameController(this); // #TODO: why is this here?
-        root.getChildren().removeAll(buttonBox);
-        Button btnOnePlayer = gameController.createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
-        Button btnTwoPlayer = gameController.createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv));
-        Button backToMenu = gameController.createButton("Back", event -> showInitialScreen(primaryStage));
-        backToMenu.setMinWidth(gameController.BUTTON_WIDTH);
-        backToMenu.setMaxWidth(gameController.BUTTON_WIDTH);
-        backToMenu.setStyle("-fx-font-size: 24px;");
-
-        // Create the game mode selection box if not already created
-        if (gameModeBox == null) {
-            gameModeBox = new VBox(20, btnOnePlayer, btnTwoPlayer, backToMenu);
-            gameModeBox.setAlignment(Pos.CENTER);
-        }
-        // Add the game mode box to the root stack pane, making it visible
-        if (!root.getChildren().contains(gameModeBox)) {
-            root.getChildren().add(gameModeBox);
-        }
-
-        // Make the game mode selection box visible
-        gameModeBox.setVisible(true);
-        // Create and configure the scene
-        root.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case DOWN, UP:
-                    if (btnOnePlayer.isFocused()) {
-                        btnTwoPlayer.requestFocus();
-                    } else if (btnTwoPlayer.isFocused()) {
-                        backToMenu.requestFocus();
-                    } else {
-                        btnOnePlayer.requestFocus(); // Wrap around to the first button
-                    }
-
-                    break;
-
-                case ENTER:
-                    if (btnOnePlayer.isFocused()) {
-                        btnOnePlayer.fire();
-                    } else if (btnTwoPlayer.isFocused()) {
-                        btnTwoPlayer.fire();
-                    } else if (backToMenu.isFocused()) {
-                        backToMenu.fire();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-        return null;
-    }
-
-    ;
+//    public EventHandler<ActionEvent> showPlayerModeSelection(Stage actionEvent, VBox buttonBox, StackPane root, MediaPlayer mdv, Image logoImage, StackPane stackPane) {
+////        mainController = new MainController(this, this);
+//
+//        root.getChildren().removeAll(buttonBox);
+//        ImageView imageView = new ImageView(logoImage);
+//        imageView.setPreserveRatio(true);
+//        imageView.setFitHeight(100); // You can adjust this value as needed
+//
+//        Button btnOnePlayer = createButton("SinglePlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
+//        Button btnTwoPlayer = createButton("MultiPlay", event -> this.showStageSelectionScreen(actionEvent, mdv,root));
+//
+//        applyButtonStyles(btnOnePlayer, false);
+//        applyButtonStyles(btnTwoPlayer, false);
+//
+//        // Then in the scene.setOnKeyPressed event, after the focus change, call it like this:
+//        applyButtonStyles(btnOnePlayer, btnOnePlayer.isFocused());
+//        applyButtonStyles(btnTwoPlayer, btnTwoPlayer.isFocused());
+//
+//        // Create the game mode selection box if not already created
+//        if (gameModeBox == null) {
+//            gameModeBox = new VBox(80, imageView,btnOnePlayer, btnTwoPlayer);
+//            gameModeBox.setAlignment(Pos.CENTER);
+//        }
+//        // Add the game mode box to the root stack pane, making it visible
+//        if (!root.getChildren().contains(gameModeBox)) {
+//            root.getChildren().add(gameModeBox);
+//        }
+//
+//        // Make the game mode selection box visible
+//        gameModeBox.setVisible(true);
+//        // Create and configure the scene
+//        root.setOnKeyPressed(event -> {
+//            switch (event.getCode()) {
+//                case DOWN:
+//                    if (btnOnePlayer.isFocused()) {
+//                        btnTwoPlayer.requestFocus();
+//                    } else if (btnTwoPlayer.isFocused()) {
+//                    } else {
+//                        btnOnePlayer.requestFocus(); // Wrap around to the first button
+//                    }
+//
+//                    break;
+//                case UP:
+//                    if (btnOnePlayer.isFocused()) {
+//                        btnTwoPlayer.requestFocus();
+//                    } else if (btnTwoPlayer.isFocused()) {
+//                    } else {
+//                        btnOnePlayer.requestFocus();
+//                    }
+//                    break;
+//                case ENTER:
+//                    if (btnOnePlayer.isFocused()) {
+//                        btnOnePlayer.fire();
+//                    } else if (btnTwoPlayer.isFocused()) {
+//                        btnTwoPlayer.fire();
+//                    }else {
+//                        break;
+//                    }
+//                default:
+//                    break;
+//            }
+//        });
+//        return null;
+//    }
 
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
@@ -646,14 +877,110 @@ public class GameView {
         dialog.setScene(dialogScene);
         dialog.show();
 
-        // 5초 후 팝업 닫기
         PauseTransition delay = new PauseTransition(Duration.seconds(7));
         delay.setOnFinished(e -> dialog.close());
         delay.play();
 
-        // 아무곳이나 클릭하면 팝업 닫기
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
 
+    public void applyButtonStyles(Button button, boolean focused) {
+        String fontFamily = btnFont.getName(); // Get the font name from the Font object
+        String fontSize = "24px";
+        String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";
+        String textColor = focused ? "white" : "black";
+        String textShadow = focused ? "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);" : "";
+
+        button.setStyle(String.format("-fx-font-family: '%s'; -fx-font-size: %s; -fx-background-color: %s; -fx-text-fill: %s; %s",
+                fontFamily, fontSize, backgroundColor, textColor, textShadow));
+        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            applyButtonStyles(button, isNowFocused);
+        });
+    }
+
+    public void educationalPopup() {
+        try {
+
+            FileInputStream ins = new FileInputStream("src/main/resources/data/educational_messages.json");
+            InputStreamReader inr = new InputStreamReader(ins, "UTF-8");
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Read the JSON content as a List
+            List<String> messages = mapper.readValue(inr, new TypeReference<List<String>>(){});
+
+            // Ensure the list is not empty and select a random message
+            if (!messages.isEmpty()) {
+                Random rand = new Random();
+                String randomMessage = messages.get(rand.nextInt(messages.size()));
+
+                final Stage dialog = new Stage();
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(this.primaryStage);
+                dialog.initStyle(StageStyle.UNDECORATED);
+
+                VBox popupVbox = new VBox(60);
+                popupVbox.setAlignment(Pos.CENTER);
+                popupVbox.setPrefWidth(450);
+                popupVbox.setPrefHeight(700);
+                popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+
+                Label noticeLabel = new Label("Environmental \n      Fun Fact!");
+                noticeLabel.setFont(creditFont);
+                noticeLabel.setAlignment(Pos.TOP_CENTER);
+
+                Label educationalMsgLabel = new Label();
+                educationalMsgLabel.setText(randomMessage);
+                educationalMsgLabel.setWrapText(true);
+                educationalMsgLabel.setAlignment(Pos.CENTER);
+                educationalMsgLabel.setFont(contentFont);
+
+                // Close Button
+                Button closeButton = new Button("Close");
+                if (contentFont != null) {
+                    closeButton.setFont(btnFont);
+                } else {
+                    System.out.println("Failed to load custom font. Using default font.");
+                }
+                closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+                closeButton.setOnAction(e -> {
+                    dialog.close(); // Close the popup
+                    // Start the timer after the popup is closed
+                    PauseTransition wait = new PauseTransition(Duration.seconds(5));
+                    wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+                    wait.play();
+                });
+                // Add labels and close button to VBox
+                popupVbox.getChildren().addAll(noticeLabel, educationalMsgLabel, closeButton);
+                VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
+                Scene dialogScene = new Scene(popupVbox);
+                dialog.setScene(dialogScene);
+                dialog.showAndWait();
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    private void setupKeyControls(Scene scene, Button btnStartGame) {
+//        scene.setOnKeyPressed(event -> {
+//            switch (event.getCode()) {
+//                case DOWN:
+//                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
+//                    else if (gameCredit.isFocused()) btnExit.requestFocus();
+//                    break;
+//                case UP:
+//                    if (btnExit.isFocused()) gameCredit.requestFocus();
+//                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
+//                    break;
+//                case ENTER:
+//                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
+//                    focusedButton.fire();
+//                    break;
+//            }
+//        });
+//    }
 
 }
