@@ -124,7 +124,7 @@ public class Player implements motion {
     public void setY(int j) {
         this.y = j;
     }
-    public void setCell(Cell newCell) {
+    public void setCell(Cell newCell, Grid grid){
         // Retrieve grid dimensions
         double cellWidth = grid.getWidth() / grid.getColumns();
         double cellHeight = grid.getHeight() / grid.getRows();
