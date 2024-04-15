@@ -72,4 +72,9 @@ public class Grid extends Pane {
     public int getColumns() {
         return columns;
     }
+
+    // Sets color of that cell
+    public void setCellColor(int column, int row, String color) {
+        cells[row][column].setStyle("-fx-background-color: " + color + ";");
+    }
 }
