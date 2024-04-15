@@ -10,40 +10,48 @@ public class Player implements motion {
 
     //Check method of movement
     public boolean isWalking = false;
-    public boolean isUnderground= false;
+    public boolean isUnderground = false;
 
-    public Player(int x, int y,int stamina,int speed,double co2,int gems) {
+    public Player(int x, int y, int stamina, int speed, double co2, int gems) {
         this.x = x;
         this.y = y;
-        this.stamina=100;
-        this.speed=10;
-        this.co2=0;
+        this.stamina = 100;
+        this.speed = 10;
+        this.co2 = 0;
     }
 
     public int getCoordX() {
         return this.x;
     }
+
     public int getCoordY() {
         return this.y;
     }
+
     public int getStamina() {
         return stamina;
     }
+
     public void setSpeed(int speed) {
-    this.speed=speed;
+        this.speed = speed;
     }
+
     public int getSpeed() {
         return speed;
     }
+
     public double getCo2() {
         return co2;
     }
+
     public void setCo2(double co2) {
-        this.co2=co2;
+        this.co2 = co2;
     }
+
     public void setStamina(int stamina) {
-        this.stamina=stamina;
+        this.stamina = stamina;
     }
+
     @Override
     public void moveUp() {
         setIsWalking(true);
@@ -65,7 +73,12 @@ public class Player implements motion {
         x += speed;
     }
 
-    public void decreaseStamina(){ //alternatively we could have each item change the stamina
+    /**
+     * Decreases the player's stamina.
+     * This method reduces the player's stamina by 10 units if the current stamina is greater than 0.
+     * If the stamina becomes less than 0 after the reduction, it is set to 0.
+     */
+    public void decreaseStamina() { //alternatively we could have each item change the stamina
         if (this.stamina > 0) {
             this.stamina -= 10;
             if (this.stamina < 0) {
@@ -73,7 +86,14 @@ public class Player implements motion {
             }
         }
     }
-    public void increaseStamina(){
+
+    /**
+     * Increases the player's stamina.
+     * This method increases the player's stamina by 5 units if the current stamina is less than 95.
+     * If the stamina is 95 or more, it is set to 100.
+     * It also prints the new stamina value to the console.
+     */
+    public void increaseStamina() {
         if (stamina < 95) {
             stamina += 5;
         } else {
@@ -85,12 +105,15 @@ public class Player implements motion {
     public void initCell(Grid grid) {
         this.playerCell = grid.getCell(this.getCoordY(), this.getCoordX());
     }
-    public void setX(int i){
-        this.x =i;
+
+    public void setX(int i) {
+        this.x = i;
     }
-    public void setY(int j){
+
+    public void setY(int j) {
         this.y = j;
     }
+
     public void setCell(Cell cell) {
 
         this.playerCell = cell;
@@ -109,9 +132,20 @@ public class Player implements motion {
         return this.playerCell;
     }
 
+    /**
+     * Sets the walking status of the player.
+     *
+     * @param isWalking The walking status to set. If true, the player is walking. If false, the player is not walking.
+     */
     public void setIsWalking(boolean isWalking) {
         this.isWalking = isWalking;
     }
+
+    /**
+     * Gets the walking status of the player.
+     *
+     * @return The walking status of the player. Returns true if the player is walking, false otherwise.
+     */
     public boolean getIsWalking() {
         return this.isWalking;
     }
