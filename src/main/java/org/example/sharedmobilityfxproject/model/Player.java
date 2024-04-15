@@ -124,7 +124,7 @@ public class Player implements motion {
     public void setY(int j) {
         this.y = j;
     }
-    public void setCell(Cell newCell, Grid grid){
+    public void setCell(Cell newCell, Grid grid) {
         // Retrieve grid dimensions
         double cellWidth = grid.getWidth() / grid.getColumns();
         double cellHeight = grid.getHeight() / grid.getRows();
@@ -165,7 +165,7 @@ public class Player implements motion {
                 // Reset translations to ensure the visual does not drift
                 playerVisual.setTranslateX(0);
                 playerVisual.setTranslateY(0);
-               // Highlight the new cell
+                // Highlight the new cell
             });
             tt.play();
 
@@ -179,6 +179,7 @@ public class Player implements motion {
             // Highlight the new cell
         }
     }
+
 
 
     private Node getPlayerVisual(Grid grid) {
