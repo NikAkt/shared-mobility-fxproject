@@ -468,11 +468,6 @@ public class GameView {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
-    public static void increaseGemCount() {
-        gemCount++;
-        updateGemCountLabel();
-    }
-
     private void initializeMetroSystem() {
         metroLayer = new StackPane();
         metroLayer.setStyle("-fx-background-color: #CCCCCC;");
@@ -866,5 +861,10 @@ public class GameView {
         dialog.showAndWait();
 
 
+    }
+
+    public void incrementGemCount() {
+        gemCount++;
+        updateGemCountLabel();
     }
 }

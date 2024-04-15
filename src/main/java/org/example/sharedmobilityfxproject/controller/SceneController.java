@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 public class SceneController {
-    private static GameView gameView;
+    public static GameView gameView;
     public MainController mainController;
 //    private Parent root;
 
