@@ -74,8 +74,8 @@ public class GameView {
     // **** Resources of Main Game ****
     ProgressBar staminaBar;
     ProgressBar co2Bar;
-    Label staminaLabel;      // 스태미나 값을 보여주는 레이블
-    Label co2Label;          // CO2 값을 보여주는 레이블
+    Label staminaLabel;
+    Label co2Label;
     // **** Variables Setting ****
     // Label to keep track of gem count
 
@@ -151,10 +151,14 @@ public class GameView {
         //initialise the co2 bar
         this.co2Bar = new ProgressBar(0);
     }
-
+    /**
+     * Initializes the stage clear flags for each stage in the game.
+     * The flags are stored in a HashMap where the key is the stage name and the value is a boolean indicating whether the stage has been cleared.
+     * By default, only the "Dublin" stage is set to cleared (true), all other stages are not cleared (false).
+     */
     private void initializeStageClearFlags() {
         stageClearFlags = new HashMap<>();
-        stageClearFlags.put("Dublin", true); // Dublin은 기본적으로 클리어된 상태로 시작합니다.
+        stageClearFlags.put("Dublin", true);
         stageClearFlags.put("Athens", false);
         stageClearFlags.put("Seoul", false);
         stageClearFlags.put("Vilnius", false);
@@ -172,7 +176,13 @@ public class GameView {
     public Scene getScene() {
         return scene;
     }
-
+    /**
+     * Sets up the main menu of the game.
+     * This includes the creation and styling of the game start, game credit, and exit buttons.
+     * The buttons are added to a VBox which is then added to a StackPane along with the media view and image view.
+     * The media view is set to play indefinitely and the image view is set to preserve its original aspect ratio.
+     * The scene is then created with the StackPane as its root and a size of 1496x1117.
+     */
     public void setupMainMenu() {
 
         imageView.setPreserveRatio(true);
@@ -203,6 +213,15 @@ public class GameView {
 
     }
 
+    /**
+     * Sets up the game scene for a specific stage.
+     * This includes setting up the game grid, CO2 and stamina bars, countdown timer, and gem count label.
+     * The stage name is displayed at the top of the scene.
+     * The scene is then created with a StackPane as its root and a size of WIDTH x HEIGHT.
+     * The metro system is initialized and the scene is set to the primary stage.
+     *
+     * @param stageName The name of the stage for which the game scene is being set up.
+     */
     public void setupGameScene(String stageName) {
         // **** Game Setup ****
         mainGameSetting();
@@ -327,6 +346,12 @@ public class GameView {
 
     }
 
+    /**
+     * Sets up the main game settings.
+     * This includes stopping any currently playing video, starting the game background music, and displaying a popup dialog.
+     * The popup dialog provides a notice and a start message to the player, and includes a "Let's Rock!" button to close the dialog and start the game.
+     * After the dialog is closed, a timer is started with a delay of 5 seconds.
+     */
     public void mainGameSetting() {
         //Stop the video
         mediaView.getMediaPlayer().stop();
@@ -408,6 +433,16 @@ public class GameView {
         return getGameStartbtn;
     }
 
+    /**
+     * Creates a button for a specific game stage.
+     * The button is labeled with the stage name and decorated with an image.
+     * If the stage has not been cleared yet, the image is desaturated and an "X" mark is added on top of it.
+     * The button's content display is set to TOP, meaning the text (stage name) is displayed below the image.
+     *
+     * @param stage The name of the stage for which the button is being created.
+     * @param stageImage The image to be used as the button's graphic.
+     * @return The created button.
+     */
     public Button createStageButton(String stage, ImageView stageImage) {
         stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
@@ -462,6 +497,13 @@ public class GameView {
         return button;
     }
 
+
+    /**
+     * Returns the CSS style string for a normal button.
+     * The style includes the font family, font size, background color, and text color.
+     *
+     * @return A string representing the CSS style for a normal button.
+     */
     public String normalButtonStyle() {
         return "-fx-font-family: 'blueShadow'; -fx-font-size: 24px; -fx-background-color: rgba(255, 255, 240, 0.7); -fx-text-fill: black;";
     }
@@ -511,7 +553,14 @@ public class GameView {
 
         }
     }
-
+    /**
+     * Displays the stage selection screen of the game.
+     * This includes playing the background media, creating stage selection buttons for each stage, and setting up key event handlers.
+     * The stage selection buttons are added to two HBox containers (topRow and bottomRow), which are then added to a VBox (stageSelectionBox).
+     * The stageSelectionBox is added to a StackPane along with the media view.
+     * The scene is then created with the StackPane as its root and a size of 1496x1117.
+     * If an exception occurs during the setup, it is caught and its stack trace is printed.
+     */
     public void showStageSelectionScreen() {
         //bring the Stage in gameView
         try {
@@ -583,6 +632,12 @@ public class GameView {
 
     }
 
+    /**
+     * Retrieves all stage selection buttons from the top and bottom rows.
+     * The buttons are collected from the children of the topRow and bottomRow HBox containers.
+     *
+     * @return A list of all stage selection buttons.
+     */
     public List<Button> getAllStageButtons() {
         List<Button> buttons = new ArrayList<>();
         buttons.addAll(topRow.getChildren().stream().map(node -> (Button) node).collect(Collectors.toList()));
@@ -590,6 +645,16 @@ public class GameView {
         return buttons;
     }
 
+    /**
+     * Creates an ImageView for a specific game stage.
+     * The image is selected based on the stage name and is loaded from the resources directory.
+     * The image is then set to a specific height and width.
+     * If the image cannot be found, an IllegalStateException is thrown.
+     *
+     * @param stageName The name of the stage for which the image is being created.
+     * @return An ImageView containing the stage image.
+     * @throws IllegalStateException If the image for the stage cannot be found.
+     */
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
             case "Seoul" -> "/images/seoul.jpg";
@@ -606,8 +671,8 @@ public class GameView {
             throw new IllegalStateException("Cannot find image for stage: " + stageName);
         }
         ImageView imageView = new ImageView(is);
-        imageView.setFitHeight(200); // 이미지 높이를 설정
-        imageView.setFitWidth(230);  // 이미지 너비를 설정
+        imageView.setFitHeight(200);
+        imageView.setFitWidth(230);
         return imageView;
     }
 
@@ -619,22 +684,11 @@ public class GameView {
         return COLUMNS;
     }
 
-    // Place the gem after the grid is filled and the player's position is initialized
-    private void generateGems(Grid grid, int numberOfGems) {
-        for (int i = 0; i < numberOfGems; i++) {
-            int gemColumn;
-            int gemRow;
-            do {
-                gemColumn = (int) (Math.random() * COLUMNS);
-                gemRow = (int) (Math.random() * ROWS);
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
-
-
-            Gem gem = new Gem(gemColumn, gemRow);
-            grid.add(gem, gemColumn, gemRow);
-        }
-    }
-
+    /**
+     * Transitions from the stage selection screen to the main game page.
+     * This includes stopping any currently playing media, loading and playing the main game background music.
+     * The actual transition to the game play scene is not implemented in this method.
+     */
     public void selectStage() {
         //This function is describing between Mapselection and MainGamePage
 
@@ -661,6 +715,13 @@ public class GameView {
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
+    /**
+     * Displays a game over dialog.
+     * The dialog is a modal window with no title bar, containing a label with a game over message.
+     * The dialog is displayed for 7 seconds, after which it is automatically closed.
+     * The dialog can also be closed by clicking anywhere within it.
+     *
+     */
 
     private void gameOver(Stage primarOveryStage) {
         // GameOver method
@@ -689,6 +750,16 @@ public class GameView {
         dialogScene.setOnMouseClicked(e -> dialog.close());
     }
 
+    /**
+     * Applies a specific style to a button based on its focus state.
+     * The style includes the font family, font size, background color, text color, and text shadow.
+     * If the button is focused, the background color is set to dodgerblue, the text color is set to white, and a drop shadow effect is applied.
+     * If the button is not focused, the background color is set to a semi-transparent white, the text color is set to black, and no drop shadow effect is applied.
+     * A listener is added to the button's focused property to reapply the style whenever the focus state changes.
+     *
+     * @param button The button to which the style is being applied.
+     * @param focused The focus state of the button.
+     */
     public void applyButtonStyles(Button button, boolean focused) {
         String fontFamily = btnFont.getName(); // Get the font name from the Font object
         String fontSize = "24px";
@@ -702,7 +773,14 @@ public class GameView {
             applyButtonStyles(button, isNowFocused);
         });
     }
-
+    /**
+     * Displays an educational popup with a random message from a list of messages stored in a JSON file.
+     * The popup is a modal dialog with a title, a random educational message, and a close button.
+     * After the dialog is closed, a timer is started with a delay of 5 seconds.
+     * If the JSON file cannot be read or the list of messages is empty, an exception is caught and its stack trace is printed.
+     *
+     * @throws Exception If there is an error reading the JSON file or displaying the popup.
+     */
     public void educationalPopup() {
         try {
 
@@ -770,7 +848,12 @@ public class GameView {
         }
     }
 
-    /// Game Credit
+    /**
+     * Displays a credit popup dialog.
+     * The dialog is a modal window with no title bar, containing a label with the title "Game Credit", a message with the credits, and a close button.
+     * After the dialog is closed, a timer is started with a delay of 5 seconds.
+     * The dialog is positioned in the center of the primary stage.
+     */
     public void showCredit() {
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -816,7 +899,7 @@ public class GameView {
         popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
         VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
 
-// Scene and stage setup
+        // Scene and stage setup
         Scene dialogScene = new Scene(popupVbox);
         dialog.setOnShown(event -> {
             dialog.setX(this.primaryStage.getX() + this.primaryStage.getWidth() / 2 - dialog.getWidth() / 2);
@@ -826,6 +909,14 @@ public class GameView {
         dialog.showAndWait();
     }
 
+    /**
+     * Displays a stage alert dialog with a predefined message.
+     * The dialog is a modal window with no title bar, containing a label with the title "Notice", a predefined message, and a close button.
+     * The dialog can be closed by clicking the close button or pressing the ENTER key.
+     * The dialog is owned by the primary stage of the application.
+     *
+     * @param message The message to be displayed in the dialog. This parameter is not used in the current implementation.
+     */
     public void showStageAlert(String message) {
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -872,18 +963,40 @@ public class GameView {
 
     }
 
+    /**
+     * Increments the gem count by one and updates the gem count label.
+     * This method is typically called when a player collects a gem in the game.
+     */
     public void incrementGemCount() {
         gemCount++;
         updateGemCountLabel();
     }
-
+    /**
+     * Updates the stamina value and the corresponding UI elements.
+     * The method sets the new stamina value, calculates the fraction of the maximum stamina it represents,
+     * updates the progress bar to reflect this fraction, and updates the stamina label with the new stamina value.
+     * It also prints the updated stamina value and progress to the console.
+     *
+     * @param newStamina The new stamina value to be set.
+     */
     public void updateStamina(int newStamina) {
         this.staminagauge = newStamina;
-        double staminaFraction = newStamina / 100.0;  // 100을 최대 스태미나 값으로 가정
-        this.staminaBar.setProgress(staminaFraction);  // 프로그레스 바 업데이트
-        this.staminaLabel.setText("Stamina: " + newStamina + "%");  // 레이블 업데이트
+        double staminaFraction = newStamina / 100.0;
+        this.staminaBar.setProgress(staminaFraction);
+        this.staminaLabel.setText("Stamina: " + newStamina + "%");
         System.out.println("Updated Stamina: " + this.staminagauge + ", Progress: " + staminaFraction);
     }
 
+
+    /**
+     * Plays the 'no stamina' sound effect.
+     * This method is typically called when the player's stamina is depleted in the game.
+     * The sound effect file is located in the 'src/main/resources/music' directory.
+     */
+    public void playNoStaminaSound() {
+        Media no_stamina_effect = new Media(new File("src/main/resources/music/no_stamina.mp3").toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(no_stamina_effect);
+        mediaPlayer.play();
+    }
 
 }

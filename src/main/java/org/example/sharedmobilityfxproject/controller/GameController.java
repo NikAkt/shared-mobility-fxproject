@@ -430,12 +430,24 @@ public class GameController {
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
 
+    /**
+     * Moves the player in the game based on the provided direction.
+     * This method checks if the player has enough stamina to move. If not, it plays a sound and returns.
+     * If the player has enough stamina, it sets the player's status to walking and calculates the new position.
+     * If the player is in the metro scene, it updates the player's position.
+     * If the player is at a metro stop, it switches the scene to the metro scene and updates the player's position.
+     * If the player can move to the new position, it updates the player's position and interacts with the cell.
+     * If the player is in a taxi and not walking, it moves the taxi to the new position.
+     * If the player is walking, it increments the move counter and decreases the player's stamina every 5 moves.
+     *
+     * @param dx The change in the x-coordinate (horizontal direction) of the player's position.
+     * @param dy The change in the y-coordinate (vertical direction) of the player's position.
+     */
     private void movePlayer(int dx, int dy) {
-//        System.out.println(playerUno);
 
         if (playerUno.getStamina() <= 0) {
             System.out.println("Not enough stamina to move.");
-            playNoStaminaSound();  // 스테미나가 부족할 때 사운드 재생
+            gameView.playNoStaminaSound();
             return;
         }
 
@@ -477,12 +489,10 @@ public class GameController {
                 moveCounter++;
                 System.out.println("Move Counter: " + moveCounter);
 
+                //Decrease stamina every 5 moves
                 if (moveCounter >= 5) {
-                    System.out.println("Went to initialiser of moveCounter");
                     playerUno.decreaseStamina();
-                    System.out.println(" playerUno.decreaseStamina() works!!!");
-                    gameView.updateStamina(playerUno.getStamina()); // 추가: GameView의 staminagauge 업데이트
-                    System.out.println(" Update Player Stamina works!!!");
+                    gameView.updateStamina(playerUno.getStamina());
                     moveCounter = 0;
                 }
             }
@@ -616,7 +626,13 @@ public class GameController {
             }
 
         }}
-
+    /**
+     * Checks and increases the player's stamina if the player is stationary.
+     * This method checks if the player's current coordinates are the same as the last recorded coordinates.
+     * If they are the same, it increments the stationary time.
+     * If the stationary time is greater than or equal to 1, it increases the player's stamina, updates the stamina in the game view, and resets the stationary time.
+     * If the player's current coordinates are not the same as the last recorded coordinates, it resets the stationary time and updates the last recorded coordinates to the current coordinates.
+     */
     private void checkAndIncreaseStamina() {
         if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
             // stay certain Coordinates
@@ -632,9 +648,5 @@ public class GameController {
             lastY = playerUno.getCoordY();
         }
     }
-    private void playNoStaminaSound() {
-        Media no_stamina_effect = new Media(new File("src/main/resources/music/no_stamina.mp3").toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(no_stamina_effect);
-        mediaPlayer.play();
-    }
+
 }

@@ -14,6 +14,10 @@ public class SceneController {
         this.gameView = gameView;
     }
 
+    /**
+     * Initializes the main menu of the game.
+     * This method sets up the main menu, sets the scene to the main menu, sets the title of the primary stage, and shows the primary stage.
+     */
     public void initMainMenu() {
         System.out.println("initMainMenu");
         gameView.setupMainMenu();
@@ -22,11 +26,20 @@ public class SceneController {
         gameView.getPrimaryStage().show();
 
     }
+
+    /**
+     * Switches the scene to the game credits.
+     * This method is typically called when the 'Game Credits' button is clicked in the main menu.
+     */
     public static void switchToGameCredits(){
         System.out.println("switchToGameCredits in SceneController");
         gameView.showCredit();
     }
 
+    /**
+     * Switches the scene to the stage selection screen.
+     * This method displays the stage selection screen, sets the scene to the stage selection screen, sets the title of the primary stage, and shows the primary stage.
+     */
     public void switchStageChoose() {
         System.out.println("SwitchStageChoose in SceneController");
         gameView.showStageSelectionScreen();
@@ -34,15 +47,18 @@ public class SceneController {
         gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();
     }
+
+
     public void mapClearCheck(String msg) {
         gameView.showStageAlert(msg);
     }
 
-    public void switchToMapSelectionScene() {
-        System.out.println(" switchToGameScene in SceneController");
-        gameView.selectStage();
-    }
-
+    /**
+     * Initializes the game scene for a specific stage.
+     * This method sets up the game scene for the provided stage, sets the scene to the game scene, sets the title of the primary stage, and shows the primary stage.
+     *
+     * @param stageName The name of the stage for which the game scene is to be initialized.
+     */
     public void initGameScene(String stageName) {
         System.out.println("initGameScene in SceneController");
         gameView.setupGameScene(stageName);
@@ -51,13 +67,4 @@ public class SceneController {
         gameView.getPrimaryStage().show();
     }
 
-//    public void loadGameMap(ActionEvent event) throws IOException {
-//        System.out.println("loadGameMap");
-//        root = FXMLLoader.load(getClass().getResource("mainMap.fxml"));
-//        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        stage.setScene(scene);
-//        stage.show();
-//
-//    }
 }
