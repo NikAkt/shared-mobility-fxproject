@@ -1,6 +1,6 @@
 package org.example.sharedmobilityfxproject;
 import org.example.sharedmobilityfxproject.model.*;
-
+import org.example.sharedmobilityfxproject.model.Cell;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.Animation;
@@ -78,8 +78,13 @@ public class Main extends Application {
 
     private void colorCell(int column, int row, String color) {
         Cell cell = grid.getCell(column, row);
-        cell.colorCell(color);
+        if (cell != null) {
+            cell.colorCell(color);
+        } else {
+            System.out.println("Cell at column " + column + ", row " + row + " is null.");
+        }
     }
+
     public static void increaseGemCount() {
         gemCount++;
         updateGemCountLabel();
@@ -107,9 +112,6 @@ public class Main extends Application {
             primaryStage.setResizable(false);
 //            primaryStage.setFullScreen(true);
 //            primaryStage.setFullScreenExitHint("Press esc to minimize !");
-
-            // Create grid for the game
-            Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
             // Create keyboard actions handler
             KeyboardActions ka = new KeyboardActions(grid);
