@@ -17,7 +17,11 @@ public class Gem extends Cell {
     public Gem(int column, int row) {
         super(column, row);
         getStyleClass().add("gem");
-        setUserData("gem"); // Set a custom attribute to identify the gem cell
+        setUserData("gem");
+        String imagePath = getClass().getResource("/images/gem.png").toExternalForm();
+        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                "-fx-background-size: cover; -fx-background-position: center center;");
+        this.getStyleClass().add("cell-obstacle");// Set a custom attribute to identify the gem cell
     }
 
     // Override the highlight method to play the gem collect sound and increment the gem count

@@ -45,6 +45,9 @@ public class Obstacle {
                 if (col >= 0 && col < grid.getColumns() && r >= 0 && r < grid.getRows()) {
                     Cell obstacleCell = grid.getCell(col, r);
 //
+                    String imagePath = getClass().getResource("/images/house.png").toExternalForm();
+                    obstacleCell.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                            "-fx-background-size: cover; -fx-background-position: center center;");
                     obstacleCell.getStyleClass().add("cell-obstacle");
                 }
             }
