@@ -377,6 +377,9 @@ public class GameController {
             } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1))) {
                 // Move vertically as a fallback
                 moveBus(bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
+            }else if (canMoveBusTo(bus.getX()-1, bus.getY() )) {
+                // Move vertically as a fallback
+                moveBus(bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
             }
         } else if (bus.getY() < stop.getY() || bus.getY() > stop.getY()) {
 //            System.out.println("----------- moving y ---------");
