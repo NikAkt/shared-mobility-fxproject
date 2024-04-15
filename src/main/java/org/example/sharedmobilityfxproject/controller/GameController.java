@@ -145,13 +145,13 @@ System.out.println("GameController startPlayingGame");
 //        int gap = 5;
 
         // Fill the grid with obstacles
-        Map map = new Map();
-        int[][] mapArray = new int[80][120];
-        try {
-            mapArray = map.getMapArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        Map map = new Map();
+//        int[][] mapArray = new int[80][120];
+//        try {
+//            mapArray = map.getMapArray();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 //        int[][] mapArray = new int[4][5];
 //        int[][] mapArray = {
@@ -161,8 +161,9 @@ System.out.println("GameController startPlayingGame");
 //                    {1,1,1,1,1},
 //                };
 
+        // Sample map array
         int[][] mapArray = {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -171,39 +172,20 @@ System.out.println("GameController startPlayingGame");
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
         };
 
-
-        // Define the size and gap of the obstacles
-        int obstacleWidth = 5;
-        int obstacleHeight = 3;
-        int gap = 5;
-
-// Calculate the number of obstacle blocks in each direction based on game view dimensions
-        int numBlocksX = (mapArray[0].length - 2 * gap) / (obstacleWidth + gap);
-        int numBlocksY = (mapArray.length - 2 * gap) / (obstacleHeight + gap);
-
-        for (int bx = 0; bx < numBlocksX; bx++) {
-            for (int by = 0; by < numBlocksY; by++) {
-                int baseColumn = gap + bx * (obstacleWidth + gap);
-                int baseRow = gap + by * (obstacleHeight + gap);
-
-                // Only create obstacles if the designated start point is marked in the map array
-                if (mapArray[baseRow][baseColumn] == 1) {
-                    for (int i = 0; i < obstacleWidth; i++) {
-                        for (int j = 0; j < obstacleHeight; j++) {
-                            int obstacleColumn = baseColumn + i;
-                            int obstacleRow = baseRow + j;
-                            if (obstacleColumn < mapArray[0].length && obstacleRow < mapArray.length) {
-                                Obstacle obstacle = new Obstacle(gameView.grid, obstacleColumn, obstacleRow);
-                                obstacles.add(obstacle);
-                            }
-                        }
-                    }
+        for (int row = 0; row < mapArray.length; row++) {
+            for (int column = 0; column < mapArray[row].length; column++) {
+                if (mapArray[row][column] == 1) { // Check if the cell indicates an obstacle
+                    // Create an obstacle for each cell marked with 1
+                    Obstacle obstacle = new Obstacle(gameView.grid, column, row);
+                    obstacles.add(obstacle);
                 }
             }
         }
+
+
 
 
 
