@@ -102,7 +102,7 @@ public class GameController {
 
 
         this.sceneController.initGameScene();
-        this.startPlayingGame();
+        this.startPlayingGame(stageName);
     }
 
     public void startPlayingGame(String stageName) {

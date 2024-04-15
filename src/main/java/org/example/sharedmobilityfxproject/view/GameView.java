@@ -99,13 +99,13 @@ public class GameView {
     private Map<String, Boolean> stageClearFlags;
 
     // **** Stamina ****
-    int staminagauge;
+    double staminagauge;
 
     {
         staminagauge = 100;
     }
 
-    int co2Gauge;
+    double co2Gauge;
 
     {
         co2Gauge = 0;
