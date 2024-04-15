@@ -100,13 +100,10 @@ public class GameController {
         checkStationary.setCycleCount(Timeline.INDEFINITE);
         checkStationary.play();
 
-
-        this.sceneController.initGameScene();
-        this.startPlayingGame(stageName);
     }
 
     public void startPlayingGame(String stageName) {
-        sceneController.initGameScene(stageName);
+        this.sceneController.initGameScene(stageName);
         this.isGameStarted = true;
         System.out.println("GameController startPlayingGame");
 
