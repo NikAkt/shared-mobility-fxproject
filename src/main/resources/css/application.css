@@ -3,35 +3,39 @@
 }
 
 .cell-highlight {
-    -fx-background-color: blue;
+
 }
 
 .cell-hover-highlight {
 }
 .busStop {
     -fx-background-radius: 0%;
-    -fx-background-color: orange;
+
 }
 .bus {
     -fx-background-radius: 0%;
-    -fx-background-color: black;
+
 }
 .metroStop{
     -fx-background-radius: 0%;
     -fx-background-color: #4f1d1d;
 }
 .gem {
-    -fx-background-color: purple;
+    -fx-max-height: 100px;
+    -fx-max-width: 100px;
 }
 
 .cell-obstacle {
-    -fx-background-color: #808080;
-    -fx-background-radius: 0%;
+-fx-background-image: url('/images/icon.png');
+-fx-background-size: cover; -fx-background-position: center center;
 }
 
 .cell.finish {
     -fx-background-color: green;
 }
 .taxi{
-    -fx-background-color: #ff0000;
+
+}
+.bicycle{
+    -fx-background-color: #66FFFF;
 }

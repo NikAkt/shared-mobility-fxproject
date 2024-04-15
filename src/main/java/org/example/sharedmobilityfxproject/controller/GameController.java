@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
@@ -11,17 +12,25 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
+import org.example.sharedmobilityfxproject.model.tranportMode.Bicycle;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 
 public class GameController {
+    private boolean playerTimeout = true;
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private SceneController sceneController;
     //class call
@@ -39,6 +48,7 @@ public class GameController {
     public boolean playerMovementEnabled = true;
     public boolean onBus = false;
     public boolean inTaxi = false;
+    public boolean onBicycle = false;
     public Player playerUno;
 
 
@@ -52,8 +62,25 @@ public class GameController {
     public Cell finishCell;
     public Taxi taximan;
     public Bus busman;
+    public Bicycle cycleman;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
+    private Timer timer = new Timer();  // Create a Timer object
+    private ScrollPane scrollPane;
+
+    private void enableMovementAfterDelay() {
+        playerTimeout = false;  // Disable further moves immediately when this method is called
+        int delayInMilliseconds = (int) (playerUno.speedTime * 1000);  // Convert seconds to milliseconds
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // This will run in a background thread, make sure to run UI updates on the JavaFX thread
+                javafx.application.Platform.runLater(() -> {
+                    playerTimeout = true;  // Re-enable moves after the specified time
+                });
+            }
+        }, delayInMilliseconds);
+    }
 
     //Player Movement Check for Stamina
     private int moveCounter = 0;
@@ -76,6 +103,8 @@ public class GameController {
         checkStationary.play();
 
 
+        this.sceneController.initGameScene();
+        this.startPlayingGame();
     }
 
     public void startPlayingGame(String stageName) {
@@ -101,42 +130,28 @@ public class GameController {
 //            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
 //            vbox.setAlignment(Pos.TOP_LEFT);
 
+//        // Sample map array
+//        int[][] mapArray = {
+//                {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
+//        };
 
-        // Initialise Obstacles for x = 0
-        // Initialise Obstacles
-        // Initialise Obstacles
-//            obstacles = new ArrayList<>();
-
-        // Define the size of the obstacle blocks and the gap between them
-        int obstacleWidth = 5;
-        int obstacleHeight = 3;
-        int gap = 5;
+        // Start filling the grid with obstacles and other stuff
+        Map map = new Map();
+        fillGridWithMapArray(map);
 
 
-        // Calculate the number of obstacle blocks in each direction
-        int numBlocksX = (gameView.getColumns() - 2 * gap) / (obstacleWidth + gap);
-        int numBlocksY = (gameView.getRows() - 2 * gap) / (obstacleHeight + gap);
 
 
-        // For each block position
-        for (int bx = 0; bx < numBlocksX; bx++) {
-            for (int by = 0; by < numBlocksY; by++) {
-                // Calculate the top-left corner of the block
-                int x = gap + bx * (obstacleWidth + gap);
-                int y = gap + by * (obstacleHeight + gap);
 
-                // Create the obstacle block
-                for (int i = 0; i < obstacleWidth; i++) {
-                    for (int j = 0; j < obstacleHeight; j++) {
-                        obstacles.add(new Obstacle(gameView.grid, x + i, y + j));
-                        List<Integer> coordinatePair = new ArrayList<>();
-
-                        coordinatePair.add(x + i);
-                        coordinatePair.add(y + j);
-                    }
-                }
-            }
-        }
         obstacleCoordinates = new ArrayList<>();
 
         for (Obstacle obstacle : obstacles) {
@@ -149,61 +164,72 @@ public class GameController {
         // Place the finish cell after the grid is filled and the player's position is initialised
         int finishColumn;
         int finishRow;
-        finishColumn=102;
-        finishRow=58;
+        finishColumn = 102;
+        finishRow = 58;
 
         finishCell = new Cell(finishColumn, finishRow);
         finishCell.getStyleClass().add("finish");
         gameView.grid.add(finishCell, finishColumn, finishRow);
 
-        //bus SHITE
-        busStop busS1 = new busStop(4,4);
-        busStop busS2 = new busStop(110,4);
-        busStop busS3 = new busStop(57,25);
-        busStop busS4 = new busStop(110,64);
-        busStop busS5 = new busStop(57,64);
-        busStop busS6 = new busStop(4,64);
-        busStop busS7 = new busStop(4,34);
+//        //bus SHITE
+//        busStop busS1 = new busStop(4,4);
+//        busStop busS2 = new busStop(110,4);
+//        busStop busS3 = new busStop(57,25);
+//        busStop busS4 = new busStop(110,64);
+//        busStop busS5 = new busStop(57,64);
+//        busStop busS6 = new busStop(4,64);
+//        busStop busS7 = new busStop(4,34);
 
         metroStop metro1 = new metroStop(2,30);
         gameView.grid.add(metro1,2,30);
-        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+
+//        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+//        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+//        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+//        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+//        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+//        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+//        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+//
+//
+//        busStops.add(busS1);
+//        busStops.add(busS2);
+//        busStops.add(busS3);
+//        busStops.add(busS4);
+//        busStops.add(busS5);
+//        busStops.add(busS6);
+//        busStops.add(busS7);
 
 
-        busStops.add(busS1);
-        busStops.add(busS2);
-        busStops.add(busS3);
-        busStops.add(busS4);
-        busStops.add(busS5);
-        busStops.add(busS6);
-        busStops.add(busS7);
 
+        busman = new Bus(busStops,3, 4);
 
-
-        busman = new Bus(busStops,4, 4);
         taximan = new Taxi (58,28);
+        cycleman= new Bicycle(10,4);
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
-            gameView.grid.add(stop,stop.getX(), stop.getY());
+            gameView.grid.add(stop, stop.getX(), stop.getY());
         }
 
-        gameView.grid.add(busman,busman.getX(), busman.getY());// Example starting position
+        gameView.grid.add(busman, busman.getX(), busman.getY());// Example starting position
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
-
+        gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
 
         // Schedule the bus to move every second
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
             busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
-            if(taximan.hailed&&!taximan.arrived){
-                moveTaxiTowardsPlayer(taximan);
+            if (taximan.hailed && !taximan.arrived) {
+                moveTaxiTowardsPlayer(gameView.grid, taximan);
             }
-            if (!busman.isWaiting){
+            if (onBicycle) {
+                if (cycleman.bikeTime == 0) {
+                    onBicycle = false;
+                }
+                if (cycleman.bikeTime >= 1) {
+                    cycleman.bikeTime -= 1;
+                }
+            }
+            if (!busman.isWaiting) {
 
 
                 moveBusTowardsBusStop(busman, targetBusStop);
@@ -216,12 +242,11 @@ public class GameController {
                     //Increase carbon footprint amount as long as player is on the bus
                     double carbonFootprint = 0.2; //subject to change
 //                    gameController.updateCarbonFootprintLabel();
-                }}
-            else{
-                if(busman.waitTime ==0){
-                    busman.waitASec();
                 }
-                else{
+            } else {
+                if (busman.waitTime == 0) {
+                    busman.waitASec();
+                } else {
                     busman.waitTime--;
                 }
             }
@@ -231,13 +256,60 @@ public class GameController {
         busMovementTimeline.play();
 
 
-
         // give playerUno a cell goddamit
         playerUno.initCell(gameView.grid);
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
     }
+
+    /**
+     * This method fills the grid based on the contents of a map array from a Map object.
+     * It initializes a 2D array with dimensions 80x120 and attempts to retrieve the map array.
+     * If an exception occurs, it prints the stack trace.
+     * Each cell in the array is processed based on its value:
+     * - 1: Creates and adds an Obstacle to the list.
+     * - 2: Colors the cell green.
+     * - 3: Colors the cell blue.
+     * - 4: Marks the cell as a bus stop.
+     * - 9: Also creates and adds an Obstacle, similar to 1.
+     * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
+     */
+    public void fillGridWithMapArray(Map map) {
+        int[][] mapArray = new int[80][120];  // Default map size initialization
+        try {
+            mapArray = map.getMapArray();  // Attempt to retrieve the map array
+        } catch (Exception e) {
+            e.printStackTrace();  // Print any errors encountered
+        }
+
+        for (int row = 0; row < mapArray.length; row++) {
+            for (int column = 0; column < mapArray[row].length; column++) {
+                switch (mapArray[row][column]) {
+                    case 1:  // Cell indicates an obstacle
+                    case 9:  // Cell also indicates an obstacle (same behavior as 1)
+                        Obstacle obstacle = new Obstacle(gameView.grid, column, row);
+                        obstacles.add(obstacle);
+                        break;
+                    case 2:  // Color the cell green
+                        gameView.grid.setCellColor(column, row, "GREEN");
+                        break;
+                    case 3:  // Color the cell blue
+                        gameView.grid.setCellColor(column, row, "BLUE");
+                        break;
+                    case 4:  // Mark as bus stop
+                        busStop busS = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
+                        busStops.add(busS);
+                        break;
+                    default:
+                        // Optionally handle default case if needed
+                        break;
+                }
+            }
+        }
+    }
+
 
     private void generateGems(Grid grid, int numberOfGems) {
         for (int i = 0; i < numberOfGems; i++) {
@@ -262,9 +334,10 @@ public class GameController {
             grid.add(gem, gemColumn, gemRow);
         }
     }
+
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus) {
         System.out.println("moving taxi");
-        if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
+        if (bus.getX() == playerUno.getCoordX() && bus.getY() == playerUno.getCoordY() && taximan.arrived && !inTaxi) {
             inTaxi = true;
 
         }
@@ -276,7 +349,7 @@ public class GameController {
                 int newX = bus.getX() + (bus.getX() < playerUno.getCoordX() ? 1 : -1);
                 if (canMoveBusTo(newX, bus.getY())) {
                     moveTaxi(grid, bus, newX, bus.getY());
-                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() <playerUno.getCoordY() ? 1 : -1))) {
+                } else if (canMoveBusTo(bus.getX(), bus.getY() + (bus.getY() < playerUno.getCoordY() ? 1 : -1))) {
                     // Move vertically as a fallback
                     moveTaxi(grid, bus, bus.getX(), bus.getY() + (bus.getY() < playerUno.getCoordY() ? 1 : -1));
                 }
@@ -314,17 +387,18 @@ public class GameController {
                 bus.flagMove = 0;
             }
 
-        }}
+        }
+    }
 
     public void moveBusTowardsBusStop(Bus bus, busStop stop) {
         // Calculate the Manhattan distance for both possible next steps
-        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX()) ;
+        int distanceIfMoveX = Math.abs((bus.getX()) - stop.getX());
         int distanceIfMoveY = Math.abs(bus.getY() - stop.getY());
 //        System.out.println("--------------------");
 //        System.out.println(stop.getX()+"   "+ stop.getY());
 
 //        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
-        if ((bus.getX()<stop.getX()||bus.getX()>stop.getX())&&bus.flagMove==0 ) {
+        if ((bus.getX() < stop.getX() || bus.getX() > stop.getX()) && bus.flagMove == 0) {
 //            System.out.println("----------- moving x ---------");
             // Move horizontally towards the bus stop, if not blocked
             int newX = bus.getX() + (bus.getX() < stop.getX() ? 1 : -1);
@@ -334,62 +408,73 @@ public class GameController {
                 // Move vertically as a fallback
                 moveBus(bus, bus.getX(), bus.getY() + (bus.getY() < stop.getY() ? 1 : -1));
             }
-        }
-
-        else if (bus.getY()<stop.getY()||bus.getY()>stop.getY()){
+        } else if (bus.getY() < stop.getY() || bus.getY() > stop.getY()) {
 //            System.out.println("----------- moving y ---------");
             // Move vertically towards the bus stop, if not blocked
             int newY = bus.getY() + (bus.getY() < stop.getY() ? 1 : -1);
             if (canMoveBusTo(bus.getX(), newY)) {
 
                 moveBus(bus, bus.getX(), newY);
-            }
-            else if (canMoveBusTo(bus.getX() +1, bus.getY())) {
+            } else if (canMoveBusTo(bus.getX() + 1, bus.getY())) {
                 // Move horizontally as a fallback
-                if (bus.flagMove == 0){
-                    bus.flagMove =1;
+                if (bus.flagMove == 0) {
+                    bus.flagMove = 1;
                 }
                 moveBus(bus, bus.getX() + +1, bus.getY());
             }
         }
         //arriving at stop logic
-        else if (bus.getX()==stop.getX()&&bus.getY()==stop.getY()){
+        else if (bus.getX() == stop.getX() && bus.getY() == stop.getY()) {
             System.out.println("----------- ARRIVED..... GET THE FUCK OUT ---------");
             bus.waitASec();
             bus.list().add(bus.list().remove(0));
-            System.out.println("now going towards :"+bus.nextStop());
-            if(!playerMovementEnabled&&playerUno.getCoordX()==bus.getX()&&playerUno.getCoordY()==bus.getY()){
+            System.out.println("now going towards :" + bus.nextStop());
+            if (!playerMovementEnabled && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
                 System.out.println("----------- You just got on the bus ---------");
                 this.onBus = true;
 
-            }else if(this.onBus){
-                System.out.println("----------- You arrived at  ---------"+stop);
+            } else if (this.onBus) {
+                System.out.println("----------- You arrived at  ---------" + stop);
                 System.out.println("----------- Press E to get off  ---------");
                 this.onBus = true;
 
             }
-        }
-        else if (bus.getY()==stop.getY()) {
-            bus.flagMove=0;
+        } else if (bus.getY() == stop.getY()) {
+            bus.flagMove = 0;
         }
 
     }
 
     public void setupKeyboardActions(KeyCode key) {
-        if(this.inTaxi){
+        if (this.inTaxi) {
             switch (key) {
                 case D -> movePlayer(2, 0);
                 case A -> movePlayer(-2, 0);
                 case W -> movePlayer(0, -2);
                 case S -> movePlayer(0, 2);
-                case T -> this.inTaxi =false;
+                case T -> this.inTaxi = false;
                 case E -> togglePlayerMovement();
                 case C ->
                         System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
                                 "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
-            }}else if (playerMovementEnabled) {
+            }
+        } else if (onBicycle && playerMovementEnabled && playerTimeout) {
+            System.out.println("Bicycle time: " + cycleman.bikeTime + " you are still on bike");
+            switch (key) {
+                case D -> movePlayer(5, 0);
+                case A -> movePlayer(-5, 0);
+                case W -> movePlayer(0, -5);
+                case S -> movePlayer(0, 5);
+                case C ->
+                        System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                                "\nPlayer is currently " + (onBicycle ? "on bicycle." : "not on the bicycle.") +
+                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                                "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
+            }
+            enableMovementAfterDelay();
+        } else if (playerMovementEnabled && playerTimeout) {
             switch (key) {
                 case D -> movePlayer(1, 0);
                 case A -> movePlayer(-1, 0);
@@ -398,11 +483,15 @@ public class GameController {
                 case T -> hailTaxi();
                 case E -> togglePlayerMovement();
             }
+            enableMovementAfterDelay();
+        } else if (key == KeyCode.E) {
+            togglePlayerMovement();
         } else if (key == KeyCode.E) {
             togglePlayerMovement();
         }
     }
-    private void moveTaxi(Grid grid,Taxi bus, int newX, int newY) {
+
+    private void moveTaxi(Grid grid, Taxi bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
 
         grid.moveCell(bus, newX, newY);
@@ -427,6 +516,7 @@ public class GameController {
         //grid.add(cell,cell.getColumn(),cell.getRow());
 
     }
+
     private boolean canMoveBusTo(int x, int y) {
         // Implement logic to check if the bus can move to (x, y) considering obstacles
         // Return true if it can move, false if there's an obstacle
@@ -448,6 +538,7 @@ public class GameController {
      */
     private void movePlayer(int dx, int dy) {
 
+
         if (playerUno.getStamina() <= 0) {
             System.out.println("Not enough stamina to move.");
             gameView.playNoStaminaSound();
@@ -459,11 +550,11 @@ public class GameController {
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
 
-        if(gameView.isMetroSceneActive){
+        if (gameView.isMetroSceneActive) {
             playerUno.getCell().unhighlight();
 
             playerUno.getCell().highlight();
-            System.out.println("player pos: " +playerUno.getCoordX()+" "+playerUno.getCoordY());
+            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
         }
 
         if (playerUno.getCell() instanceof metroStop) {
@@ -472,7 +563,9 @@ public class GameController {
             Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
             playerUno.isUnderground = true;
             System.out.println(gameView.grid);
-            playerUno.setCellByCoords(gameView.grid,newColumn,newRow);
+
+
+            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
             System.out.println("Player has entered a metro entrance" + gameView.grid);
         }
         if (canMoveTo(newColumn, newRow)) {
@@ -491,7 +584,6 @@ public class GameController {
             if (playerUno.getIsWalking()) {
                 moveCounter++;
                 System.out.println("Move Counter: " + moveCounter);
-
                 //Decrease stamina every 5 moves
                 if (moveCounter >= 5) {
                     playerUno.decreaseStamina();
@@ -500,8 +592,16 @@ public class GameController {
                 }
             }
         }
+        interactWithCell(gameView.grid.getCell(newColumn, newRow));
+        if (inTaxi) {
+            // Assuming taximan is accessible from here, or find a way to access it
+            moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
+        }
     }
+
+
+
 
     private boolean canMoveTo(int x, int y) {
         return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
@@ -509,11 +609,18 @@ public class GameController {
 
     private void interactWithCell(Cell cell) {
         if ("gem".equals(cell.getUserData())) {
+            System.out.println("Interacting with gem ");
             collectGem(cell);
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
         } else if (cell == finishCell) {
             finishGame();
+        } else if (cell instanceof Bicycle) {
+            System.out.println("You just got on the bike");
+            onBicycle = true;
+            cycleman.bikeTime=300;
+            System.out.println(onBicycle
+            );
         }
     }
 

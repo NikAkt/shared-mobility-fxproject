@@ -45,6 +45,8 @@ import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.*;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -139,6 +141,8 @@ public class GameView {
     public ImageView imageView = new ImageView(logoImage);
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
+    private ScrollPane scrollPane;
+
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
 
@@ -212,7 +216,7 @@ public class GameView {
         StackPane.setMargin(imageView, new Insets(250, 0, 0, 0));
         StackPane.setAlignment(buttonBox, Pos.CENTER);
 
-        scene = new Scene(root, 1496, 1117);
+        scene = new Scene(root, WIDTH,HEIGHT);
 
     }
 
@@ -626,7 +630,7 @@ public class GameView {
             //Add new StageSelectionBox
             StackPane root = new StackPane(mediaView, stageSelectionBox);
             StackPane.setAlignment(stageSelectionBox, Pos.CENTER);
-            scene = new Scene(root, 1496, 1117);
+            scene = new Scene(root, WIDTH, HEIGHT);
 
 
         } catch (Exception e) {
@@ -817,7 +821,7 @@ public class GameView {
 
                 Label educationalMsgLabel = new Label();
                 educationalMsgLabel.setText(randomMessage);
-                educationalMsgLabel.setWrapText(true);
+                educationalMsgLabel.setWrapText(false);
                 educationalMsgLabel.setAlignment(Pos.CENTER);
                 educationalMsgLabel.setFont(contentFont);
 

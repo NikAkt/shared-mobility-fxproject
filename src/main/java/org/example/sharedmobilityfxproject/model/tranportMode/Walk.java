@@ -5,7 +5,7 @@ public class Walk extends Player {
     // Example properties unique to the Walk class
     private int walkSpeed;
     public Walk(int x, int y, int stamina, int speed, int co2, int GemCount, int walkSpeed) {
-        super(x, y, stamina, speed, co2, GemCount);
+        super(x, y, stamina, speed, co2);
         this.walkSpeed = walkSpeed; // Additional properties of the Walk class
     }
 
