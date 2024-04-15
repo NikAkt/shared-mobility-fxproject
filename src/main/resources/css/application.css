@@ -3,18 +3,18 @@
 }
 
 .cell-highlight {
-    -fx-background-color: blue;
+
 }
 
 .cell-hover-highlight {
 }
 .busStop {
     -fx-background-radius: 0%;
-    -fx-background-color: orange;
+
 }
 .bus {
     -fx-background-radius: 0%;
-    -fx-background-color: black;
+
 }
 .metroStop{
     -fx-background-radius: 0%;
@@ -34,7 +34,7 @@
     -fx-background-color: green;
 }
 .taxi{
-    -fx-background-color: #ff0000;
+
 }
 .bicycle{
     -fx-background-color: #66FFFF;
