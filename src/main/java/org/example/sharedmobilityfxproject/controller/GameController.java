@@ -568,7 +568,7 @@ public class GameController {
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
-            playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
+            playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
             if (inTaxi && !(playerUno.isWalking)) {

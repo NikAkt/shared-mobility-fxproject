@@ -270,7 +270,7 @@ public class GameView {
         this.staminaLabel.setFont(contentFont);
 
         this.staminaBar = new ProgressBar(staminagauge);
-        this.staminaBar.setPrefWidth(1100); // Adjust width as needed
+        this.staminaBar.setPrefWidth(1000); // Adjust width as needed
         this.staminaBar.setPrefHeight(40); // Adjust height as needed
         this. staminaBar.setStyle("-fx-accent: yellow;");
 
