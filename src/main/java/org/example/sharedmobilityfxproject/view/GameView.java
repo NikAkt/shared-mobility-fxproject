@@ -71,6 +71,11 @@ public class GameView {
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
 
+    // **** Resources of Main Game ****
+    ProgressBar staminaBar;
+    ProgressBar co2Bar;
+    Label staminaLabel;      // 스태미나 값을 보여주는 레이블
+    Label co2Label;          // CO2 값을 보여주는 레이블
     // **** Variables Setting ****
     // Label to keep track of gem count
 
@@ -95,7 +100,7 @@ public class GameView {
     int staminagauge;
 
     {
-        staminagauge = 0;
+        staminagauge = 100;
     }
 
     int co2Gauge;
@@ -140,6 +145,11 @@ public class GameView {
     public GameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initializeStageClearFlags();
+
+        //initialise the stamina bar
+        this.staminaBar = new ProgressBar(1.0);
+        //initialise the co2 bar
+        this.co2Bar = new ProgressBar(0);
     }
 
     private void initializeStageClearFlags() {
@@ -209,17 +219,17 @@ public class GameView {
         mapStackPane.setMaxSize(1280, 720); // Set the maximum size of the grid if necessary
 
 
-        ProgressBar co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
+        co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
         co2Bar.setPrefWidth(40);
         co2Bar.setPrefHeight(550); // Adjust the height as needed
         co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
 
         // CO2 Level
-        Label co2TextLabel = new Label("CO2:" + co2Gauge);
-        co2TextLabel.setFont(new Font("Arial", 16));
-        co2TextLabel.setFont(contentFont);
+        co2Label = new Label("CO2:" + co2Gauge);
+        co2Label.setFont(new Font("Arial", 16));
+        co2Label.setFont(contentFont);
 
-        VBox co2VBox = new VBox(co2Bar, co2TextLabel);
+        VBox co2VBox = new VBox(co2Bar, co2Label);
 
         HBox co2HBox = new HBox(co2VBox); // Add the VBox to the HBox
         co2HBox.setAlignment(Pos.CENTER_LEFT); // Set alignment to center left
@@ -227,19 +237,19 @@ public class GameView {
         HBox.setMargin(co2VBox, new Insets(30, 0, 0, 10));
 
         // "Stamina" text
-        Text staminaText = new Text("Stamina:" +
-                " " + staminagauge);
+        staminaLabel = new Label("Stamina:" +
+                " " + staminagauge+"%");
 
-        staminaText.setFont(javafx.scene.text.Font.font(14));
-        staminaText.setFont(contentFont);
+        staminaLabel.setFont(javafx.scene.text.Font.font(14));
+        staminaLabel.setFont(contentFont);
 
-        ProgressBar staminaBar = new ProgressBar(staminagauge);
+        staminaBar = new ProgressBar(staminagauge);
         staminaBar.setPrefWidth(1100); // Adjust width as needed
         staminaBar.setPrefHeight(40); // Adjust height as needed
         staminaBar.setStyle("-fx-accent: yellow;");
 
         // Stamina container setup
-        VBox staminaContainer = new VBox(staminaText, staminaBar);
+        VBox staminaContainer = new VBox(staminaLabel, staminaBar);
         staminaContainer.setAlignment(Pos.BOTTOM_CENTER);
         StackPane.setMargin(staminaContainer, new Insets(0, 0, 20, 0)); // Add margin at the bottom if needed
 
@@ -289,7 +299,6 @@ public class GameView {
         StackPane.setMargin(mapStackPane, new Insets(40, 0, 45, 120));
 
 
-
         mapStackPane.getChildren().clear(); // Remove all current children
         mapStackPane.getChildren().add(grid); // Assuming 'grid' is already defined as a Node
         stackRoot.getChildren().add(gemContainer);
@@ -306,7 +315,6 @@ public class GameView {
         primaryStage.setHeight(HEIGHT);
         primaryStage.setResizable(false);
         scene = new Scene(stackRoot, WIDTH, HEIGHT);
-
 
 
         // create scene and set to stage
@@ -867,4 +875,14 @@ public class GameView {
         gemCount++;
         updateGemCountLabel();
     }
+
+    public void updateStamina(int newStamina) {
+        this.staminagauge = newStamina;
+        double staminaFraction = newStamina / 100.0;  // 100을 최대 스태미나 값으로 가정
+        this.staminaBar.setProgress(staminaFraction);  // 프로그레스 바 업데이트
+        this.staminaLabel.setText("Stamina: " + newStamina + "%");  // 레이블 업데이트
+        System.out.println("Updated Stamina: " + this.staminagauge + ", Progress: " + staminaFraction);
+    }
+
+
 }

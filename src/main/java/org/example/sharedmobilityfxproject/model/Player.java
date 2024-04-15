@@ -7,6 +7,9 @@ public class Player implements motion {
     private int speed; // speed
     private double co2; // co2 produced
     private Cell playerCell;
+
+    //Check method of movement
+    public boolean isWalking = false;
     public boolean isUnderground= false;
 
     public Player(int x, int y,int stamina,int speed,double co2,int gems) {
@@ -43,6 +46,7 @@ public class Player implements motion {
     }
     @Override
     public void moveUp() {
+        setIsWalking(true);
         y -= speed;
     }
 
@@ -62,7 +66,13 @@ public class Player implements motion {
     }
 
     public void decreaseStamina(){ //alternatively we could have each item change the stamina
-        stamina=stamina-10;
+        System.out.print("Decreasing stamina called");
+        if (this.stamina > 0) {
+            this.stamina -= 10;
+            if (this.stamina < 0) {
+                this.stamina = 0;
+            }
+        }
     }
     public void increaseStamina(){
         stamina=stamina+10;
@@ -95,6 +105,11 @@ public class Player implements motion {
         return this.playerCell;
     }
 
-
+    public void setIsWalking(boolean isWalking) {
+        this.isWalking = isWalking;
+    }
+    public boolean getIsWalking() {
+        return this.isWalking;
+    }
 
 }

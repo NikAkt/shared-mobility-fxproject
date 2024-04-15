@@ -45,6 +45,8 @@ public class GameController {
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
 
+    //Player Movement Check for Stamina
+    private int moveCounter = 0;
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -222,10 +224,19 @@ public class GameController {
         for (int i = 0; i < numberOfGems; i++) {
             int gemColumn;
             int gemRow;
+            boolean isObstacle;
             do {
                 gemColumn = (int) (Math.random() * gameView.getColumns());
-                gemRow = (int) (Math.random() * gameView.getRows());
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+                gemRow = (int) (Math.random(
+
+                ) * gameView.getRows());
+                int finalGemColumn = gemColumn;
+                int finalGemRow = gemRow;
+                //It is called before gemGeneration
+                // obstacleCoordinates is the list of obstacles's coordinates
+                isObstacle = obstacleCoordinates.stream().anyMatch(coords -> coords[0] == finalGemColumn && coords[1] == finalGemRow);
+                //Check
+            } while (isObstacle || (gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
 
             Gem gem = new Gem(gemColumn, gemRow);
@@ -404,7 +415,8 @@ public class GameController {
     }
 
     private void movePlayer(int dx, int dy) {
-        System.out.println(playerUno);
+//        System.out.println(playerUno);
+        playerUno.setIsWalking(true);
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
@@ -415,20 +427,15 @@ public class GameController {
             playerUno.getCell().highlight();
             System.out.println("player pos: " +playerUno.getCoordX()+" "+playerUno.getCoordY());
         }
-        if (playerUno.getCell() instanceof metroStop) {
 
+        if (playerUno.getCell() instanceof metroStop) {
             gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
             gameView.switchSceneToMetro();// Metro scene is now active
             Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
             playerUno.isUnderground = true;
             System.out.println(gameView.grid);
-
-
-
             playerUno.setCellByCoords(gameView.grid,newColumn,newRow);
             System.out.println("Player has entered a metro entrance" + gameView.grid);
-
-
         }
         if (canMoveTo(newColumn, newRow)) {
             playerUno.getCell().unhighlight();
@@ -438,10 +445,23 @@ public class GameController {
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow));
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
-            if (inTaxi) {
+            if (inTaxi && !(playerUno.isWalking)) {
                 // Assuming taximan is accessible from here, or find a way to access it
                 moveTaxi(gameView.grid, taximan, newColumn, newRow);
+            }
+            //MoveCounter for walking and decrease stamina every 5 moves
+            if (playerUno.getIsWalking()) {
+                moveCounter++;
+                System.out.println("Move Counter: " + moveCounter);
 
+                if (moveCounter >= 5) {
+                    System.out.println("Went to initialiser of moveCounter");
+                    playerUno.decreaseStamina();
+                    System.out.println(" playerUno.decreaseStamina() works!!!");
+                    gameView.updateStamina(playerUno.getStamina()); // 추가: GameView의 staminagauge 업데이트
+                    System.out.println(" Update Player Stamina works!!!");
+                    moveCounter = 0;
+                }
             }
         }
 
