@@ -11,6 +11,18 @@ public class Bicycle extends Cell {
         //setStaminaDrain(0.5); // Reduced stamina drain
         this.x = i;
         this.y = j;
+        String imagePath = getClass().getResource("/images/bike.png").toExternalForm();
+
+
+
+
+        // Set the fixed size of the Gem node to match the cell size
+        setPrefHeight(10);  // Set the preferred height to 10 pixels
+        setPrefWidth(8);    // Set the preferred width to 8 pixels
+
+
+        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                "-fx-background-size: contain; -fx-background-position: center center;");
         this.getStyleClass().add("bicycle");
     }
     public int getX() {
