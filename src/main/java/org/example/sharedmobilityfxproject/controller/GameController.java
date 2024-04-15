@@ -26,7 +26,7 @@ import java.util.List;
 
 
 
-public class GameController {
+public class GameController{
     private boolean playerTimeout = true;
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -65,6 +65,7 @@ public class GameController {
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
     private Timer timer = new Timer();  // Create a Timer object
     private ScrollPane scrollPane;
+    private GameOverListener gameOverListener;
 
     private void enableMovementAfterDelay() {
         playerTimeout = false;  // Disable further moves immediately when this method is called
@@ -101,7 +102,9 @@ public class GameController {
         checkStationary.play();
 
     }
-
+    public void setGameOverListener(GameOverListener listener) {
+        this.gameOverListener = listener;
+    }
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
         this.isGameStarted = true;

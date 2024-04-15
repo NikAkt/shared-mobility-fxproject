@@ -91,7 +91,7 @@ public class Player implements motion {
      */
     public void decreaseStamina() { //alternatively we could have each item change the stamina
         if (this.stamina > 0) {
-            this.stamina -= 10;
+            this.stamina -= 5;
             if (this.stamina < 0) {
                 this.stamina = 0;
             }

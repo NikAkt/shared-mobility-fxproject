@@ -20,6 +20,7 @@ import javafx.scene.input.KeyCode;
 
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
@@ -113,7 +114,8 @@ public class GameView {
 
     // Label to keep track of total carbon footprint
     Label carbonFootprintLabel; // Label to display carbon footprint
-
+    //**** Game Over Listener ****
+    private GameOverListener gameOverListener;
     public static final double BUTTON_WIDTH = 200;
 
     // **** Font Setting ****
@@ -236,19 +238,19 @@ public class GameView {
         // **** Start Main Game ****
         StackPane mapStackPane = new StackPane();
         Scale scaleTransform = new Scale();
-        scaleTransform.setX(0.7); // Scale down X to 80% of its size
-        scaleTransform.setY(0.7); // Scale down Y to 80% of its size
+        scaleTransform.setX(0.8);
+        scaleTransform.setY(0.8);
         grid.getTransforms().add(scaleTransform);
 
-        mapStackPane.setPadding(new Insets(40)); // Reset any existing padding
-        mapStackPane.setAlignment(Pos.BOTTOM_LEFT); // Align the grid to the bottom-left within its container
-        mapStackPane.setMaxSize(1280, 720); // Set the maximum size of the grid if necessary
+        mapStackPane.setPadding(new Insets(40));
+        mapStackPane.setAlignment(Pos.BOTTOM_LEFT);
+        mapStackPane.setMaxSize(1280, 720);
 
 
-        this.co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
+        this.co2Bar = new ProgressBar(co2Gauge);
         this.co2Bar.setPrefWidth(40);
-        this.co2Bar.setPrefHeight(550); // Adjust the height as needed
-        this.co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
+        this.co2Bar.setPrefHeight(550);
+        this.co2Bar.setStyle("-fx-accent: red;");
 
         // CO2 Level
         this.co2Label = new Label("CO2:" + co2Gauge);
@@ -257,9 +259,9 @@ public class GameView {
 
         VBox co2VBox = new VBox(co2Bar, co2Label);
 
-        HBox co2HBox = new HBox(co2VBox); // Add the VBox to the HBox
-        co2HBox.setAlignment(Pos.CENTER_LEFT); // Set alignment to center left
-        HBox.setHgrow(co2VBox, Priority.ALWAYS); // Allow the VBox to grow as needed
+        HBox co2HBox = new HBox(co2VBox);
+        co2HBox.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(co2VBox, Priority.ALWAYS);
         HBox.setMargin(co2VBox, new Insets(30, 0, 0, 10));
 
         // "Stamina" text
@@ -270,8 +272,8 @@ public class GameView {
         this.staminaLabel.setFont(contentFont);
 
         this.staminaBar = new ProgressBar(staminagauge);
-        this.staminaBar.setPrefWidth(1000); // Adjust width as needed
-        this.staminaBar.setPrefHeight(40); // Adjust height as needed
+        this.staminaBar.setPrefWidth(1000);
+        this.staminaBar.setPrefHeight(40);
         this. staminaBar.setStyle("-fx-accent: yellow;");
 
         // Stamina container setup
@@ -288,11 +290,11 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        IntegerProperty timeSeconds = new SimpleIntegerProperty(180);
+        IntegerProperty timeSeconds = new SimpleIntegerProperty(160);
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
-                        event -> gameOver(primaryStage),
+                        event -> gameOver(primaryStage,stageName),
                         new KeyValue(timeSeconds, 0)
                 )
 
@@ -320,14 +322,14 @@ public class GameView {
 
         // StackPane setup
         StackPane stackRoot = new StackPane();
-        stackRoot.setAlignment(Pos.TOP_RIGHT); // Align all children to the top-right
-        stackRoot.setPadding(new Insets(0)); // Reset any existing padding
+        stackRoot.setAlignment(Pos.TOP_RIGHT);
+        stackRoot.setPadding(new Insets(0));
 
         StackPane.setMargin(mapStackPane, new Insets(40, 0, 45, 120));
 
 
-        mapStackPane.getChildren().clear(); // Remove all current children
-        mapStackPane.getChildren().add(grid); // Assuming 'grid' is already defined as a Node
+        mapStackPane.getChildren().clear();
+        mapStackPane.getChildren().add(grid);
         stackRoot.getChildren().add(gemContainer);
         stackRoot.getChildren().add(timeContainer);
         stackRoot.getChildren().add(co2HBox);
@@ -349,7 +351,7 @@ public class GameView {
         initializeMetroSystem();
 
         primaryStage.setScene(scene);
-        primaryStage.show(); // This is crucial to actually display the window
+        primaryStage.show();
 
     }
 
@@ -366,8 +368,8 @@ public class GameView {
         //BGM Stop
         Media gameMusic1 = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(gameMusic1);
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Set the music to loop continuously
-        mediaPlayer.play(); // Start playing the new background music
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
 
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -409,15 +411,15 @@ public class GameView {
         });
         closeButton.setPrefSize(160, 80); // Set the preferred size of the button
         closeButton.setOnAction(e -> {
-            dialog.close(); // Close the popup
-            // Start the timer after the popup is closed
+            dialog.close();
+
             PauseTransition wait = new PauseTransition(Duration.seconds(5));
             wait.setOnFinished(event -> System.out.println("5 Seconds past"));
             wait.play();
         });
         // Add labels and close button to VBox
         popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
-        VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
+        VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
 
         // Scene and stage setup
         Scene dialogScene = new Scene(popupVbox);
@@ -730,31 +732,71 @@ public class GameView {
      *
      */
 
-    private void gameOver(Stage primarOveryStage) {
+    private void gameOver(Stage primarOveryStage,String stageName) {
+        //Result Calculating
+        Text resultLabel;
+        if (gemCount >= 5) {
+            resultLabel = new Text("Stage Clear!");
+            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
+            setNextStageFlag(stageName);
+            resultLabel.setFont(contentFont);
+        } else {
+            resultLabel = new Text("Stage Fail");
+            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
+            resultLabel.setFont(contentFont);
+        }
+
         // GameOver method
+        int scorePerGem = 100;
+        double scorePenaltyPer10CO2 = 10;
+        int finalScore = (gemCount * scorePerGem) - (int)(co2Gauge / 10.0 * scorePenaltyPer10CO2);
+
+        Text gameOverGem = new Text("Total Gems: " + gemCount);
+        Text gameOverCo2 = new Text("Total CO2: " + String.format("%.1f", co2Gauge));
+
+        gameOverGem.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
+        gameOverGem.setFont(contentFont);
+        gameOverCo2.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
+        gameOverCo2.setFont(contentFont);
+
+        Text finalScoreLabel = new Text("Final Score: " + finalScore);
+        finalScoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
+        finalScoreLabel.setFont(contentFont);
+
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(primaryStage);
         dialog.initStyle(StageStyle.UNDECORATED); // 창 제목 표시줄 제거
 
-        Label gameOverLabel = new Label("GAME OVER, Life is not Easy, Let's Go to Code!");
-        gameOverLabel.setAlignment(Pos.CENTER);
-        gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
+        Text gameOverLabel = new Text("GAME OVER"+"\nGoodbye "+stageName+"!");
 
-        StackPane dialogPane = new StackPane(gameOverLabel);
+        gameOverLabel.textAlignmentProperty().setValue(TextAlignment.CENTER);
+        gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
+        gameOverLabel.setFont(creditFont);
+        // Layout
+        VBox dialogVBox = new VBox(10, gameOverLabel, gameOverGem, gameOverCo2, finalScoreLabel);
+        dialogVBox.setAlignment(Pos.CENTER);
+        dialogVBox.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
+        dialogVBox.getChildren().add(1, resultLabel);
+
+        StackPane dialogPane = new StackPane(dialogVBox);
         dialogPane.setAlignment(Pos.CENTER);
         dialogPane.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
 
-        Scene dialogScene = new Scene(dialogPane, 800, 400);
+        Scene dialogScene = new Scene(dialogPane, 500, 400);
 
         dialog.setScene(dialogScene);
         dialog.show();
 
-        PauseTransition delay = new PauseTransition(Duration.seconds(7));
-        delay.setOnFinished(e -> dialog.close());
-        delay.play();
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(e -> {
+            dialog.close();
+            if (gameOverListener != null) {
+                gameOverListener.onGameOver();  // Notify the listener
+            }
+        });
 
-        dialogScene.setOnMouseClicked(e -> dialog.close());
+        dialogVBox.getChildren().add(closeButton);
     }
 
     /**
@@ -821,7 +863,7 @@ public class GameView {
 
                 Label educationalMsgLabel = new Label();
                 educationalMsgLabel.setText(randomMessage);
-                educationalMsgLabel.setWrapText(false);
+                educationalMsgLabel.setWrapText(true);
                 educationalMsgLabel.setAlignment(Pos.CENTER);
                 educationalMsgLabel.setFont(contentFont);
 
@@ -977,6 +1019,7 @@ public class GameView {
     public void incrementGemCount() {
         gemCount++;
         updateGemCountLabel();
+        educationalPopup();
     }
     /**
      * Updates the stamina value and the corresponding UI elements.
@@ -1005,5 +1048,29 @@ public class GameView {
         MediaPlayer mediaPlayer = new MediaPlayer(no_stamina_effect);
         mediaPlayer.play();
     }
+    private void setNextStageFlag(String currentStage) {
+        List<String> stageNames = new ArrayList<>(stageClearFlags.keySet());
+        for (int i = 0; i < stageNames.size(); i++) {
+            if (stageNames.get(i).equals(currentStage)) {
+                if (i + 1 < stageNames.size()) {
+                    stageClearFlags.put(stageNames.get(i + 1), true);
+                }
+                break;
+            }
+        }
 
+        // Check if all stages are cleared
+        boolean allCleared = true;
+        for (boolean flag : stageClearFlags.values()) {
+            if (!flag) {
+                allCleared = false;
+                break;
+            }
+        }
+
+        // If all stages are cleared, possibly do something or nothing
+        if (allCleared) {
+            // All stages are cleared, you may want to do something here or just leave it empty
+        }
+    }
 }

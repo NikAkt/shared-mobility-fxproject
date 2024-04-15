@@ -27,13 +27,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class MainController {
+public class MainController implements GameOverListener {
     private GameController gameController;
     private SceneController sceneController;
     public GameView gameView;
-
-    int co2Points = 0;
-    int staminaPoints = 0;
 
     public static final double BUTTON_WIDTH = 200;
     public static final int ROWS = 80;
@@ -64,6 +61,7 @@ public class MainController {
         this.gameView = gameView;
         this.sceneController = sceneController;
         this.gameController = initGameController();
+        this.gameController.setGameOverListener(this);
         this.startGame();
     }
 
@@ -150,5 +148,7 @@ public class MainController {
         }
         return false;
     }
-
+    public void onGameOver() {
+        sceneController.switchStageChoose();
+    }
 }
