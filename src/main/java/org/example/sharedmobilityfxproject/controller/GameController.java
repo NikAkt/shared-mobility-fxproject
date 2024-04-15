@@ -6,6 +6,8 @@ import javafx.animation.Timeline;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
@@ -13,6 +15,7 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,11 @@ public class GameController {
     public boolean inTaxi = false;
     public Player playerUno;
 
+
+    //Stamina related
+    private int lastX, lastY;  // Last coordinates of the player
+    private int stationaryTime = 0;  // Time to stay
+
     public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
 
@@ -57,6 +65,14 @@ public class GameController {
         this.sceneController = sceneController;
         this.gameView = gameView;
         this.playerUno = playerUno;
+        lastX = playerUno.getCoordX();
+        lastY = playerUno.getCoordY();
+
+        //Counting staying time on the spot
+        Timeline checkStationary = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAndIncreaseStamina()));
+        checkStationary.setCycleCount(Timeline.INDEFINITE);
+        checkStationary.play();
+
 
     }
 
@@ -416,6 +432,13 @@ public class GameController {
 
     private void movePlayer(int dx, int dy) {
 //        System.out.println(playerUno);
+
+        if (playerUno.getStamina() <= 0) {
+            System.out.println("Not enough stamina to move.");
+            playNoStaminaSound();  // 스테미나가 부족할 때 사운드 재생
+            return;
+        }
+
         playerUno.setIsWalking(true);
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
@@ -593,4 +616,25 @@ public class GameController {
             }
 
         }}
+
+    private void checkAndIncreaseStamina() {
+        if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
+            // stay certain Coordinates
+            stationaryTime += 1;
+            if (stationaryTime >= 1) {
+                playerUno.increaseStamina();  // recover Stamina
+                gameView.updateStamina(playerUno.getStamina());
+                stationaryTime = 0;
+            }
+        } else {
+            stationaryTime = 0;
+            lastX = playerUno.getCoordX();
+            lastY = playerUno.getCoordY();
+        }
+    }
+    private void playNoStaminaSound() {
+        Media no_stamina_effect = new Media(new File("src/main/resources/music/no_stamina.mp3").toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(no_stamina_effect);
+        mediaPlayer.play();
+    }
 }

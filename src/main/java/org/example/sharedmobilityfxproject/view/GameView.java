@@ -269,6 +269,7 @@ public class GameView {
                         event -> gameOver(primaryStage),
                         new KeyValue(timeSeconds, 0)
                 )
+
         ).play();
 
         timeSeconds.addListener((obs, oldVal, newVal) -> {

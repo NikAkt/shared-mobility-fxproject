@@ -75,7 +75,12 @@ public class Player implements motion {
         }
     }
     public void increaseStamina(){
-        stamina=stamina+10;
+        if (stamina < 95) {
+            stamina += 5;
+        } else {
+            stamina = 100;
+        }
+        System.out.println("Stamina increased to: " + stamina);
     }
 
     public void initCell(Grid grid) {
