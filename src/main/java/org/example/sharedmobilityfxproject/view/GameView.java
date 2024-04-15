@@ -213,7 +213,7 @@ public class GameView {
 
         StackPane root = new StackPane(mediaView, imageView, buttonBox);
         StackPane.setAlignment(imageView, Pos.TOP_CENTER);
-        StackPane.setMargin(imageView, new Insets(250, 0, 0, 0));
+        StackPane.setMargin(imageView, new Insets(50, 0, 0, 0));
         StackPane.setAlignment(buttonBox, Pos.CENTER);
 
         scene = new Scene(root, WIDTH,HEIGHT);
