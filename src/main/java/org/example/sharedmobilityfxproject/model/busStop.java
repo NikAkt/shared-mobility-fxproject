@@ -17,6 +17,11 @@ public class busStop extends Cell {
         this.x = i;
         this.y = j;
         this.flagIsPlayerHere = false; // Initialize to false
+        String imagePath = getClass().getResource("/images/busStop.png").toExternalForm();
+        setPrefHeight(10);  // Set the preferred height to 10 pixels
+        setPrefWidth(3);
+        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                "-fx-background-size: contain; -fx-background-position: center center;");
         getStyleClass().add("busStop");
     }
 
