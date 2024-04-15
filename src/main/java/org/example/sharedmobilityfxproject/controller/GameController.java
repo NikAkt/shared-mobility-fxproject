@@ -646,7 +646,6 @@ public class GameController {
                     stationaryTime = 0;
                 }
             } else {
-
                 stationaryTime = 0;
                 lastX = playerUno.getCoordX();
                 lastY = playerUno.getCoordY();
