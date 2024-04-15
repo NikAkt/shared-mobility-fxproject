@@ -112,36 +112,75 @@ System.out.println("GameController startPlayingGame");
         // Initialise Obstacles
 //            obstacles = new ArrayList<>();
 
-        // Define the size of the obstacle blocks and the gap between them
+//        // Define the size of the obstacle blocks and the gap between them
+//        int obstacleWidth = 5;
+//        int obstacleHeight = 3;
+//        int gap = 5;
+//
+//
+//        // Calculate the number of obstacle blocks in each direction
+//        int numBlocksX = (gameView.getColumns() - 2 * gap) / (obstacleWidth + gap);
+//        int numBlocksY = (gameView.getRows() - 2 * gap) / (obstacleHeight + gap);
+//
+//
+//        // For each block position
+//        for (int bx = 0; bx < numBlocksX; bx++) {
+//            for (int by = 0; by < numBlocksY; by++) {
+//                // Calculate the top-left corner of the block
+//                int x = gap + bx * (obstacleWidth + gap);
+//                int y = gap + by * (obstacleHeight + gap);
+//
+//                // Create the obstacle block
+//                for (int i = 0; i < obstacleWidth; i++) {
+//                    for (int j = 0; j < obstacleHeight; j++) {
+//                        obstacles.add(new Obstacle(gameView.grid, x + i, y + j));
+//                        List<Integer> coordinatePair = new ArrayList<>();
+//
+//                        coordinatePair.add(x + i);
+//                        coordinatePair.add(y + j);
+//                    }
+//                }
+//            }
+//        }
+
+        // Define the size and gap of the obstacles
         int obstacleWidth = 5;
         int obstacleHeight = 3;
         int gap = 5;
 
+        // Fill the grid with obstacles
+        Map map = new Map();
+        int[][] mapArray = new int[80][120];
+        try {
+            mapArray = map.getMapArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        // Calculate the number of obstacle blocks in each direction
-        int numBlocksX = (gameView.getColumns() - 2 * gap) / (obstacleWidth + gap);
-        int numBlocksY = (gameView.getRows() - 2 * gap) / (obstacleHeight + gap);
-
-
-        // For each block position
-        for (int bx = 0; bx < numBlocksX; bx++) {
-            for (int by = 0; by < numBlocksY; by++) {
-                // Calculate the top-left corner of the block
-                int x = gap + bx * (obstacleWidth + gap);
-                int y = gap + by * (obstacleHeight + gap);
-
-                // Create the obstacle block
-                for (int i = 0; i < obstacleWidth; i++) {
-                    for (int j = 0; j < obstacleHeight; j++) {
-                        obstacles.add(new Obstacle(gameView.grid, x + i, y + j));
-                        List<Integer> coordinatePair = new ArrayList<>();
-
-                        coordinatePair.add(x + i);
-                        coordinatePair.add(y + j);
+        for (int row = 0; row < mapArray.length; row++) {
+            for (int column = 0; column < mapArray[row].length; column++) {
+                // Only start a new obstacle if this position is marked for an obstacle start
+                if (mapArray[row][column] == 1) {
+                    // Create each obstacle within its width and height bounds
+                    for (int i = 0; i < obstacleWidth; i++) {
+                        for (int j = 0; j < obstacleHeight; j++) {
+                            int obstacleColumn = column + i;
+                            int obstacleRow = row + j;
+                            if (obstacleColumn < mapArray[row].length && obstacleRow < mapArray.length) {
+                                Obstacle obstacle = new Obstacle(gameView.grid, obstacleColumn, obstacleRow);
+                                obstacles.add(obstacle);
+                            }
+                        }
                     }
+                    // Skip columns covered by the width of the obstacle and the gap to avoid placing overlapping obstacles
+                    column += obstacleWidth + gap - 1;
                 }
             }
+            // Increase the row index by obstacle height and gap after processing a row that starts an obstacle
+            row += obstacleHeight + gap - 1;
         }
+
+
         obstacleCoordinates = new ArrayList<>();
 
         for (Obstacle obstacle : obstacles) {
