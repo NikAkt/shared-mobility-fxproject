@@ -268,12 +268,12 @@ System.out.println("GameController startPlayingGame");
                         Obstacle obstacle = new Obstacle(gameView.grid, column, row);
                         obstacles.add(obstacle);
                         break;
-//                    case 2:  // Color the cell green
-//                        gameView.grid.setColor(column, row, Color.GREEN);
-//                        break;
-//                    case 3:  // Color the cell blue
-//                        gameView.grid.setColor(column, row, Color.BLUE);
-//                        break;
+                    case 2:  // Color the cell green
+                        gameView.grid.setCellColor(column, row, "GREEN");
+                        break;
+                    case 3:  // Color the cell blue
+                        gameView.grid.setCellColor(column, row, "BLUE");
+                        break;
                     case 4:  // Mark as bus stop
                         busStop busS = new busStop(column,row);
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
