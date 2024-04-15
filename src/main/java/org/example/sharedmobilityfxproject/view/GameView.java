@@ -148,8 +148,11 @@ public class GameView {
 
         //initialise the stamina bar
         this.staminaBar = new ProgressBar(1.0);
+        this.staminaLabel = new Label("Stamina: 100%");
+
         //initialise the co2 bar
         this.co2Bar = new ProgressBar(0);
+        this.co2Label = new Label("CO2: 0");
     }
     /**
      * Initializes the stage clear flags for each stage in the game.
@@ -238,15 +241,15 @@ public class GameView {
         mapStackPane.setMaxSize(1280, 720); // Set the maximum size of the grid if necessary
 
 
-        co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
-        co2Bar.setPrefWidth(40);
-        co2Bar.setPrefHeight(550); // Adjust the height as needed
-        co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
+        this.co2Bar = new ProgressBar(co2Gauge); // Example value, adjust as needed
+        this.co2Bar.setPrefWidth(40);
+        this.co2Bar.setPrefHeight(550); // Adjust the height as needed
+        this.co2Bar.setStyle("-fx-accent: red;"); // Set the fill color to red
 
         // CO2 Level
-        co2Label = new Label("CO2:" + co2Gauge);
-        co2Label.setFont(new Font("Arial", 16));
-        co2Label.setFont(contentFont);
+        this.co2Label = new Label("CO2:" + co2Gauge);
+        this.co2Label.setFont(new Font("Arial", 16));
+        this.co2Label.setFont(contentFont);
 
         VBox co2VBox = new VBox(co2Bar, co2Label);
 
@@ -256,16 +259,16 @@ public class GameView {
         HBox.setMargin(co2VBox, new Insets(30, 0, 0, 10));
 
         // "Stamina" text
-        staminaLabel = new Label("Stamina:" +
+        this.staminaLabel = new Label("Stamina:" +
                 " " + staminagauge+"%");
 
-        staminaLabel.setFont(javafx.scene.text.Font.font(14));
-        staminaLabel.setFont(contentFont);
+        this.staminaLabel.setFont(javafx.scene.text.Font.font(14));
+        this.staminaLabel.setFont(contentFont);
 
-        staminaBar = new ProgressBar(staminagauge);
-        staminaBar.setPrefWidth(1100); // Adjust width as needed
-        staminaBar.setPrefHeight(40); // Adjust height as needed
-        staminaBar.setStyle("-fx-accent: yellow;");
+        this.staminaBar = new ProgressBar(staminagauge);
+        this.staminaBar.setPrefWidth(1100); // Adjust width as needed
+        this.staminaBar.setPrefHeight(40); // Adjust height as needed
+        this. staminaBar.setStyle("-fx-accent: yellow;");
 
         // Stamina container setup
         VBox staminaContainer = new VBox(staminaLabel, staminaBar);

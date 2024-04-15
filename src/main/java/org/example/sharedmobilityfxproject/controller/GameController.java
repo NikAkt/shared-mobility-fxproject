@@ -33,6 +33,8 @@ public class GameController {
     public int currentRow;
     public int currentColumn;
 
+    //GameStart Flag
+    private boolean isGameStarted = false;
     // Newly Added
     public boolean playerMovementEnabled = true;
     public boolean onBus = false;
@@ -78,6 +80,7 @@ public class GameController {
 
     public void startPlayingGame(String stageName) {
         sceneController.initGameScene(stageName);
+        this.isGameStarted = true;
         System.out.println("GameController startPlayingGame");
 
         // Fill the grid with cells
@@ -634,18 +637,21 @@ public class GameController {
      * If the player's current coordinates are not the same as the last recorded coordinates, it resets the stationary time and updates the last recorded coordinates to the current coordinates.
      */
     private void checkAndIncreaseStamina() {
-        if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
-            // stay certain Coordinates
-            stationaryTime += 1;
-            if (stationaryTime >= 1) {
-                playerUno.increaseStamina();  // recover Stamina
-                gameView.updateStamina(playerUno.getStamina());
+        if (isGameStarted && playerUno.getStamina() < 100) {
+            if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
+                stationaryTime += 1;
+                if (stationaryTime >= 1) {
+                    playerUno.increaseStamina();  // 스태미나 회복
+                    gameView.updateStamina(playerUno.getStamina());
+                    stationaryTime = 0;
+                }
+            } else {
+
                 stationaryTime = 0;
+                lastX = playerUno.getCoordX();
+                lastY = playerUno.getCoordY();
             }
-        } else {
-            stationaryTime = 0;
-            lastX = playerUno.getCoordX();
-            lastY = playerUno.getCoordY();
+
         }
     }
 
