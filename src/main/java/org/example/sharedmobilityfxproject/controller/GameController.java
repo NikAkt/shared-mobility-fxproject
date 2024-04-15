@@ -106,39 +106,6 @@ System.out.println("GameController startPlayingGame");
 //            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
 //            vbox.setAlignment(Pos.TOP_LEFT);
 
-
-        // Initialise Obstacles for x = 0
-        // Initialise Obstacles
-        // Initialise Obstacles
-//            obstacles = new ArrayList<>();
-
-//        // Define the size of the obstacle blocks and the gap between them
-//        int obstacleWidth = 5;
-//        int obstacleHeight = 3;
-//        int gap = 5;
-//
-//
-//        // Calculate the number of obstacle blocks in each direction
-//        int numBlocksX = (gameView.getColumns() - 2 * gap) / (obstacleWidth + gap);
-//        int numBlocksY = (gameView.getRows() - 2 * gap) / (obstacleHeight + gap);
-//
-//
-//        // For each block position
-//        for (int bx = 0; bx < numBlocksX; bx++) {
-//            for (int by = 0; by < numBlocksY; by++) {
-//                // Calculate the top-left corner of the block
-//                int x = gap + bx * (obstacleWidth + gap);
-//                int y = gap + by * (obstacleHeight + gap);
-//
-//                // Create the obstacle block
-//                for (int i = 0; i < obstacleWidth; i++) {
-//                    for (int j = 0; j < obstacleHeight; j++) {
-//                        obstacles.add(new Obstacle(gameView.grid, x + i, y + j));
-//                    }
-//                }
-//            }
-//        }
-
 //        // Sample map array
 //        int[][] mapArray = {
 //                {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -153,24 +120,9 @@ System.out.println("GameController startPlayingGame");
 //                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
 //        };
 
-        // Fill the grid with obstacles
+        // Start filling the grid with obstacles and other stuff
         Map map = new Map();
-        int[][] mapArray = new int[80][120];
-        try {
-            mapArray = map.getMapArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        for (int row = 0; row < mapArray.length; row++) {
-            for (int column = 0; column < mapArray[row].length; column++) {
-                if (mapArray[row][column] == 1) { // Check if the cell indicates an obstacle
-                    // Create an obstacle for each cell marked with 1
-                    Obstacle obstacle = new Obstacle(gameView.grid, column, row);
-                    obstacles.add(obstacle);
-                }
-            }
-        }
+        fillGridWithMapArray(map);
 
 
 
@@ -284,6 +236,34 @@ System.out.println("GameController startPlayingGame");
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
+    }
+
+    /**
+     * This method fills the grid with obstacles.
+     * It first creates a new Map object and initializes a 2D array with dimensions 80x120.
+     * It then attempts to get the map array from the Map object.
+     * If an exception occurs during this process, it is caught and printed.
+     * The method then iterates over each cell in the map array.
+     * If a cell is marked with a 1, it indicates an obstacle.
+     * For each cell marked with 1, an Obstacle object is created and added to the obstacles list.
+     */
+    public void fillGridWithMapArray(Map map) {
+        int[][] mapArray = new int[80][120];
+        try {
+            mapArray = map.getMapArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (int row = 0; row < mapArray.length; row++) {
+            for (int column = 0; column < mapArray[row].length; column++) {
+                if (mapArray[row][column] == 1) { // Check if the cell indicates an obstacle
+                    // Create an obstacle for each cell marked with 1
+                    Obstacle obstacle = new Obstacle(gameView.grid, column, row);
+                    obstacles.add(obstacle);
+                }
+            }
+        }
     }
 
     private void generateGems(Grid grid, int numberOfGems) {
