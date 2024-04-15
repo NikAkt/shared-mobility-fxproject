@@ -1,14 +1,16 @@
 package org.example.sharedmobilityfxproject.model;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import javafx.scene.image.ImageView;
 public class Player implements motion {
     private int x; // x position
     private int y; // y position
     private int speed; // speed
-    public double speedTime = .5;
+    public double speedTime = .25;
     private Node playerVisual;
     private double co2; // co2 produced
     private Cell playerCell;
@@ -22,9 +24,12 @@ public class Player implements motion {
         this.stamina=100;
         this.speed=10;
         this.co2=0;
-        this.playerVisual = new Circle(5, Color.BLUE);
 
-
+        Image sprite = new Image(String.valueOf(getClass().getResource("/images/playerSprite.png")));
+        this.playerVisual = new ImageView(sprite);
+        ((ImageView) this.playerVisual).setFitHeight(10); // Set the size as needed
+        ((ImageView) this.playerVisual).setFitWidth(30);
+        ((ImageView) this.playerVisual).setPreserveRatio(true);
     }
 
     public int getCoordX() {

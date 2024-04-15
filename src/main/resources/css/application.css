@@ -25,8 +25,8 @@
 }
 
 .cell-obstacle {
-    -fx-background-color: #808080;
-    -fx-background-radius: 0%;
+-fx-background-image: url('/images/icon.png');
+-fx-background-size: cover; -fx-background-position: center center;
 }
 
 .cell.finish {

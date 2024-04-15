@@ -1,11 +1,16 @@
 package org.example.sharedmobilityfxproject.model;
 
 
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 /**
  * Obstacle class represents an obstacle on the grid.
  * It is responsible for managing the state of the cells that form the obstacle.
  */
 public class Obstacle {
+    private Node obstacleVisual;
 
     private Grid grid;
     private int column;
@@ -23,6 +28,7 @@ public class Obstacle {
         this.grid = grid;
         this.column = column;
         this.row = row;
+
         createObstacle();
     }
 
@@ -38,6 +44,7 @@ public class Obstacle {
             for (int r : rows) {
                 if (col >= 0 && col < grid.getColumns() && r >= 0 && r < grid.getRows()) {
                     Cell obstacleCell = grid.getCell(col, r);
+//
                     obstacleCell.getStyleClass().add("cell-obstacle");
                 }
             }
