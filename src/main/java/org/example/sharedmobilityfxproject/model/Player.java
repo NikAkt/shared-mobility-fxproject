@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 public class Player implements motion {
     private int x; // x position
     private int y; // y position
-    private int stamina; // stamina
+    private double stamina; // stamina
     private int speed; // speed
     public double speedTime = .25;
     private Node playerVisual;
@@ -20,7 +20,7 @@ public class Player implements motion {
     public boolean isWalking = false;
     public boolean isUnderground = false;
 
-    public Player(int x, int y,int stamina,int speed,double co2) {
+    public Player(int x, int y,double stamina,int speed,double co2) {
         this.x = x;
         this.y = y;
         this.stamina=100;
@@ -60,7 +60,7 @@ public class Player implements motion {
         this.co2 = co2;
     }
     public void setStamina(double stamina) {
-        this.stamina=stamina;
+        this.stamina = stamina;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class Player implements motion {
     public void setY(int j) {
         this.y = j;
     }
-    public void setCell(Cell newCell, Grid grid) {
+    public void setCell(Cell newCell) {
         // Retrieve grid dimensions
         double cellWidth = grid.getWidth() / grid.getColumns();
         double cellHeight = grid.getHeight() / grid.getRows();

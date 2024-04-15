@@ -986,7 +986,7 @@ public class GameView {
      *
      * @param newStamina The new stamina value to be set.
      */
-    public void updateStamina(int newStamina) {
+    public void updateStamina(double newStamina) {
         this.staminagauge = newStamina;
         double staminaFraction = newStamina / 100.0;
         this.staminaBar.setProgress(staminaFraction);
