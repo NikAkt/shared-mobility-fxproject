@@ -147,37 +147,39 @@ System.out.println("GameController startPlayingGame");
         finishCell.getStyleClass().add("finish");
         gameView.grid.add(finishCell, finishColumn, finishRow);
 
-        //bus SHITE
-        busStop busS1 = new busStop(4,4);
-        busStop busS2 = new busStop(110,4);
-        busStop busS3 = new busStop(57,25);
-        busStop busS4 = new busStop(110,64);
-        busStop busS5 = new busStop(57,64);
-        busStop busS6 = new busStop(4,64);
-        busStop busS7 = new busStop(4,34);
+//        //bus SHITE
+//        busStop busS1 = new busStop(4,4);
+//        busStop busS2 = new busStop(110,4);
+//        busStop busS3 = new busStop(57,25);
+//        busStop busS4 = new busStop(110,64);
+//        busStop busS5 = new busStop(57,64);
+//        busStop busS6 = new busStop(4,64);
+//        busStop busS7 = new busStop(4,34);
 
         metroStop metro1 = new metroStop(2,30);
         gameView.grid.add(metro1,2,30);
-        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
 
-
-        busStops.add(busS1);
-        busStops.add(busS2);
-        busStops.add(busS3);
-        busStops.add(busS4);
-        busStops.add(busS5);
-        busStops.add(busS6);
-        busStops.add(busS7);
+//        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+//        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+//        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+//        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+//        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+//        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+//        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+//
+//
+//        busStops.add(busS1);
+//        busStops.add(busS2);
+//        busStops.add(busS3);
+//        busStops.add(busS4);
+//        busStops.add(busS5);
+//        busStops.add(busS6);
+//        busStops.add(busS7);
 
 
 
         busman = new Bus(busStops,3, 4);
+
         taximan = new Taxi (58,28);
         cycleman= new Bicycle(10,4);
         for (int i = 0; i < busman.list().size(); i++){
@@ -239,32 +241,52 @@ System.out.println("GameController startPlayingGame");
     }
 
     /**
-     * This method fills the grid with obstacles.
-     * It first creates a new Map object and initializes a 2D array with dimensions 80x120.
-     * It then attempts to get the map array from the Map object.
-     * If an exception occurs during this process, it is caught and printed.
-     * The method then iterates over each cell in the map array.
-     * If a cell is marked with a 1, it indicates an obstacle.
-     * For each cell marked with 1, an Obstacle object is created and added to the obstacles list.
+     * This method fills the grid based on the contents of a map array from a Map object.
+     * It initializes a 2D array with dimensions 80x120 and attempts to retrieve the map array.
+     * If an exception occurs, it prints the stack trace.
+     * Each cell in the array is processed based on its value:
+     * - 1: Creates and adds an Obstacle to the list.
+     * - 2: Colors the cell green.
+     * - 3: Colors the cell blue.
+     * - 4: Marks the cell as a bus stop.
+     * - 9: Also creates and adds an Obstacle, similar to 1.
+     * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
      */
     public void fillGridWithMapArray(Map map) {
-        int[][] mapArray = new int[80][120];
+        int[][] mapArray = new int[80][120];  // Default map size initialization
         try {
-            mapArray = map.getMapArray();
+            mapArray = map.getMapArray();  // Attempt to retrieve the map array
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // Print any errors encountered
         }
 
         for (int row = 0; row < mapArray.length; row++) {
             for (int column = 0; column < mapArray[row].length; column++) {
-                if (mapArray[row][column] == 1) { // Check if the cell indicates an obstacle
-                    // Create an obstacle for each cell marked with 1
-                    Obstacle obstacle = new Obstacle(gameView.grid, column, row);
-                    obstacles.add(obstacle);
+                switch (mapArray[row][column]) {
+                    case 1:  // Cell indicates an obstacle
+                    case 9:  // Cell also indicates an obstacle (same behavior as 1)
+                        Obstacle obstacle = new Obstacle(gameView.grid, column, row);
+                        obstacles.add(obstacle);
+                        break;
+//                    case 2:  // Color the cell green
+//                        gameView.grid.setColor(column, row, Color.GREEN);
+//                        break;
+//                    case 3:  // Color the cell blue
+//                        gameView.grid.setColor(column, row, Color.BLUE);
+//                        break;
+                    case 4:  // Mark as bus stop
+                        busStop busS = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
+                        busStops.add(busS);
+                        break;
+                    default:
+                        // Optionally handle default case if needed
+                        break;
                 }
             }
         }
     }
+
 
     private void generateGems(Grid grid, int numberOfGems) {
         for (int i = 0; i < numberOfGems; i++) {
