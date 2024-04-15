@@ -21,7 +21,8 @@
     -fx-background-color: #4f1d1d;
 }
 .gem {
-    -fx-background-color: purple;
+    -fx-max-height: 100px;
+    -fx-max-width: 100px;
 }
 
 .cell-obstacle {

@@ -19,9 +19,19 @@ public class Gem extends Cell {
         getStyleClass().add("gem");
         setUserData("gem");
         String imagePath = getClass().getResource("/images/gem.png").toExternalForm();
+
+
+
+
+        // Set the fixed size of the Gem node to match the cell size
+        setPrefHeight(10);  // Set the preferred height to 10 pixels
+        setPrefWidth(8);    // Set the preferred width to 8 pixels
+
+
         this.setStyle("-fx-background-image: url('" + imagePath + "');" +
-                "-fx-background-size: cover; -fx-background-position: center center;");
-        this.getStyleClass().add("cell-obstacle");// Set a custom attribute to identify the gem cell
+                "-fx-background-size: contain; -fx-background-position: center center;");
+        this.getStyleClass().add("gem");// Set a custom attribute to identify the gem cell
+
     }
 
     // Override the highlight method to play the gem collect sound and increment the gem count
