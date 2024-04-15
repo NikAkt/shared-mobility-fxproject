@@ -124,4 +124,15 @@ public class Map {
             e.printStackTrace();
         }
     }
+
+    public int[][] getMapArray() {
+
+        int[][] arr = new int[80][120]; // change the rows and columns for your convinience
+        try {
+            arr = loadMap();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arr;
+    }
 }
