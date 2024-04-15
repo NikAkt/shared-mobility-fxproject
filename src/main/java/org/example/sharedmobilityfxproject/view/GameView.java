@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -134,6 +134,7 @@ public class GameView {
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
+    private ScrollPane scrollPane;
 
     // Boolean flag to track if the player is in a taxi
     boolean hailTaxi = false;
@@ -143,6 +144,12 @@ public class GameView {
 
     public GameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
+//        scrollPane = new ScrollPane(grid);
+//        scrollPane.setPannable(true);
+//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+//        scrollPane.setPrefViewportWidth(100); // Viewport size
+//        scrollPane.setPrefViewportHeight(611);
     }
 
     public Stage getPrimaryStage() {
