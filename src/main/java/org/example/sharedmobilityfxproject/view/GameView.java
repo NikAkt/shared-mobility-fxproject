@@ -144,12 +144,7 @@ public class GameView {
 
     public GameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
-//        scrollPane = new ScrollPane(grid);
-//        scrollPane.setPannable(true);
-//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-//        scrollPane.setPrefViewportWidth(100); // Viewport size
-//        scrollPane.setPrefViewportHeight(611);
+
     }
 
     public Stage getPrimaryStage() {
