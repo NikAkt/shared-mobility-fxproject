@@ -1,8 +1,6 @@
 package org.example.sharedmobilityfxproject.controller;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
@@ -57,6 +55,8 @@ public class GameController {
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
     private Timer timer = new Timer();  // Create a Timer object
     private ScrollPane scrollPane;
+    private double cellWidth;
+    private double cellHeight;
 
     private void enableMovementAfterDelay() {
         playerTimeout = false;  // Disable further moves immediately when this method is called
@@ -82,7 +82,8 @@ public class GameController {
         this.sceneController = sceneController;
         this.gameView = gameView;
         this.playerUno = playerUno;
-
+        this.cellWidth = gameView.grid.width/gameView.grid.columns;
+        this.cellHeight = gameView.grid.height/gameView.grid.rows;
         this.sceneController.initGameScene();
         this.startPlayingGame();
     }
@@ -492,13 +493,28 @@ public class GameController {
         // Return true if it can move, false if there's an obstacle
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
+    public void updateScalePivot(Node node, double newPivotX, double newPivotY, double durationSeconds) {
+        Duration duration = Duration.seconds(durationSeconds);
 
+        double oldPivotX = node.getScaleX();
+        double oldPivotY = node.getScaleY();
+
+
+        Timeline timeline = new Timeline();
+        KeyValue kvX = new KeyValue(gameView.scale.pivotXProperty(), newPivotX);
+        KeyValue kvY = new KeyValue(gameView.scale.pivotYProperty(), newPivotY);
+        KeyFrame kf = new KeyFrame(duration, kvX, kvY);
+
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+    }
     private void movePlayer(int dx, int dy) {
 
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
-
+        double pivotX = (newColumn + 0.5) * cellWidth;  // cellWidth is the width of one grid cell
+        double pivotY = (newRow + 0.5) * cellHeight;
         if (gameView.isMetroSceneActive) {
             playerUno.getCell().unhighlight();
 
@@ -526,7 +542,7 @@ public class GameController {
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
 
-
+            updateScalePivot(gameView.grid, pivotX, pivotY, 1);
             // Setup to follow player
 
 //            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {

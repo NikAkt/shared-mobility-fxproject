@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 
 import javafx.scene.input.KeyCode;
 
+import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -140,7 +141,7 @@ public class GameView {
     boolean hailTaxi = false;
 
     private String viewType;
-
+    public Scale scale;
 
     public GameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -182,7 +183,11 @@ public class GameView {
     public void setupGameScene(){
         StackPane root = new StackPane();
         scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
-
+        StackPane mapStackPane = new StackPane();
+         scale = new Scale();
+        scale.setX(1.5);
+        scale.setY(1.5);
+        grid.getTransforms().add(scale);
         // Settings
         Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
         primaryStage.getIcons().add(icon);
