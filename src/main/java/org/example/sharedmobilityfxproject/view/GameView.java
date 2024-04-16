@@ -197,12 +197,11 @@ public class GameView {
         gemCountLabel.setAlignment(Pos.TOP_LEFT);
         gemCountLabel.setPadding(new Insets(10));
 
-//            ka = new GameController(this, playerUno);
+
 
         // Add background image, grid, and gem count label to the root StackPane
         root.getChildren().addAll(grid);
 
-//            System.out.println(busS1.getX());
         // create scene and set to stage
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
         initializeMetroSystem();
