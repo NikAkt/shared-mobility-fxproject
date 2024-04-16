@@ -527,15 +527,8 @@ public class GameController {
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
-
-
-            // Setup to follow player
-
-//            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
-//                scrollPane.setHvalue(playerUno.getCoordX() / gameView.grid.getWidth());
-//                scrollPane.setVvalue(playerUno.getCoordY() / gameView.grid.getHeight());
-//            });
         }
+
         interactWithCell(gameView.grid.getCell(newColumn, newRow));
         if (inTaxi) {
             // Assuming taximan is accessible from here, or find a way to access it
