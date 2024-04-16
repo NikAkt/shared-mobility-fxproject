@@ -273,7 +273,9 @@ public class GameController {
                     case 2:  // Color the cell green
                         gameView.grid.setCellColor(column, row, "GREEN");
                         break;
-                    case 3:  // Color the cell blue
+                    case 3:  // Initialise water as obstalces and then colour the cell blue
+                        Obstacle obstacleWater = new Obstacle(gameView.grid, column, row);
+                        obstacles.add(obstacleWater);
                         gameView.grid.setCellColor(column, row, "BLUE");
                         break;
                     case 4:  // Mark as bus stop
