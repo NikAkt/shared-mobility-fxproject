@@ -67,4 +67,19 @@ public class SceneController {
         gameView.getPrimaryStage().show();
     }
 
+    public void increaseCo2GaugeUpdate(Double co2Amount){
+        gameView.increaseCo2Gauge(co2Amount);
+    }
+
+    public double getCo2Gauge() {
+        return gameView.getCo2Gauge();
+    }
+
+    public void setCo2Gauge(double co2Gauge) {
+        gameView.setCo2Gauge(co2Gauge);
+    }
+
+    public void missionFail() {
+        gameView.gameFail();
+    }
 }

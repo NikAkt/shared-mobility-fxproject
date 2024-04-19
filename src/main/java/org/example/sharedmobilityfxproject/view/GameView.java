@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.*;
+
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -160,6 +161,7 @@ public class GameView {
         this.co2Bar = new ProgressBar(0);
         this.co2Label = new Label("CO2: 0");
     }
+
     /**
      * Initializes the stage clear flags for each stage in the game.
      * The flags are stored in a HashMap where the key is the stage name and the value is a boolean indicating whether the stage has been cleared.
@@ -185,6 +187,7 @@ public class GameView {
     public Scene getScene() {
         return scene;
     }
+
     /**
      * Sets up the main menu of the game.
      * This includes the creation and styling of the game start, game credit, and exit buttons.
@@ -218,7 +221,7 @@ public class GameView {
         StackPane.setMargin(imageView, new Insets(50, 0, 0, 0));
         StackPane.setAlignment(buttonBox, Pos.CENTER);
 
-        scene = new Scene(root, WIDTH,HEIGHT);
+        scene = new Scene(root, WIDTH, HEIGHT);
 
     }
 
@@ -247,26 +250,31 @@ public class GameView {
         mapStackPane.setMaxSize(1280, 720);
 
 
-        this.co2Bar = new ProgressBar(co2Gauge);
-        this.co2Bar.setPrefWidth(40);
-        this.co2Bar.setPrefHeight(550);
+        // CO2 ProgressBar setup
+        this.co2Bar = new ProgressBar(this.co2Gauge);
+        this.co2Bar.setPrefWidth(500);  // Adjust the preferred width to fit the vertical layout
+        this.co2Bar.setPrefHeight(40);  // Adjust the height accordingly
         this.co2Bar.setStyle("-fx-accent: red;");
+        this.co2Bar.setRotate(270);
 
-        // CO2 Level
-        this.co2Label = new Label("CO2:" + co2Gauge);
-        this.co2Label.setFont(new Font("Arial", 16));
-        this.co2Label.setFont(contentFont);
+        // CO2 Label setup
+        this.co2Label = new Label("CO2: " + this.co2Gauge);
+        this.co2Label.setFont(new Font("Arial", 16));  // Set the font directly
+        this.co2Label.setFont(contentFont);  // Assuming 'contentFont' is already defined elsewhere
 
-        VBox co2VBox = new VBox(co2Bar, co2Label);
+        // VBox for vertical layout
+        VBox co2VBox = new VBox();  // Add ProgressBar first, then the Label
+        co2VBox.getChildren().add(this.co2Bar);
+        co2VBox.getChildren().add(this.co2Label);
+        VBox.setMargin(this.co2Bar, new Insets(200, 0, 0, -200)); // Top margin of 100
+        co2VBox.setAlignment(Pos.CENTER);  // Center the contents in the VBox
+        VBox.setMargin(this.co2Label, new Insets(240, 0, 0, -190));  // Add some space between the bar and the label
 
-        HBox co2HBox = new HBox(co2VBox);
-        co2HBox.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(co2VBox, Priority.ALWAYS);
-        HBox.setMargin(co2VBox, new Insets(30, 0, 0, 10));
+        co2VBox.setPrefHeight(600);
 
         // "Stamina" text
         this.staminaLabel = new Label("Stamina:" +
-                " " + staminagauge+"%");
+                " " + this.staminagauge + "%");
 
         this.staminaLabel.setFont(javafx.scene.text.Font.font(14));
         this.staminaLabel.setFont(contentFont);
@@ -274,7 +282,7 @@ public class GameView {
         this.staminaBar = new ProgressBar(staminagauge);
         this.staminaBar.setPrefWidth(1000);
         this.staminaBar.setPrefHeight(40);
-        this. staminaBar.setStyle("-fx-accent: yellow;");
+        this.staminaBar.setStyle("-fx-accent: yellow;");
 
         // Stamina container setup
         VBox staminaContainer = new VBox(staminaLabel, staminaBar);
@@ -294,7 +302,7 @@ public class GameView {
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
-                        event -> gameOver(primaryStage,stageName),
+                        event -> gameOver(primaryStage, stageName),
                         new KeyValue(timeSeconds, 0)
                 )
 
@@ -326,15 +334,37 @@ public class GameView {
         stackRoot.setPadding(new Insets(0));
 
         StackPane.setMargin(mapStackPane, new Insets(40, 0, 45, 120));
-
-
         mapStackPane.getChildren().clear();
         mapStackPane.getChildren().add(grid);
-        stackRoot.getChildren().add(gemContainer);
-        stackRoot.getChildren().add(timeContainer);
-        stackRoot.getChildren().add(co2HBox);
-        stackRoot.getChildren().add(staminaContainer);
-        stackRoot.getChildren().add(mapStackPane);
+
+        AnchorPane anchorRoot = new AnchorPane();
+
+
+        AnchorPane.setTopAnchor(mapStackPane, 0.0);
+        AnchorPane.setBottomAnchor(mapStackPane, 0.0);
+        AnchorPane.setLeftAnchor(mapStackPane, 60.0);
+        AnchorPane.setRightAnchor(mapStackPane, 0.0);
+
+
+        AnchorPane.setBottomAnchor(staminaContainer, 10.0);
+        AnchorPane.setLeftAnchor(staminaContainer, 0.0);
+        AnchorPane.setRightAnchor(staminaContainer, 0.0);
+        staminaContainer.setMaxWidth(Double.MAX_VALUE);
+
+
+        AnchorPane.setTopAnchor(timeContainer, 20.0);
+        AnchorPane.setLeftAnchor(timeContainer, 0.0);
+        AnchorPane.setRightAnchor(timeContainer, 0.0);
+        timeContainer.setMaxWidth(Double.MAX_VALUE);
+
+
+        AnchorPane.setTopAnchor(co2VBox, 10.0);  // Top anchor with a margin
+        AnchorPane.setLeftAnchor(co2VBox, 0.0);
+
+        AnchorPane.setTopAnchor(gemContainer, 10.0);
+        AnchorPane.setRightAnchor(gemContainer, 10.0);
+        anchorRoot.getChildren().addAll(mapStackPane, co2VBox, staminaContainer, timeContainer, gemContainer);
+
 
         // Settings
         Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
@@ -343,7 +373,7 @@ public class GameView {
         primaryStage.setWidth(WIDTH);
         primaryStage.setHeight(HEIGHT);
         primaryStage.setResizable(false);
-        scene = new Scene(stackRoot, WIDTH, HEIGHT);
+        scene = new Scene(anchorRoot, WIDTH, HEIGHT);
 
 
         // create scene and set to stage
@@ -448,7 +478,7 @@ public class GameView {
      * If the stage has not been cleared yet, the image is desaturated and an "X" mark is added on top of it.
      * The button's content display is set to TOP, meaning the text (stage name) is displayed below the image.
      *
-     * @param stage The name of the stage for which the button is being created.
+     * @param stage      The name of the stage for which the button is being created.
      * @param stageImage The image to be used as the button's graphic.
      * @return The created button.
      */
@@ -562,6 +592,7 @@ public class GameView {
 
         }
     }
+
     /**
      * Displays the stage selection screen of the game.
      * This includes playing the background media, creating stage selection buttons for each stage, and setting up key event handlers.
@@ -724,15 +755,15 @@ public class GameView {
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
+
     /**
      * Displays a game over dialog.
      * The dialog is a modal window with no title bar, containing a label with a game over message.
      * The dialog is displayed for 7 seconds, after which it is automatically closed.
      * The dialog can also be closed by clicking anywhere within it.
-     *
      */
 
-    private void gameOver(Stage primarOveryStage,String stageName) {
+    private void gameOver(Stage primarOveryStage, String stageName) {
         //Result Calculating
         Text resultLabel;
         if (gemCount >= 5) {
@@ -749,7 +780,7 @@ public class GameView {
         // GameOver method
         int scorePerGem = 100;
         double scorePenaltyPer10CO2 = 10;
-        int finalScore = (gemCount * scorePerGem) - (int)(co2Gauge / 10.0 * scorePenaltyPer10CO2);
+        int finalScore = (gemCount * scorePerGem) - (int) (co2Gauge / 10.0 * scorePenaltyPer10CO2);
 
         Text gameOverGem = new Text("Total Gems: " + gemCount);
         Text gameOverCo2 = new Text("Total CO2: " + String.format("%.1f", co2Gauge));
@@ -768,7 +799,7 @@ public class GameView {
         dialog.initOwner(primaryStage);
         dialog.initStyle(StageStyle.UNDECORATED); // 창 제목 표시줄 제거
 
-        Text gameOverLabel = new Text("GAME OVER"+"\nGoodbye "+stageName+"!");
+        Text gameOverLabel = new Text("GAME OVER" + "\nGoodbye " + stageName + "!");
 
         gameOverLabel.textAlignmentProperty().setValue(TextAlignment.CENTER);
         gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
@@ -806,7 +837,7 @@ public class GameView {
      * If the button is not focused, the background color is set to a semi-transparent white, the text color is set to black, and no drop shadow effect is applied.
      * A listener is added to the button's focused property to reapply the style whenever the focus state changes.
      *
-     * @param button The button to which the style is being applied.
+     * @param button  The button to which the style is being applied.
      * @param focused The focus state of the button.
      */
     public void applyButtonStyles(Button button, boolean focused) {
@@ -822,6 +853,7 @@ public class GameView {
             applyButtonStyles(button, isNowFocused);
         });
     }
+
     /**
      * Displays an educational popup with a random message from a list of messages stored in a JSON file.
      * The popup is a modal dialog with a title, a random educational message, and a close button.
@@ -1021,6 +1053,7 @@ public class GameView {
         updateGemCountLabel();
         educationalPopup();
     }
+
     /**
      * Updates the stamina value and the corresponding UI elements.
      * The method sets the new stamina value, calculates the fraction of the maximum stamina it represents,
@@ -1048,6 +1081,7 @@ public class GameView {
         MediaPlayer mediaPlayer = new MediaPlayer(no_stamina_effect);
         mediaPlayer.play();
     }
+
     private void setNextStageFlag(String currentStage) {
         List<String> stageNames = new ArrayList<>(stageClearFlags.keySet());
         for (int i = 0; i < stageNames.size(); i++) {
@@ -1072,5 +1106,31 @@ public class GameView {
         if (allCleared) {
             // All stages are cleared, you may want to do something here or just leave it empty
         }
+    }
+
+
+    //**** Transport Co2 Methods ****
+    public void increaseCo2Gauge(double amount) {
+        this.co2Gauge += amount;
+        this.updateCo2Label();
+        this.co2Bar.setProgress(co2Gauge / 100.0);
+    }
+
+    public void updateCo2Label() {
+        this.co2Label.setText("CO2: " + String.format("%.1f", this.co2Gauge));
+
+    }
+
+    public double getCo2Gauge() {
+        return this.co2Gauge;
+    }
+
+    public void gameFail() {
+        System.out.println("Game Fail");
+        gameOver(primaryStage, "Stage");
+    }
+
+    public void setCo2Gauge(double co2Gauge) {
+        this.co2Gauge = co2Gauge;
     }
 }

@@ -1,4 +1,5 @@
 package org.example.sharedmobilityfxproject.controller;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -25,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-public class GameController{
+public class GameController {
     private boolean playerTimeout = true;
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -83,6 +83,7 @@ public class GameController{
 
     //Player Movement Check for Stamina
     private int moveCounter = 0;
+
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -102,9 +103,11 @@ public class GameController{
         checkStationary.play();
 
     }
+
     public void setGameOverListener(GameOverListener listener) {
         this.gameOverListener = listener;
     }
+
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
         this.isGameStarted = true;
@@ -147,9 +150,6 @@ public class GameController{
         fillGridWithMapArray(map);
 
 
-
-
-
         obstacleCoordinates = new ArrayList<>();
 
         for (Obstacle obstacle : obstacles) {
@@ -178,8 +178,8 @@ public class GameController{
 //        busStop busS6 = new busStop(4,64);
 //        busStop busS7 = new busStop(4,34);
 
-        metroStop metro1 = new metroStop(2,30);
-        gameView.grid.add(metro1,2,30);
+        metroStop metro1 = new metroStop(2, 30);
+        gameView.grid.add(metro1, 2, 30);
 
 //        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
 //        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
@@ -199,12 +199,11 @@ public class GameController{
 //        busStops.add(busS7);
 
 
+        busman = new Bus(busStops, 3, 4);
 
-        busman = new Bus(busStops,3, 4);
-
-        taximan = new Taxi (58,28);
-        cycleman= new Bicycle(10,4);
-        for (int i = 0; i < busman.list().size(); i++){
+        taximan = new Taxi(58, 28);
+        cycleman = new Bicycle(10, 4);
+        for (int i = 0; i < busman.list().size(); i++) {
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
         }
@@ -296,7 +295,7 @@ public class GameController{
                         gameView.grid.setCellColor(column, row, "BLUE");
                         break;
                     case 4:  // Mark as bus stop
-                        busStop busS = new busStop(column,row);
+                        busStop busS = new busStop(column, row);
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
                         busStops.add(busS);
                         break;
@@ -579,7 +578,7 @@ public class GameController{
                 moveTaxi(gameView.grid, taximan, newColumn, newRow);
             }
             //MoveCounter for walking and decrease stamina every 5 moves
-            if (playerUno.getIsWalking()) {
+            if (!inTaxi && playerUno.getIsWalking()) {
                 moveCounter++;
                 System.out.println("Move Counter: " + moveCounter);
                 //Decrease stamina every 5 moves
@@ -599,8 +598,6 @@ public class GameController{
     }
 
 
-
-
     private boolean canMoveTo(int x, int y) {
         return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
@@ -616,7 +613,7 @@ public class GameController{
         } else if (cell instanceof Bicycle) {
             System.out.println("You just got on the bike");
             onBicycle = true;
-            cycleman.bikeTime=300;
+            cycleman.bikeTime = 300;
             System.out.println(onBicycle
             );
         }
@@ -644,13 +641,22 @@ public class GameController{
     }
 
     private void hailTaxi() {
+        // When a player hails a taxi, the player can cancel the hail.
         if (taximan.hailed) {
-            taximan.hailed = !taximan.hailed;
-        }
-        else{
+            taximan.hailed = false;
+        } else {
+            // Hail taxt, limit Co2 not be over 100%
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2 = currentCo2 + 30.0;
+            if (potentialCo2 > 100.0) {
+                gameFailedCall();
+            } else {
+                sceneController.increaseCo2GaugeUpdate(30.0); // Safely increase CO2
+            }
             taximan.hailed = true;
         }
     }
+
     private void togglePlayerMovement() {
         if (onBus) {
             int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
@@ -683,7 +689,7 @@ public class GameController{
 
     public void moveTaxiTowardsPlayer(Taxi bus) {
 
-        if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
+        if (bus.getX() == playerUno.getCoordX() && bus.getY() == playerUno.getCoordY() && taximan.arrived && !inTaxi) {
             inTaxi = true;
 
         }
@@ -733,7 +739,9 @@ public class GameController{
                 bus.flagMove = 0;
             }
 
-        }}
+        }
+    }
+
     /**
      * Checks and increases the player's stamina if the player is stationary.
      * This method checks if the player's current coordinates are the same as the last recorded coordinates.
@@ -755,8 +763,11 @@ public class GameController{
                 lastX = playerUno.getCoordX();
                 lastY = playerUno.getCoordY();
             }
-
         }
     }
 
+    private void gameFailedCall() {
+        sceneController.setCo2Gauge(100.0); // Set CO2 to maximum if overflown
+        sceneController.missionFail();  // Call mission fail function
+    }
 }
