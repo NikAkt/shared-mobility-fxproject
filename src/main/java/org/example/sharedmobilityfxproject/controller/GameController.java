@@ -1,4 +1,8 @@
 package org.example.sharedmobilityfxproject.controller;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.animation.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -13,6 +17,7 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -20,7 +25,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class GameController {
@@ -37,12 +41,19 @@ public class GameController {
     public int currentRow;
     public int currentColumn;
 
+    //GameStart Flag
+    private boolean isGameStarted = false;
     // Newly Added
     public boolean playerMovementEnabled = true;
     public boolean onBus = false;
     public boolean inTaxi = false;
     public boolean onBicycle = false;
     public Player playerUno;
+
+
+    //Stamina related
+    private int lastX, lastY;  // Last coordinates of the player
+    private int stationaryTime = 0;  // Time to stay
 
     public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
@@ -57,6 +68,7 @@ public class GameController {
     private ScrollPane scrollPane;
     private double cellWidth;
     private double cellHeight;
+    private GameOverListener gameOverListener;
 
     private void enableMovementAfterDelay() {
         playerTimeout = false;  // Disable further moves immediately when this method is called
@@ -72,6 +84,9 @@ public class GameController {
         }, delayInMilliseconds);
     }
 
+    //Player Movement Check for Stamina
+    private int moveCounter = 0;
+
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -82,14 +97,27 @@ public class GameController {
         this.sceneController = sceneController;
         this.gameView = gameView;
         this.playerUno = playerUno;
+        lastX = playerUno.getCoordX();
+        lastY = playerUno.getCoordY();
+
+        //Counting staying time on the spot
+        Timeline checkStationary = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAndIncreaseStamina()));
+        checkStationary.setCycleCount(Timeline.INDEFINITE);
+        checkStationary.play();
+
         this.cellWidth = gameView.grid.width/gameView.grid.columns;
         this.cellHeight = gameView.grid.height/gameView.grid.rows;
         this.sceneController.initGameScene();
         this.startPlayingGame();
     }
 
-    public void startPlayingGame() {
-        sceneController.initGameScene();
+    public void setGameOverListener(GameOverListener listener) {
+        this.gameOverListener = listener;
+    }
+
+    public void startPlayingGame(String stageName) {
+        this.sceneController.initGameScene(stageName);
+        this.isGameStarted = true;
         System.out.println("GameController startPlayingGame");
 
         // Fill the grid with cells
@@ -129,9 +157,6 @@ public class GameController {
         fillGridWithMapArray(map);
 
 
-
-
-
         obstacleCoordinates = new ArrayList<>();
 
         for (Obstacle obstacle : obstacles) {
@@ -160,8 +185,8 @@ public class GameController {
 //        busStop busS6 = new busStop(4,64);
 //        busStop busS7 = new busStop(4,34);
 
-        metroStop metro1 = new metroStop(2,30);
-        gameView.grid.add(metro1,2,30);
+        metroStop metro1 = new metroStop(2, 30);
+        gameView.grid.add(metro1, 2, 30);
 
 //        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
 //        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
@@ -181,12 +206,11 @@ public class GameController {
 //        busStops.add(busS7);
 
 
+        busman = new Bus(busStops, 3, 4);
 
-        busman = new Bus(busStops,3, 4);
-
-        taximan = new Taxi (58,28);
-        cycleman= new Bicycle(10,4);
-        for (int i = 0; i < busman.list().size(); i++){
+        taximan = new Taxi(58, 28);
+        cycleman = new Bicycle(10, 4);
+        for (int i = 0; i < busman.list().size(); i++) {
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
         }
@@ -278,7 +302,7 @@ public class GameController {
                         gameView.grid.setCellColor(column, row, "BLUE");
                         break;
                     case 4:  // Mark as bus stop
-                        busStop busS = new busStop(column,row);
+                        busStop busS = new busStop(column, row);
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
                         busStops.add(busS);
                         break;
@@ -295,10 +319,19 @@ public class GameController {
         for (int i = 0; i < numberOfGems; i++) {
             int gemColumn;
             int gemRow;
+            boolean isObstacle;
             do {
                 gemColumn = (int) (Math.random() * gameView.getColumns());
-                gemRow = (int) (Math.random() * gameView.getRows());
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+                gemRow = (int) (Math.random(
+
+                ) * gameView.getRows());
+                int finalGemColumn = gemColumn;
+                int finalGemRow = gemRow;
+                //It is called before gemGeneration
+                // obstacleCoordinates is the list of obstacles's coordinates
+                isObstacle = obstacleCoordinates.stream().anyMatch(coords -> coords[0] == finalGemColumn && coords[1] == finalGemRow);
+                //Check
+            } while (isObstacle || (gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
 
             Gem gem = new Gem(gemColumn, gemRow);
@@ -508,8 +541,29 @@ public class GameController {
         timeline.getKeyFrames().add(kf);
         timeline.play();
     }
+    /**
+     * Moves the player in the game based on the provided direction.
+     * This method checks if the player has enough stamina to move. If not, it plays a sound and returns.
+     * If the player has enough stamina, it sets the player's status to walking and calculates the new position.
+     * If the player is in the metro scene, it updates the player's position.
+     * If the player is at a metro stop, it switches the scene to the metro scene and updates the player's position.
+     * If the player can move to the new position, it updates the player's position and interacts with the cell.
+     * If the player is in a taxi and not walking, it moves the taxi to the new position.
+     * If the player is walking, it increments the move counter and decreases the player's stamina every 5 moves.
+     *
+     * @param dx The change in the x-coordinate (horizontal direction) of the player's position.
+     * @param dy The change in the y-coordinate (vertical direction) of the player's position.
+     */
     private void movePlayer(int dx, int dy) {
 
+
+        if (playerUno.getStamina() <= 0) {
+            System.out.println("Not enough stamina to move.");
+            gameView.playNoStaminaSound();
+            return;
+        }
+
+        playerUno.setIsWalking(true);
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
@@ -521,8 +575,8 @@ public class GameController {
             playerUno.getCell().highlight();
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
         }
-        if (playerUno.getCell() instanceof metroStop) {
 
+        if (playerUno.getCell() instanceof metroStop) {
             gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
             gameView.switchSceneToMetro();// Metro scene is now active
             Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
@@ -532,8 +586,6 @@ public class GameController {
 
             playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
             System.out.println("Player has entered a metro entrance" + gameView.grid);
-
-
         }
         if (canMoveTo(newColumn, newRow)) {
             playerUno.getCell().unhighlight();
@@ -541,6 +593,23 @@ public class GameController {
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
+            if (inTaxi && !(playerUno.isWalking)) {
+                // Assuming taximan is accessible from here, or find a way to access it
+                moveTaxi(gameView.grid, taximan, newColumn, newRow);
+            }
+            //MoveCounter for walking and decrease stamina every 5 moves
+            if (!inTaxi && playerUno.getIsWalking()) {
+                moveCounter++;
+                System.out.println("Move Counter: " + moveCounter);
+                //Decrease stamina every 5 moves
+                if (moveCounter >= 5) {
+                    playerUno.decreaseStamina();
+                    gameView.updateStamina(playerUno.getStamina());
+                    moveCounter = 0;
+                }
+            }
 
             updateScalePivot(gameView.grid, pivotX, pivotY, 1);
             // Setup to follow player
@@ -559,13 +628,11 @@ public class GameController {
     }
 
 
-
     private boolean canMoveTo(int x, int y) {
         return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
 
     private void interactWithCell(Cell cell) {
-
         if ("gem".equals(cell.getUserData())) {
             System.out.println("Interacting with gem ");
             collectGem(cell);
@@ -576,7 +643,7 @@ public class GameController {
         } else if (cell instanceof Bicycle) {
             System.out.println("You just got on the bike");
             onBicycle = true;
-            cycleman.bikeTime=300;
+            cycleman.bikeTime = 300;
             System.out.println(onBicycle
             );
         }
@@ -604,13 +671,22 @@ public class GameController {
     }
 
     private void hailTaxi() {
+        // When a player hails a taxi, the player can cancel the hail.
         if (taximan.hailed) {
-            taximan.hailed = !taximan.hailed;
-        }
-        else{
+            taximan.hailed = false;
+        } else {
+            // Hail taxt, limit Co2 not be over 100%
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2 = currentCo2 + 30.0;
+            if (potentialCo2 > 100.0) {
+                gameFailedCall();
+            } else {
+                sceneController.increaseCo2GaugeUpdate(30.0); // Safely increase CO2
+            }
             taximan.hailed = true;
         }
     }
+
     private void togglePlayerMovement() {
         if (onBus) {
             int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
@@ -643,7 +719,7 @@ public class GameController {
 
     public void moveTaxiTowardsPlayer(Taxi bus) {
 
-        if (bus.getX()==playerUno.getCoordX()&&bus.getY()==playerUno.getCoordY()&&taximan.arrived&&!inTaxi){
+        if (bus.getX() == playerUno.getCoordX() && bus.getY() == playerUno.getCoordY() && taximan.arrived && !inTaxi) {
             inTaxi = true;
 
         }
@@ -693,5 +769,35 @@ public class GameController {
                 bus.flagMove = 0;
             }
 
-        }}
+        }
+    }
+
+    /**
+     * Checks and increases the player's stamina if the player is stationary.
+     * This method checks if the player's current coordinates are the same as the last recorded coordinates.
+     * If they are the same, it increments the stationary time.
+     * If the stationary time is greater than or equal to 1, it increases the player's stamina, updates the stamina in the game view, and resets the stationary time.
+     * If the player's current coordinates are not the same as the last recorded coordinates, it resets the stationary time and updates the last recorded coordinates to the current coordinates.
+     */
+    private void checkAndIncreaseStamina() {
+        if (isGameStarted && playerUno.getStamina() < 100) {
+            if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
+                stationaryTime += 1;
+                if (stationaryTime >= 1) {
+                    playerUno.increaseStamina();  // 스태미나 회복
+                    gameView.updateStamina(playerUno.getStamina());
+                    stationaryTime = 0;
+                }
+            } else {
+                stationaryTime = 0;
+                lastX = playerUno.getCoordX();
+                lastY = playerUno.getCoordY();
+            }
+        }
+    }
+
+    private void gameFailedCall() {
+        sceneController.setCo2Gauge(100.0); // Set CO2 to maximum if overflown
+        sceneController.missionFail();  // Call mission fail function
+    }
 }

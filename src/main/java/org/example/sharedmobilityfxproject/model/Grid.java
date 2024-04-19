@@ -52,10 +52,10 @@ public class Grid extends Pane {
         double newY = h * row;
 
 
-            TranslateTransition tt = new TranslateTransition(Duration.seconds(0.05), cell);
-            tt.setToX(newX);
-            tt.setToY(newY);
-            tt.play();
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.05), cell);
+        tt.setToX(newX);
+        tt.setToY(newY);
+        tt.play();
 
 
         cell.setPrefWidth(w);

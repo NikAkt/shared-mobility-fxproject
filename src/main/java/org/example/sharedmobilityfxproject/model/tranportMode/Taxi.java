@@ -6,7 +6,7 @@ import org.example.sharedmobilityfxproject.model.Cell;
 public class Taxi extends Cell {
     private int speed;
     private double carbonFootprintAmount;
-    private final double carbonFootprintPerKm = 170; // Assuming this is the rate for a petrol car
+    private final double carbonFootprintPerKm = 30.0; // Assuming this is the rate for a petrol car
     private int x;
     private int y;
     public int flagMove = 0;

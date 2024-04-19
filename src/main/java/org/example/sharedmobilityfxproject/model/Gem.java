@@ -7,6 +7,8 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 
+import static org.example.sharedmobilityfxproject.controller.SceneController.gameView;
+
 public class Gem extends Cell {
     public boolean isCollected = false; // Flag to track if the gem has been collected
     public MainController mainController;
@@ -41,7 +43,7 @@ public class Gem extends Cell {
         if (!isCollected) {
             System.out.println("Gem collected"); //debug
             playGemCollectSound(); // Play the gem collect sound
-//            gameController.incrementGemCount(); // Increment the gem count
+            gameView.incrementGemCount(); // Increment the gem count
             isCollected = true; // Set the flag to true after the gem is collected
         }
     }
