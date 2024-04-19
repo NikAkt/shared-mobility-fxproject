@@ -380,10 +380,6 @@ public class GameView {
         primaryStage.setResizable(false);
         scene = new Scene(anchorRoot, WIDTH, HEIGHT);
 
-
-        // Add background image, grid, and gem count label to the root StackPane
-        root.getChildren().addAll(grid);
-
         // create scene and set to stage
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
         initializeMetroSystem();
