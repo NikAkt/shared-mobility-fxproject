@@ -107,8 +107,7 @@ public class GameController {
 
         this.cellWidth = gameView.grid.width/gameView.grid.columns;
         this.cellHeight = gameView.grid.height/gameView.grid.rows;
-        this.sceneController.initGameScene();
-        this.startPlayingGame();
+
     }
 
     public void setGameOverListener(GameOverListener listener) {

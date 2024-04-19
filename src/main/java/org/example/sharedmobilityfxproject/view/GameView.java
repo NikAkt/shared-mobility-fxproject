@@ -444,7 +444,7 @@ public class GameView {
             Button closeButton = new Button("Let's Rock!");
             if (contentFont != null) {
 
-                closeButton.setFont(btnFont);
+                closeButton.setFont(this.btnFont);
             } else {
                 System.out.println("Failed to load custom font. Using default font.");
             }
@@ -599,7 +599,7 @@ public class GameView {
                     for (String stage : topStages) {
                         ImageView stageImage = createStageImage(stage);
                         Button stageButton = createStageButton(stage, stageImage);
-                        stageButton.setFont(btnFont);
+                        stageButton.setFont(this.btnFont);
                         stageButton.setOnAction(event -> {
                         });
                         topRow.getChildren().add(stageButton);
@@ -609,7 +609,7 @@ public class GameView {
                     for (String stage : bottomStages) {
                         ImageView stageImage = createStageImage(stage);
                         Button stageButton = createStageButton(stage, stageImage);
-                        stageButton.setFont(btnFont);
+                        stageButton.setFont(this.btnFont);
                         stageButton.setOnAction(event -> {
                         });
                         bottomRow.getChildren().add(stageButton);
@@ -857,7 +857,7 @@ public class GameView {
                     // Close Button
                     Button closeButton = new Button("Close");
                     if (contentFont != null) {
-                        closeButton.setFont(btnFont);
+                        closeButton.setFont(this.btnFont);
                     } else {
                         System.out.println("Failed to load custom font. Using default font.");
                     }
@@ -919,7 +919,7 @@ public class GameView {
             // Close Button
             Button closeButton = new Button("Close");
             if (contentFont != null) {
-                closeButton.setFont(btnFont);
+                closeButton.setFont(this.btnFont);
             } else {
                 System.out.println("Failed to load custom font. Using default font.");
             }
@@ -974,7 +974,7 @@ public class GameView {
             messageLabel.setAlignment(Pos.CENTER);
 
             Button closeButton = new Button("Close");
-            closeButton.setFont(Font.font(btnFont.getFamily(), FontWeight.BOLD, 20));
+            closeButton.setFont(Font.font(this.btnFont.getFamily(), FontWeight.BOLD, 20));
             closeButton.setOnAction(e -> dialog.close());
             closeButton.setPadding(new Insets(0)); // Set padding to 0
 
