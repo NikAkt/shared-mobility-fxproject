@@ -200,6 +200,8 @@ public class GameView {
         mediaPlayer = new MediaPlayer(gameMusic1);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.play();
+        mediaPlayer.setVolume(0.7);
+        decreaseVolume();
 
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -1107,4 +1109,12 @@ public class GameView {
      * Increments the gem count by one and updates the gem count label.
      * This method is typically called when a player collects a gem in the game.
      */
+
+
+
+    private void decreaseVolume() {
+        double currentVolume = mediaPlayer.getVolume();
+        double newVolume = Math.max(0.0, currentVolume - 0.2); // Decrease volume by 0.2, ensuring it doesn't go below 0
+        mediaPlayer.setVolume(newVolume);
+    }
 }
