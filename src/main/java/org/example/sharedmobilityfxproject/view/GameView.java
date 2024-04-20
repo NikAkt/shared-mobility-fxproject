@@ -908,4 +908,9 @@ public void showCredit(){
     dialog.setScene(dialogScene);
     dialog.showAndWait();
 }
+
+    // To pass it to the controller
+    public int getGemCount() {
+        return gemCount;
+    }
 }
