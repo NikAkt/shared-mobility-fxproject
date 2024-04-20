@@ -26,10 +26,52 @@ public class SaveGame implements Serializable {
 
     // Getters and Setters for each field
 
-    // Example getter
     public int getPlayerX() {
         return playerX;
     }
 
-    // ... Other getters and setters
+    public void setPlayerX(int playerX) {
+        this.playerX = playerX;
+    }
+
+    public int getPlayerY() {
+        return playerY;
+    }
+
+    public void setPlayerY(int playerY) {
+        this.playerY = playerY;
+    }
+
+    public int getBusX() {
+        return busX;
+    }
+
+    public void setBusX(int busX) {
+        this.busX = busX;
+    }
+
+    public int getBusY() {
+        return busY;
+    }
+
+    public void setBusY(int busY) {
+        this.busY = busY;
+    }
+
+    public List<int[]> getGemLocations() {
+        return gemLocations;
+    }
+
+    public void setGemLocations(List<int[]> gemLocations) {
+        this.gemLocations = gemLocations;
+    }
+
+    public int getGemCounter() {
+        return gemCounter;
+    }
+
+    public void setGemCounter(int gemCounter) {
+        this.gemCounter = gemCounter;
+    }
+
 }
