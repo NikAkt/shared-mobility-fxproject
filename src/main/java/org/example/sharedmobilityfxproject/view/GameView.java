@@ -109,10 +109,11 @@ public class GameView {
     public static final double BUTTON_WIDTH = 200;
 
     // **** Font Setting ****
-    public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
-    public Font creditFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 50);
-    public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
-    public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
+    Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
+    Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
+    Font contentFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 25);
+    Font btnFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 15);
+
     // From MAIN OF MERGE STARTS
 
     // Boolean flag to control hover cursor visibility
