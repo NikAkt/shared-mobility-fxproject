@@ -274,8 +274,8 @@ public class GameView {
         // **** Start Main Game ****
         StackPane mapStackPane = new StackPane();
         Scale scaleTransform = new Scale();
-        scaleTransform.setX(0.8);
-        scaleTransform.setY(0.8);
+        scaleTransform.setX(1.5);
+        scaleTransform.setY(1.5);
         grid.getTransforms().add(scaleTransform);
 
         mapStackPane.setPadding(new Insets(40));
@@ -419,16 +419,7 @@ public class GameView {
     }
 
 
-    public void setupGameScene() {
-        StackPane root = new StackPane();
-        scene = new Scene(root, WIDTH, HEIGHT); // Assuming WIDTH and HEIGHT are declared and initialized
-        StackPane mapStackPane = new StackPane();
-        scale = new Scale();
-        scale.setX(1.5);
-        scale.setY(1.5);
-        grid.getTransforms().add(scale);
 
-    }
         /**
          * Sets up the main game settings.
          * This includes stopping any currently playing video, starting the game background music, and displaying a popup dialog.

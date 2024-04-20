@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
@@ -526,6 +527,12 @@ public class GameController {
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
     public void updateScalePivot(Node node, double newPivotX, double newPivotY, double durationSeconds) {
+        //Eamonn Check this part.
+        if (gameView.scale == null) {
+            gameView.scale = new Scale();
+            node.getTransforms().add(gameView.scale);
+        }
+
         Duration duration = Duration.seconds(durationSeconds);
 
         double oldPivotX = node.getScaleX();
