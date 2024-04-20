@@ -38,6 +38,7 @@ import org.example.sharedmobilityfxproject.model.Cell;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,10 +122,11 @@ public class GameView {
     public static final double BUTTON_WIDTH = 200;
 
     // **** Font Setting ****
-    public Font titleFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 70);
-    public Font creditFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 50);
-    public Font contentFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 25);
-    public Font btnFont = Font.loadFont(getClass().getResourceAsStream("/font/blueShadow.ttf"), 15);
+  Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
+  Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
+  Font contentFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 25);
+  Font btnFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 15);
+
     // From MAIN OF MERGE STARTS
 
     // Boolean flag to control hover cursor visibility
@@ -164,6 +166,32 @@ public class GameView {
         //initialise the co2 bar
         this.co2Bar = new ProgressBar(0);
         this.co2Label = new Label("CO2: 0");
+
+        System.out.println(btnFont);
+    }
+    /**
+     * Applies a specific style to a button based on its focus state.
+     * The style includes the font family, font size, background color, text color, and text shadow.
+     * If the button is focused, the background color is set to dodgerblue, the text color is set to white, and a drop shadow effect is applied.
+     * If the button is not focused, the background color is set to a semi-transparent white, the text color is set to black, and no drop shadow effect is applied.
+     * A listener is added to the button's focused property to reapply the style whenever the focus state changes.
+     *
+     * @param button  The button to which the style is being applied.
+     * @param focused The focus state of the button.
+     */
+    public void applyButtonStyles (Button button,boolean focused){
+       
+        String fontFamily = btnFont.getName(); // Get the font name from the Font object
+        String fontSize = "24px";
+        String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";
+        String textColor = focused ? "white" : "black";
+        String textShadow = focused ? "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);" : "";
+
+        button.setStyle(String.format("-fx-font-family: '%s'; -fx-font-size: %s; -fx-background-color: %s; -fx-text-fill: %s; %s",
+                fontFamily, fontSize, backgroundColor, textColor, textShadow));
+        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            applyButtonStyles(button, isNowFocused);
+        });
     }
 
     /**
@@ -372,7 +400,7 @@ public class GameView {
 
 
         // Settings
-        Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+        Image icon =  new Image(new File("src/main/resources/images/icon.png").toURI().toString());
         primaryStage.getIcons().add(icon);
         primaryStage.setTitle("Shared Mobility Application");
         primaryStage.setWidth(WIDTH);
@@ -381,7 +409,8 @@ public class GameView {
         scene = new Scene(anchorRoot, WIDTH, HEIGHT);
 
         // create scene and set to stage
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+        File cssFile = new File("src/main/resources/css/application.css");
+        scene.getStylesheets().add("file:"+cssFile);
         initializeMetroSystem();
 
         primaryStage.setScene(scene);
@@ -554,7 +583,9 @@ public class GameView {
 
             metroLayer.getChildren().addAll(metroGrid, testLabel);
             metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
-            metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+
+            File cssFile = new File("src/main/resources/css/application.css");
+            metroScene.getStylesheets().add("file:"+cssFile);
 
         }
 
@@ -681,7 +712,7 @@ public class GameView {
                 case "Istanbul" -> "/images/istanbul.png";
                 case "Home" -> "/images/home.png";
                 case "Back" -> "/images/home.png";
-                default -> "/images/Way_Back_Home.png.png";
+                default -> "/images/Way_Back_Home.png";
             };
             Image is = new Image(new File("src/main/resources/" + imagePath).toURI().toString());
             if (is == null) {
@@ -1110,29 +1141,7 @@ public class GameView {
 
         return button;
     }
-    /**
-     * Applies a specific style to a button based on its focus state.
-     * The style includes the font family, font size, background color, text color, and text shadow.
-     * If the button is focused, the background color is set to dodgerblue, the text color is set to white, and a drop shadow effect is applied.
-     * If the button is not focused, the background color is set to a semi-transparent white, the text color is set to black, and no drop shadow effect is applied.
-     * A listener is added to the button's focused property to reapply the style whenever the focus state changes.
-     *
-     * @param button  The button to which the style is being applied.
-     * @param focused The focus state of the button.
-     */
-    public void applyButtonStyles (Button button,boolean focused){
-        String fontFamily = btnFont.getName(); // Get the font name from the Font object
-        String fontSize = "24px";
-        String backgroundColor = focused ? "dodgerblue" : "rgba(255, 255, 240, 0.7)";
-        String textColor = focused ? "white" : "black";
-        String textShadow = focused ? "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);" : "";
 
-        button.setStyle(String.format("-fx-font-family: '%s'; -fx-font-size: %s; -fx-background-color: %s; -fx-text-fill: %s; %s",
-                fontFamily, fontSize, backgroundColor, textColor, textShadow));
-        button.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            applyButtonStyles(button, isNowFocused);
-        });
-    }
 
 
     /**

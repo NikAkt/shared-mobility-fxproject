@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.File;
+
 /**
  * Obstacle class represents an obstacle on the grid.
  * It is responsible for managing the state of the cells that form the obstacle.
@@ -44,9 +46,11 @@ public class Obstacle {
             for (int r : rows) {
                 if (col >= 0 && col < grid.getColumns() && r >= 0 && r < grid.getRows()) {
                     Cell obstacleCell = grid.getCell(col, r);
-//
-                    String imagePath = getClass().getResource("/images/house.png").toExternalForm();
-                    obstacleCell.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                    String imagePath = "src/main/resources/images/house.png";
+                    File file = new File(imagePath);
+                    String absolutePath = file.toURI().toString();
+
+                    obstacleCell.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                             "-fx-background-size: cover; -fx-background-position: center center;");
                     obstacleCell.getStyleClass().add("cell-obstacle");
                 }

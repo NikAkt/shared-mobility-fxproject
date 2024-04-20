@@ -3,6 +3,8 @@ package org.example.sharedmobilityfxproject.model.tranportMode;
 import org.example.sharedmobilityfxproject.model.motion;
 import org.example.sharedmobilityfxproject.model.Cell;
 
+import java.io.File;
+
 public class Taxi extends Cell {
     private int speed;
     private double carbonFootprintAmount;
@@ -18,14 +20,15 @@ public class Taxi extends Cell {
         this.getStyleClass().add("taxi");
         this.x = x;
         this.y = y;
-        String imagePath = getClass().getResource("/images/taxi.png").toExternalForm();
-
+        String imagePath = "src/main/resources/images/taxi.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
         // Set the fixed size of the Gem node to match the cell size
         setPrefHeight(4);  // Set the preferred height to 10 pixels
         setPrefWidth(8);    // Set the preferred width to 8 pixels
 
 
-        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+        this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                 "-fx-background-size: contain; -fx-background-position: center center;");
     }
     public void setX(int i ){
