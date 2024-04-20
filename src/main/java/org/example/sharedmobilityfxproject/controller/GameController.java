@@ -95,7 +95,7 @@ public class GameController {
 
         // Before showing the primary stage, set the close request handler to save the game state
         gameView.getPrimaryStage().setOnCloseRequest(event -> {
-            this.saveGameState();
+            saveGameState();
             System.out.println("Game state saved on close.");
         });
 
