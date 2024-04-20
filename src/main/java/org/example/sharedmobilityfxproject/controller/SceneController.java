@@ -52,13 +52,15 @@ public class SceneController {
      * Switches the scene to the stage selection screen.
      * This method displays the stage selection screen, sets the scene to the stage selection screen, sets the title of the primary stage, and shows the primary stage.
      */
-    public void switchStageChoose() {
-        System.out.println("SwitchStageChoose in SceneController");
-        gameView.showStageSelectionScreen();
-        gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("WayBackHome :)");
-        gameView.getPrimaryStage().show();
-    }
+//    public void switchStageChoose() {
+//        System.out.println("SwitchStageChoose in SceneController");
+//        gameView.showStageSelectionScreen();
+//        gameView.getPrimaryStage().setScene(gameView.getScene());
+//        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+//        gameView.getPrimaryStage().show();
+//
+//
+//    }
 
 
     public void mapClearCheck(String msg) {

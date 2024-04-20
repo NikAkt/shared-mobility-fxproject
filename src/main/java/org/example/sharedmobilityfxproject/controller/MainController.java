@@ -103,7 +103,7 @@ public class MainController implements GameOverListener {
      * If the stage has been cleared, it starts the game for the selected stage.
      */
     public void mapSelectionScene() {
-        sceneController.switchStageChoose();
+        SceneController.isGoingToNext();
         gameView.getAllStageButtons().forEach(button -> {
             button.setOnAction(event -> {
                 String stage = button.getText();
@@ -166,7 +166,7 @@ public class MainController implements GameOverListener {
 
     @Override
     public void onGameOver() {
-        sceneController.switchStageChoose();
+        SceneController.isGoingToNext();
     }
 
     ///CO2

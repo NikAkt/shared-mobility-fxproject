@@ -93,12 +93,13 @@ public class GameView {
     public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
     public Player playerUno;
     // Gem count
-    static int gemCount = 0;
+    static int gemCount = 5;
     // Carbon footprint
     int carbonFootprint = 0;
 
     //**** Stage Clear Flags ****
     private Map<String, Boolean> stageClearFlags;
+    private ArrayList<String> stageOrder;
 
     // **** Stamina ****
     double staminagauge;
@@ -124,7 +125,10 @@ public class GameView {
     public GameOverListener gameOverListener;
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(60);
+    IntegerProperty timeSeconds = new SimpleIntegerProperty(6);
+
+
+
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
@@ -295,8 +299,8 @@ public class GameView {
         scene = new Scene(root, WIDTH, HEIGHT);
 
         scale = new Scale();
-        scale.setX(2.8);
-        scale.setY(2.8);
+        scale.setX(1.5);
+        scale.setY(1.5);
         grid.getTransforms().add(scale);
 
         // Game Lable Setting
@@ -317,7 +321,7 @@ public class GameView {
         this.co2Label.setStyle("-fx-background-color: transparent; -fx-padding: 5px;");
 
         // VBox for vertical layout
-        VBox co2VBox = new VBox(this.co2Bar, this.co2Label);  // Add ProgressBar first, then the Label
+        VBox co2VBox = new VBox(this.co2Bar,this.co2Label);  // Add ProgressBar first, then the Label
         co2VBox.setPrefHeight(600);
         VBox.setMargin(this.co2Bar, new Insets(150, 0, 0, -150)); // Top margin of 100
         VBox.setMargin(this.co2Label, new Insets(200, 0, 0, 0));  // Add some space between the bar and the label
@@ -415,8 +419,18 @@ public class GameView {
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
+        boolean isNextStage = isNextStage(stage);
 
-        if (!isStageCleared) {
+        if (!isStageCleared && isNextStage) {
+            stageImage.setOpacity(0.75);
+            Label nextMark = new Label("Next");
+            nextMark.setFont(new Font("Arial", 24));
+            nextMark.setStyle("-fx-text-fill: orange;");
+
+            StackPane buttonGraphic = new StackPane(stageImage, nextMark);
+            stageBtn.setGraphic(buttonGraphic);
+        } else if (!isStageCleared) {
+
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(-1);
             stageImage.setEffect(colorAdjust);
@@ -428,11 +442,14 @@ public class GameView {
             StackPane buttonGraphic = new StackPane(stageImage, xMark);
             stageBtn.setGraphic(buttonGraphic);
         } else {
+            // If the stage is cleared, just set the image without any marks
             stageBtn.setGraphic(stageImage);
         }
+
         stageBtn.setContentDisplay(ContentDisplay.TOP);
         return stageBtn;
     }
+
 
     public Button createButton(String text) {
         Button button = new Button(text);
@@ -713,10 +730,15 @@ public class GameView {
             mediaPlayer.stop();
             dialog.close();
             if (isTimeOut && isGemCollectedEnough && isCO2Safe) {
-                gemCount = 0;
+                System.out.println("들어옴");
+                this.co2Gauge = 0;
+                System.out.print("Current Stage Name check: " + stageName);
                 setNextStageCleared(stageName); // Set the next stage as cleared
                 SceneController.isGoingToNext();
+            }else{
+                SceneController.isGoingToNext();
             }
+
         });
         dialogVBox.getChildren().add(closeButton);
     }
@@ -751,7 +773,6 @@ public class GameView {
      * The flags are stored in a HashMap where the key is the stage name and the value is a boolean indicating whether the stage has been cleared.
      * By default, only the "Dublin" stage is set to cleared (true), all other stages are not cleared (false).
      */
-    private ArrayList<String> stageOrder;
 
     public boolean isStageCleared(String stage) {
         return stageClearFlags.getOrDefault(stage, false);
@@ -833,28 +854,6 @@ public class GameView {
         }
     }
 
-
-//    private void setupKeyControls(Scene scene, Button btnStartGame) {
-//        scene.setOnKeyPressed(event -> {
-//            switch (event.getCode()) {
-//                case DOWN:
-//                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
-//                    else if (gameCredit.isFocused()) btnExit.requestFocus();
-//                    break;
-//                case UP:
-//                    if (btnExit.isFocused()) gameCredit.requestFocus();
-//                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
-//                    break;
-//                case ENTER:
-//                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
-//                    focusedButton.fire();
-//                    break;
-//            }
-//        });
-//    }
-
-    /// Game Credit
-
     /**
      * Displays a credit popup dialog.
      * The dialog is a modal window with no title bar, containing a label with the title "Game Credit", a message with the credits, and a close button.
@@ -923,7 +922,6 @@ public class GameView {
     }
 
     // This is temporary, later on the function that updates the gem count will be in the controller
-    // TODO: TEMP Move this to the controller
     public void setGemCoount(int gemCountNew) {
         gemCount = gemCountNew;
         updateGemCountLabel();
@@ -1085,19 +1083,11 @@ public class GameView {
      */
 
 
+
     private void decreaseVolume() {
         double currentVolume = mediaPlayer.getVolume();
         double newVolume = Math.max(0.0, currentVolume - 0.2); // Decrease volume by 0.2, ensuring it doesn't go below 0
         mediaPlayer.setVolume(newVolume);
-    }
-
-    private void setNextStageCleared(String currentStageName) {
-        int currentIndex = stageOrder.indexOf(currentStageName);
-        // Check if there is a next stage
-        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
-            String nextStageName = stageOrder.get(currentIndex + 1);
-            stageClearFlags.put(nextStageName, true);
-        }
     }
 
     private void initializeStageClearFlags() {
@@ -1108,5 +1098,28 @@ public class GameView {
         }
         // Assuming Dublin is already cleared as per your requirement
         stageClearFlags.put("Dublin", true);
+    }
+    private void setNextStageCleared(String currentStageName) {
+        System.out.println("들어옴");
+        System.out.println("Current Stage Name!!! in setNextCleared: " + currentStageName);
+        int currentIndex = stageOrder.indexOf(currentStageName);
+
+        // Check if there is a next stage
+        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
+            String nextStageName = stageOrder.get(currentIndex + 1);
+            System.out.println("들어옴2");
+
+            stageClearFlags.put(nextStageName, true);
+        }
+    }
+
+    private boolean isNextStage(String stage) {
+        // Find the first stage that is not cleared
+        for (String s : stageOrder) {
+            if (!stageClearFlags.get(s)) {
+                return s.equals(stage);
+            }
+        }
+        return false;
     }
 }
