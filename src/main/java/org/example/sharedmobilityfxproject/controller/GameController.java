@@ -113,19 +113,16 @@ public class GameController {
     public void setGameOverListener(GameOverListener listener) {
         this.gameOverListener = listener;
     }
+
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
         this.isGameStarted = true;
         System.out.println("GameController startPlayingGame");
-
-
         gameView.getPrimaryStage().setOnCloseRequest(event -> {
             saveGameState();
             System.out.println("Game state saved on close.");
         });
 
-
-        System.out.println("GameController startPlayingGame");
         // Fill the grid with cells
         for (int row = 0; row < gameView.getRows(); row++) {
             for (int column = 0; column < gameView.getColumns(); column++) {

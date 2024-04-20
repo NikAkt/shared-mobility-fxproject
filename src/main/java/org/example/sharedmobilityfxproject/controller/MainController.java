@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class MainController implements GameOverListener {
+public class MainController {
 
 
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
@@ -71,7 +71,6 @@ public class MainController implements GameOverListener {
         this.gameView = gameView;
         this.sceneController = sceneController;
         this.gameController = initGameController();
-        this.gameController.setGameOverListener(this);
         this.startGame();
 
     }
@@ -103,7 +102,7 @@ public class MainController implements GameOverListener {
      * If the stage has been cleared, it starts the game for the selected stage.
      */
     public void mapSelectionScene() {
-        SceneController.isGoingToNext();
+        sceneController.switchStageChoose();
         gameView.getAllStageButtons().forEach(button -> {
             button.setOnAction(event -> {
                 String stage = button.getText();
@@ -164,10 +163,7 @@ public class MainController implements GameOverListener {
         mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
     }
 
-    @Override
-    public void onGameOver() {
-        SceneController.isGoingToNext();
-    }
+
 
     ///CO2
     public void updateCarbonFootprintLabel() {

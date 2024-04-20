@@ -52,17 +52,13 @@ public class SceneController {
      * Switches the scene to the stage selection screen.
      * This method displays the stage selection screen, sets the scene to the stage selection screen, sets the title of the primary stage, and shows the primary stage.
      */
-//    public void switchStageChoose() {
-//        System.out.println("SwitchStageChoose in SceneController");
-//        gameView.showStageSelectionScreen();
-//        gameView.getPrimaryStage().setScene(gameView.getScene());
-//        gameView.getPrimaryStage().setTitle("WayBackHome :)");
-//        gameView.getPrimaryStage().show();
-//
-//
-//    }
-
-
+    public void switchStageChoose() {
+        System.out.println("SwitchStageChoose in SceneController");
+        gameView.showStageSelectionScreen();
+        gameView.getPrimaryStage().setScene(gameView.getScene());
+        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+        gameView.getPrimaryStage().show();
+    }
     public void mapClearCheck(String msg) {
         gameView.showStageAlert(msg);
     }
@@ -74,9 +70,9 @@ public class SceneController {
      * @param stageName The name of the stage for which the game scene is to be initialized.
      */
     public void initGameScene(String stageName) {
+        System.out.println("반복할때거치기");
         System.out.println("initGameScene in SceneController");
         gameView.setupGameScene(stageName);
-
         gameView.getPrimaryStage().setScene(gameView.getScene());
         gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();

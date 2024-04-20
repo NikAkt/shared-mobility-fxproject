@@ -55,6 +55,7 @@ import javafx.animation.PauseTransition;
 
 public class GameView {
 
+    private final SimpleIntegerProperty timeSeconds;
     // **** Class call ****
     public GameView gameView;
     public MainController mainController;
@@ -78,6 +79,7 @@ public class GameView {
     public Stage primaryStage;
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
+    public static Label timeLabel;
     public SceneController sceneController;
 
     // **** Variables Setting ****
@@ -125,7 +127,6 @@ public class GameView {
     public GameOverListener gameOverListener;
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(6);
 
 
 
@@ -179,6 +180,7 @@ public class GameView {
         this.co2Bar = new ProgressBar(0);
         this.co2Label = new Label("CO2: 0");
         this.primaryStage = primaryStage;
+        this.timeSeconds = new SimpleIntegerProperty(180);
     }
 
     public Stage getPrimaryStage() {
@@ -298,11 +300,12 @@ public class GameView {
         StackPane root = new StackPane();
         scene = new Scene(root, WIDTH, HEIGHT);
 
-        scale = new Scale();
-        scale.setX(1.5);
-        scale.setY(1.5);
-        grid.getTransforms().add(scale);
-
+        if (!grid.getTransforms().contains(scale)) {
+            scale = new Scale();
+            scale.setX(4.5);
+            scale.setY(4.5);
+            grid.getTransforms().add(scale);
+        }
         // Game Lable Setting
 
         // CO2 ProgressBar setup
@@ -350,27 +353,29 @@ public class GameView {
         mapNameTest.setFont(contentFont);
 
         // Time countdown
-        Label timeLabel = new Label();
+        // time Reset
+        this.timeSeconds.set(180);
+        timeLabel = new Label("Time left: " + this.timeSeconds.get() + "s");
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
         new Timeline(
                 new KeyFrame(
-                        Duration.seconds(timeSeconds.get()),
+                        Duration.seconds(this.timeSeconds.get()),
                         event -> gameOver(primaryStage, stageName),
-                        new KeyValue(timeSeconds, 0)
+                        new KeyValue(this.timeSeconds, 0)
                 )
 
         ).play();
 
-        timeSeconds.addListener((obs, oldVal, newVal) -> {
+        this.timeSeconds.addListener((obs, oldVal, newVal) -> {
             timeLabel.setText("Time left: " + newVal + "s");
             timeLabel.setFont(javafx.scene.text.Font.font(40));
             timeLabel.setFont(contentFont);
         });
-        timeLabel.setAlignment(Pos.CENTER);
+        this.timeLabel.setAlignment(Pos.CENTER);
 
-        VBox timeContainer = new VBox(mapNameTest, timeLabel);
+        VBox timeContainer = new VBox(mapNameTest, this.timeLabel);
         timeContainer.setAlignment(Pos.TOP_CENTER);
         StackPane.setMargin(timeContainer, new Insets(20, 0, 0, 0));
 
@@ -406,12 +411,10 @@ public class GameView {
     }
 
     public Button getGameCreditbtn() {
-        System.out.println("GameCreditBtn in GameView");
         return gameCreditbtn;
     }
 
     public Button getGameStartbtn() {
-        System.out.println("GameStartBtn in GameView");
         return getGameStartbtn;
     }
 
@@ -731,6 +734,7 @@ public class GameView {
             dialog.close();
             if (isTimeOut && isGemCollectedEnough && isCO2Safe) {
                 System.out.println("들어옴");
+                gemCount = 0;
                 this.co2Gauge = 0;
                 System.out.print("Current Stage Name check: " + stageName);
                 setNextStageCleared(stageName); // Set the next stage as cleared
