@@ -124,7 +124,7 @@ public class GameView {
     public GameOverListener gameOverListener;
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(10);
+    IntegerProperty timeSeconds = new SimpleIntegerProperty(60);
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
@@ -295,8 +295,8 @@ public class GameView {
         scene = new Scene(root, WIDTH, HEIGHT);
 
         scale = new Scale();
-        scale.setX(1.5);
-        scale.setY(1.5);
+        scale.setX(2.8);
+        scale.setY(2.8);
         grid.getTransforms().add(scale);
 
         // Game Lable Setting
