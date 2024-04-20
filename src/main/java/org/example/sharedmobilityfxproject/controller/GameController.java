@@ -13,6 +13,7 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -558,8 +559,6 @@ public class GameController {
         }
     }
 
-
-
     private boolean canMoveTo(int x, int y) {
         return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
@@ -694,4 +693,60 @@ public class GameController {
             }
 
         }}
+
+    // Methods to Save and Load Game
+
+    public void saveGameState() {
+        List<int[]> gemLocations = new ArrayList<>();
+        // Here you should add the logic to fill gemLocations with the actual gem locations from your game
+
+        SaveGame saveGame = new SaveGame(
+                playerUno.getCoordX(),
+                playerUno.getCoordY(),
+                busman.getX(),
+                busman.getY(),
+                gemLocations,
+                // Here, add the logic to get the current gem counter from your game
+                gameView.getGemCount()
+        );
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("gameSave.ser"))) {
+            oos.writeObject(saveGame);
+            System.out.println("Game saved successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Failed to save game.");
+        }
+    }
+
+    public void loadGameState() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("gameSave.ser"))) {
+            SaveGame saveGame = (SaveGame) ois.readObject();
+
+            // Set the player's position
+            playerUno.setCellByCoords(gameView.grid, saveGame.getPlayerX(), saveGame.getPlayerY());
+
+            // Set the bus position
+            busman.setX(saveGame.getBusX());
+            busman.setY(saveGame.getBusY());
+
+            // Restore gem locations
+            // You need to clear current gems and recreate them at the loaded locations
+            recreateGems(saveGame.getGemLocations());
+
+            // Restore the gem counter
+            gemCounter = saveGame.getGemCounter();
+
+            System.out.println("Game loaded successfully.");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load game.");
+        }
+    }
+
+    private void recreateGems(List<int[]> gemLocations) {
+        // Clear current gems and add gems at the locations specified by gemLocations
+    }
+
+    // ... Rest of your GameController class ...
 }
