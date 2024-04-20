@@ -10,17 +10,15 @@ public class SaveGame implements Serializable {
     private int playerY;
     private int busX;
     private int busY;
-    private List<int[]> gemLocations;
     private int gemCounter;
 
     // Constructor, getters, and setters...
 
-    public SaveGame(int playerX, int playerY, int busX, int busY, List<int[]> gemLocations, int gemCounter) {
+    public SaveGame(int playerX, int playerY, int busX, int busY,  int gemCounter) {
         this.playerX = playerX;
         this.playerY = playerY;
         this.busX = busX;
         this.busY = busY;
-        this.gemLocations = new ArrayList<>(gemLocations); // Ensure a deep copy if necessary
         this.gemCounter = gemCounter;
     }
 
@@ -56,14 +54,6 @@ public class SaveGame implements Serializable {
 
     public void setBusY(int busY) {
         this.busY = busY;
-    }
-
-    public List<int[]> getGemLocations() {
-        return gemLocations;
-    }
-
-    public void setGemLocations(List<int[]> gemLocations) {
-        this.gemLocations = gemLocations;
     }
 
     public int getGemCounter() {
