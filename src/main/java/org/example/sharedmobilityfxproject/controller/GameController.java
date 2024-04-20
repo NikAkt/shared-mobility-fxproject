@@ -92,6 +92,13 @@ public class GameController {
     }
 
     public void startPlayingGame() {
+
+        // Before showing the primary stage, set the close request handler to save the game state
+        gameView.getPrimaryStage().setOnCloseRequest(event -> {
+            this.saveGameState();
+            System.out.println("Game state saved on close.");
+        });
+
         sceneController.initGameScene();
         System.out.println("GameController startPlayingGame");
 
@@ -699,15 +706,11 @@ public class GameController {
     // Methods to Save and Load Game
 
     public void saveGameState() {
-        List<int[]> gemLocations = new ArrayList<>();
-        // Here you should add the logic to fill gemLocations with the actual gem locations from your game
-
         SaveGame saveGame = new SaveGame(
                 playerUno.getCoordX(),
                 playerUno.getCoordY(),
                 busman.getX(),
                 busman.getY(),
-                // Here, add the logic to get the current gem counter from your game
                 gameView.getGemCount()
         );
 
