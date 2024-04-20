@@ -502,13 +502,14 @@ public class GameController {
         timeline.play();
     }
     private void movePlayer(int dx, int dy) {
+        playerUno.setIsWalking(true);
 
         if (playerUno.getStamina() <= 0) {
             System.out.println("Not enough stamina to move.");
             gameView.playNoStaminaSound();
             return;
         }
-        playerUno.setIsWalking(true);
+
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
@@ -520,7 +521,6 @@ public class GameController {
             playerUno.getCell().highlight();
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
         }
-
         if (playerUno.getCell() instanceof metroStop) {
 
             gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
@@ -540,6 +540,9 @@ public class GameController {
             playerUno.setY(newRow);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
+
+            updateScalePivot(gameView.grid, pivotX, pivotY, 1);
+
             playerUno.getCell().highlight();
             interactWithCell(playerUno.getCell());
             if (inTaxi && !(playerUno.isWalking)) {
@@ -557,7 +560,7 @@ public class GameController {
                     moveCounter = 0;
                 }
             }
-            updateScalePivot(gameView.grid, pivotX, pivotY, 1);
+
         }
         interactWithCell(gameView.grid.getCell(newColumn, newRow));
         if (inTaxi) {
@@ -612,7 +615,7 @@ public class GameController {
     private void hailTaxi() {
         // When a player hails a taxi, the player can cancel the hail.
         if (taximan.hailed) {
-            taximan.hailed = false;
+            taximan.hailed = !taximan.hailed;
         } else {
             // Hail taxt, limit Co2 not be over 100%
             double currentCo2 = sceneController.getCo2Gauge();

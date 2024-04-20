@@ -294,13 +294,9 @@ public class GameView {
         StackPane root = new StackPane();
         scene = new Scene(root, WIDTH, HEIGHT);
 
-        StackPane mapStackPane = new StackPane();
-
-        mapStackPane.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
-
         scale = new Scale();
-        scale.setX(1.5);
-        scale.setY(1.5);
+        scale.setX(2.8);
+        scale.setY(2.8);
         grid.getTransforms().add(scale);
 
         // Game Lable Setting
@@ -387,7 +383,6 @@ public class GameView {
         // Settings
         Image icon = new Image(new File("src/main/resources/images/icon.png").toURI().toString());
         primaryStage.getIcons().add(icon);
-
         primaryStage.setTitle("Shared Mobility Application");
         primaryStage.setWidth(WIDTH);
         primaryStage.setHeight(HEIGHT);
