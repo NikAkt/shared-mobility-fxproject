@@ -29,11 +29,6 @@ public class Bus extends Cell {
         this.y = j;
         //this.getStyleClass().add("bus");
         stopList  = stops;
-//        Image sprite = new Image(String.valueOf(getClass().getResource("/images/bus.png")));
-//        this.busVisual = new ImageView(sprite);
-//        ((ImageView) this.busVisual).setFitHeight(10); // Set the size as needed
-//        ((ImageView) this.busVisual).setFitWidth(30);
-//        ((ImageView) this.busVisual).setPreserveRatio(true);
 
          // Initial carbon footprint amount for Bus
         String imagePath = "src/main/resources/images/bus.png";

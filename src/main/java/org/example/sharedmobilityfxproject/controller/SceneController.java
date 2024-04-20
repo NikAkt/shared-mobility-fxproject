@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 public class SceneController {
-    private static GameView gameView;
+    public static GameView gameView;
     public MainController mainController;
 //    private Parent root;
 
@@ -13,7 +13,10 @@ public class SceneController {
     public SceneController(GameView gameView) {
         this.gameView = gameView;
     }
-
+    /**
+     * Initializes the main menu of the game.
+     * This method sets up the main menu, sets the scene to the main menu, sets the title of the primary stage, and shows the primary stage.
+     */
     public void initMainMenu() {
         System.out.println("initMainMenu");
         gameView.setupMainMenu();
@@ -22,12 +25,21 @@ public class SceneController {
         gameView.getPrimaryStage().show();
 
     }
+
+    /**
+     * Switches the scene to the game credits.
+     * This method is typically called when the 'Game Credits' button is clicked in the main menu.
+     */
     public static void switchToGameCredits(){
         System.out.println("switchToGameCredits in SceneController");
         gameView.showCredit();
     }
 
-    public  void switchStageChoose() {
+    /**
+     * Switches the scene to the stage selection screen.
+     * This method displays the stage selection screen, sets the scene to the stage selection screen, sets the title of the primary stage, and shows the primary stage.
+     */
+    public void switchStageChoose() {
         System.out.println("SwitchStageChoose in SceneController");
         gameView.showStageSelectionScreen();
         gameView.getPrimaryStage().setScene(gameView.getScene());
@@ -35,39 +47,39 @@ public class SceneController {
         gameView.getPrimaryStage().show();
     }
 
-    public void switchToMapSelectionScene() {
-        System.out.println(" switchToGameScene in SceneController");
-        gameView.selectStage();
+
+    public void mapClearCheck(String msg) {
+        gameView.showStageAlert(msg);
     }
 
-    public void initGameScene(){
+    /**
+     * Initializes the game scene for a specific stage.
+     * This method sets up the game scene for the provided stage, sets the scene to the game scene, sets the title of the primary stage, and shows the primary stage.
+     *
+     * @param stageName The name of the stage for which the game scene is to be initialized.
+     */
+    public void initGameScene(String stageName) {
+        System.out.println("initGameScene in SceneController");
+        gameView.setupGameScene(stageName);
 
-        gameView.setupGameScene();
         gameView.getPrimaryStage().setScene(gameView.getScene());
         gameView.getPrimaryStage().setTitle("WayBackHome :)");
         gameView.getPrimaryStage().show();
     }
-//    public void switchToStageChoose() {
-//        GameView mainMenuView = new GameView(this, "StageChoose",stage);
-//        stage.setScene(mainMenuView.getScene());
-//    }
-//    public void switchToGameView() {
-//        GameView gameView = new GameView(this, "GamePlay",stage);
-//        stage.setScene(gameView.getScene());
-//    }
-//    public void switchToGameOver() {
-//        GameView gameOverView = new GameView(this, "GameOver",stage);
-//        stage.setScene(gameOverView.getScene());
-//    }
 
+    public void increaseCo2GaugeUpdate(Double co2Amount){
+        gameView.increaseCo2Gauge(co2Amount);
+    }
 
-//    public void loadGameMap(ActionEvent event) throws IOException {
-//        System.out.println("loadGameMap");
-//        root = FXMLLoader.load(getClass().getResource("mainMap.fxml"));
-//        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        stage.setScene(scene);
-//        stage.show();
-//
-//    }
+    public double getCo2Gauge() {
+        return gameView.getCo2Gauge();
+    }
+
+    public void setCo2Gauge(double co2Gauge) {
+        gameView.setCo2Gauge(co2Gauge);
+    }
+
+    public void missionFail() {
+        gameView.gameFail();
+    }
 }
