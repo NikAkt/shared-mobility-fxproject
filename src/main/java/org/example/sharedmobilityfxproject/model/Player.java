@@ -6,6 +6,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import javafx.scene.image.ImageView;
+
+import java.io.File;
+
 public class Player implements motion {
     private int x; // x position
     private int y; // y position
@@ -25,7 +28,7 @@ public class Player implements motion {
         this.speed=10;
         this.co2=0;
 
-        Image sprite = new Image(String.valueOf(getClass().getResource("/images/playerSprite.png")));
+        Image sprite = new Image(new File("src/main/resources/images/playerSprite.png").toURI().toString());
         this.playerVisual = new ImageView(sprite);
         ((ImageView) this.playerVisual).setFitHeight(10); // Set the size as needed
         ((ImageView) this.playerVisual).setFitWidth(30);

@@ -189,8 +189,10 @@ public class GameView {
         scale.setY(1.5);
         grid.getTransforms().add(scale);
         // Settings
-        Image icon = new Image(String.valueOf(getClass().getResource("/images/icon.png")));
+
+        Image icon = new Image(new File("src/main/resources/images/icon.png").toURI().toString());
         primaryStage.getIcons().add(icon);
+
         primaryStage.setTitle("Shared Mobility Application");
         primaryStage.setWidth(WIDTH);
         primaryStage.setHeight(HEIGHT);
