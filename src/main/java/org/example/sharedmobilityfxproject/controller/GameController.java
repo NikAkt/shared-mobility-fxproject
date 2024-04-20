@@ -59,6 +59,8 @@ public class GameController {
     private double cellWidth;
     private double cellHeight;
 
+    private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
+
     private void enableMovementAfterDelay() {
         playerTimeout = false;  // Disable further moves immediately when this method is called
         int delayInMilliseconds = (int) (playerUno.speedTime * 1000);  // Convert seconds to milliseconds
@@ -140,7 +142,7 @@ public class GameController {
         }
         System.out.println("Obstacle Coordinates: ");
 
-        generateGems(gameView.grid, 5); // Replace 5 with the number of gems you want to generate
+        generateGems(gameView.grid, numberOfInitialGems); // Replace 5 with the number of gems you want to generate
 
         // Place the finish cell after the grid is filled and the player's position is initialised
         int finishColumn;
@@ -705,7 +707,6 @@ public class GameController {
                 playerUno.getCoordY(),
                 busman.getX(),
                 busman.getY(),
-                gemLocations,
                 // Here, add the logic to get the current gem counter from your game
                 gameView.getGemCount()
         );
@@ -732,7 +733,7 @@ public class GameController {
 
             // Restore gem locations
             // You need to clear current gems and recreate them at the loaded locations
-            recreateGems(saveGame.getGemLocations());
+            recreateGems(saveGame.getGemCounter());
 
             // Restore the gem counter
             gameView.setGemCoount(saveGame.getGemCounter());
@@ -744,9 +745,10 @@ public class GameController {
         }
     }
 
-    private void recreateGems(List<int[]> gemLocations) {
-        // Clear current gems and add gems at the locations specified by gemLocations
+    private void recreateGems(int gemCounts) {
+        // Clear current gems and add generate new random gems at different locations, based on the numberOfInitialGems - gemCounts
+        gameView.grid.getChildren().removeIf(cell -> cell instanceof Gem);
+        generateGems(gameView.grid, numberOfInitialGems - gemCounts);
     }
 
-    // ... Rest of your GameController class ...
 }
