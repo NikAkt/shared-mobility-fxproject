@@ -251,6 +251,9 @@ public class GameController {
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
+        // Load the gameState
+        loadGameState();
+
     }
 
     /**
@@ -705,7 +708,15 @@ public class GameController {
 
     // Methods to Save and Load Game
 
-    public void saveGameState() {
+    /**
+     * This method is used to save the current state of the game.
+     * It creates a new SaveGame object with the current positions of the player and the bus,
+     * as well as the current gem count. This object is then serialized and written to a file named "gameSave.ser".
+     * If the game state is saved successfully, a message is printed to the console.
+     * If an IOException occurs during this process, the stack trace is printed and a failure message is displayed.
+     */
+    private void saveGameState() {
+        // Create a new SaveGame object with the current game state
         SaveGame saveGame = new SaveGame(
                 playerUno.getCoordX(),
                 playerUno.getCoordY(),
@@ -714,28 +725,37 @@ public class GameController {
                 gameView.getGemCount()
         );
 
+        // Try to write the SaveGame object to a file
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("gameSave.ser"))) {
             oos.writeObject(saveGame);
             System.out.println("Game saved successfully.");
         } catch (IOException e) {
+            // Print the stack trace and a failure message if an IOException occurs
             e.printStackTrace();
             System.out.println("Failed to save game.");
         }
     }
 
-    public void loadGameState() {
+    /**
+     * This method is used to load the saved state of the game.
+     * It reads a serialized SaveGame object from a file named "gameSave.ser".
+     * The player's position, the bus's position, the gem locations, and the gem counter are restored from the SaveGame object.
+     * If the game state is loaded successfully, a message is printed to the console.
+     * If an IOException or ClassNotFoundException occurs during this process, the stack trace is printed and a failure message is displayed.
+     */
+    private void loadGameState() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("gameSave.ser"))) {
+            // Read the SaveGame object from the file
             SaveGame saveGame = (SaveGame) ois.readObject();
 
-            // Set the player's position
+            // Restore the player's position
             playerUno.setCellByCoords(gameView.grid, saveGame.getPlayerX(), saveGame.getPlayerY());
 
-            // Set the bus position
+            // Restore the bus's position
             busman.setX(saveGame.getBusX());
             busman.setY(saveGame.getBusY());
 
-            // Restore gem locations
-            // You need to clear current gems and recreate them at the loaded locations
+            // Restore the gem locations
             recreateGems(saveGame.getGemCounter());
 
             // Restore the gem counter
@@ -743,14 +763,26 @@ public class GameController {
 
             System.out.println("Game loaded successfully.");
         } catch (IOException | ClassNotFoundException e) {
+            // Print the stack trace and a failure message if an exception occurs
             e.printStackTrace();
             System.out.println("Failed to load game.");
         }
     }
 
+    /**
+     * This method is used to recreate the gems in the game.
+     * It first removes all the existing gems from the game grid.
+     * Then, it generates new gems at random locations.
+     * The number of new gems is determined by subtracting the number of collected gems (gemCounts) from the initial number of gems.
+     *
+     * @param gemCounts The number of gems that have been collected by the player.
+     */
     private void recreateGems(int gemCounts) {
-        // Clear current gems and add generate new random gems at different locations, based on the numberOfInitialGems - gemCounts
+        // Clear current gems from the game grid
         gameView.grid.getChildren().removeIf(cell -> cell instanceof Gem);
+
+        // Generate new random gems at different locations
+        // The number of new gems is based on the initial number of gems minus the number of collected gems
         generateGems(gameView.grid, numberOfInitialGems - gemCounts);
     }
 
