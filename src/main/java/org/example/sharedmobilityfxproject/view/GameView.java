@@ -121,9 +121,10 @@ public class GameView {
     // Boolean flag to control hover cursor visibility
 
     //**** Game Over Listener ****
-    private GameOverListener gameOverListener;
+    public GameOverListener gameOverListener;
+    public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-
+    IntegerProperty timeSeconds = new SimpleIntegerProperty(10);
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
@@ -174,7 +175,6 @@ public class GameView {
         this.co2Bar = new ProgressBar(0);
         this.co2Label = new Label("CO2: 0");
         this.primaryStage = primaryStage;
-
     }
 
     public Stage getPrimaryStage() {
@@ -295,8 +295,8 @@ public class GameView {
         scene = new Scene(root, WIDTH, HEIGHT);
 
         scale = new Scale();
-        scale.setX(2.8);
-        scale.setY(2.8);
+        scale.setX(1.5);
+        scale.setY(1.5);
         grid.getTransforms().add(scale);
 
         // Game Lable Setting
@@ -317,7 +317,7 @@ public class GameView {
         this.co2Label.setStyle("-fx-background-color: transparent; -fx-padding: 5px;");
 
         // VBox for vertical layout
-        VBox co2VBox = new VBox(this.co2Bar,this.co2Label);  // Add ProgressBar first, then the Label
+        VBox co2VBox = new VBox(this.co2Bar, this.co2Label);  // Add ProgressBar first, then the Label
         co2VBox.setPrefHeight(600);
         VBox.setMargin(this.co2Bar, new Insets(150, 0, 0, -150)); // Top margin of 100
         VBox.setMargin(this.co2Label, new Insets(200, 0, 0, 0));  // Add some space between the bar and the label
@@ -350,7 +350,6 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        IntegerProperty timeSeconds = new SimpleIntegerProperty(160);
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -412,14 +411,9 @@ public class GameView {
         return getGameStartbtn;
     }
 
-    public Button getGetStagebtn() {
-        System.out.println("GameStartBtn in GameView");
-        return stageBtn;
-    }
-
 
     public Button createStageButton(String stage, ImageView stageImage) {
-        stageBtn = new Button(stage);
+        Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
 
         if (!isStageCleared) {
@@ -436,10 +430,7 @@ public class GameView {
         } else {
             stageBtn.setGraphic(stageImage);
         }
-
         stageBtn.setContentDisplay(ContentDisplay.TOP);
-
-
         return stageBtn;
     }
 
@@ -667,29 +658,30 @@ public class GameView {
      * The dialog can also be closed by clicking anywhere within it.
      */
 
-    private void gameOver(Stage primarOveryStage, String stageName) {
-        //Result Calculating
-        Text resultLabel;
-        if (gemCount >= 5) {
-            resultLabel = new Text("Stage Clear!");
-            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
-            setNextStageFlag(stageName);
-            resultLabel.setFont(contentFont);
-        } else {
-            resultLabel = new Text("Stage Fail");
-            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
-            resultLabel.setFont(contentFont);
-        }
+    private void gameOver(Stage primaryStage, String stageName) {
+        boolean isTimeOut = timeSeconds.get() <= 0;
+        boolean isGemCollectedEnough = gemCount >= 5;
+        boolean isCO2Safe = co2Gauge < 100;
 
-        // GameOver method
+        // Calculate result based on game conditions
+        Text resultLabel;
+        if (isCO2Safe && isGemCollectedEnough && isTimeOut) {
+            resultLabel = new Text("Stage Clear - Requirements met!");
+            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
+        } else {
+            resultLabel = new Text("Stage Fail - Requirements not met");
+            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
+        }
+        resultLabel.setFont(contentFont);
+
+        // Score calculation
         int scorePerGem = 100;
         double scorePenaltyPer10CO2 = 10;
         int finalScore = (gemCount * scorePerGem) - (int) (co2Gauge / 10.0 * scorePenaltyPer10CO2);
 
         Text gameOverGem = new Text("Total Gems: " + gemCount);
         Text gameOverCo2 = new Text("Total CO2: " + String.format("%.1f", co2Gauge));
-
-        gameOverGem.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
+        gameOverGem.setStyle("-fx-font-size: 20px; -fx-text-fill: lightgreen;");
         gameOverGem.setFont(contentFont);
         gameOverCo2.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
         gameOverCo2.setFont(contentFont);
@@ -698,42 +690,36 @@ public class GameView {
         finalScoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
         finalScoreLabel.setFont(contentFont);
 
-        final Stage dialog = new Stage();
+        Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(primaryStage);
-        dialog.initStyle(StageStyle.UNDECORATED); // 창 제목 표시줄 제거
+        dialog.initStyle(StageStyle.UNDECORATED);
 
-        Text gameOverLabel = new Text("GAME OVER" + "\nGoodbye " + stageName + "!");
-
+        Text gameOverLabel = new Text("GAME OVER\nGoodbye " + stageName + "!");
         gameOverLabel.textAlignmentProperty().setValue(TextAlignment.CENTER);
         gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
-        gameOverLabel.setFont(creditFont);
-        // Layout
-        VBox dialogVBox = new VBox(10, gameOverLabel, gameOverGem, gameOverCo2, finalScoreLabel);
+        gameOverLabel.setFont(titleFont);
+
+        VBox dialogVBox = new VBox(10, gameOverLabel, gameOverGem, gameOverCo2, finalScoreLabel, resultLabel);
         dialogVBox.setAlignment(Pos.CENTER);
         dialogVBox.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
-        dialogVBox.getChildren().add(1, resultLabel);
 
-        StackPane dialogPane = new StackPane(dialogVBox);
-        dialogPane.setAlignment(Pos.CENTER);
-        dialogPane.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
-
-        Scene dialogScene = new Scene(dialogPane, 500, 400);
-
+        Scene dialogScene = new Scene(new StackPane(dialogVBox), 500, 400);
         dialog.setScene(dialogScene);
         dialog.show();
 
         Button closeButton = new Button("Close");
         closeButton.setOnAction(e -> {
+            mediaPlayer.stop();
             dialog.close();
-            if (gameOverListener != null) {
-                gameOverListener.onGameOver();  // Notify the listener
+            if (isTimeOut && isGemCollectedEnough && isCO2Safe) {
+                gemCount = 0;
+                setNextStageCleared(stageName); // Set the next stage as cleared
+                SceneController.isGoingToNext();
             }
         });
-
         dialogVBox.getChildren().add(closeButton);
     }
-
 
     /**
      * Applies a specific style to a button based on its focus state.
@@ -765,14 +751,7 @@ public class GameView {
      * The flags are stored in a HashMap where the key is the stage name and the value is a boolean indicating whether the stage has been cleared.
      * By default, only the "Dublin" stage is set to cleared (true), all other stages are not cleared (false).
      */
-    private void initializeStageClearFlags() {
-        stageClearFlags = new HashMap<>();
-        stageClearFlags.put("Dublin", true);
-        stageClearFlags.put("Athens", false);
-        stageClearFlags.put("Seoul", false);
-        stageClearFlags.put("Vilnius", false);
-        stageClearFlags.put("Istanbul", false);
-    }
+    private ArrayList<String> stageOrder;
 
     public boolean isStageCleared(String stage) {
         return stageClearFlags.getOrDefault(stage, false);
@@ -1106,10 +1085,28 @@ public class GameView {
      */
 
 
-
     private void decreaseVolume() {
         double currentVolume = mediaPlayer.getVolume();
         double newVolume = Math.max(0.0, currentVolume - 0.2); // Decrease volume by 0.2, ensuring it doesn't go below 0
         mediaPlayer.setVolume(newVolume);
+    }
+
+    private void setNextStageCleared(String currentStageName) {
+        int currentIndex = stageOrder.indexOf(currentStageName);
+        // Check if there is a next stage
+        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
+            String nextStageName = stageOrder.get(currentIndex + 1);
+            stageClearFlags.put(nextStageName, true);
+        }
+    }
+
+    private void initializeStageClearFlags() {
+        stageClearFlags = new LinkedHashMap<>();
+        stageOrder = new ArrayList<>(Arrays.asList("Dublin", "Athens", "Seoul", "Vilnius", "Istanbul"));
+        for (String city : stageOrder) {
+            stageClearFlags.put(city, false);
+        }
+        // Assuming Dublin is already cleared as per your requirement
+        stageClearFlags.put("Dublin", true);
     }
 }

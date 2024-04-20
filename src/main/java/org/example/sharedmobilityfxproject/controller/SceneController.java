@@ -13,6 +13,19 @@ public class SceneController {
     public SceneController(GameView gameView) {
         this.gameView = gameView;
     }
+
+    public static void isGoingToNext() {
+        if (gameView != null) {
+            System.out.println("isGoingToNext in SceneController");
+            gameView.showStageSelectionScreen();
+            gameView.getPrimaryStage().setScene(gameView.getScene());
+            gameView.getPrimaryStage().setTitle("WayBackHome :)");
+            gameView.getPrimaryStage().show();
+        } else {
+            System.out.println("GameView is not initialized");
+        }
+    }
+
     /**
      * Initializes the main menu of the game.
      * This method sets up the main menu, sets the scene to the main menu, sets the title of the primary stage, and shows the primary stage.
@@ -81,5 +94,6 @@ public class SceneController {
 
     public void missionFail() {
         gameView.gameFail();
+        gameView.gameOverFlag = true;
     }
 }
