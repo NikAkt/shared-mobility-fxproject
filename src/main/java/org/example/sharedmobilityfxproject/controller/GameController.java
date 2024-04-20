@@ -735,7 +735,7 @@ public class GameController {
             recreateGems(saveGame.getGemLocations());
 
             // Restore the gem counter
-            gemCounter = saveGame.getGemCounter();
+            gameView.setGemCoount(saveGame.getGemCounter());
 
             System.out.println("Game loaded successfully.");
         } catch (IOException | ClassNotFoundException e) {
