@@ -210,7 +210,8 @@ public class GameView {
         root.getChildren().addAll(grid);
 
         // create scene and set to stage
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+        File cssFile = new File("src/main/resources/css/application.css");
+        scene.getStylesheets().add("file:"+cssFile);
         initializeMetroSystem();
     }
 
@@ -320,7 +321,8 @@ public class GameView {
 
         metroLayer.getChildren().addAll(metroGrid,testLabel);
         metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
-        metroScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/application.css")).toExternalForm());
+        File cssFile = new File("src/main/resources/css/application.css");
+        metroScene.getStylesheets().add("file:"+cssFile);
 
     }
 

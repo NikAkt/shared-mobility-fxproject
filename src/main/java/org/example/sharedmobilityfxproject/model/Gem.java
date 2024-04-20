@@ -18,17 +18,16 @@ public class Gem extends Cell {
         super(column, row);
         getStyleClass().add("gem");
         setUserData("gem");
-        String imagePath = getClass().getResource("/images/gem.png").toExternalForm();
-
-
-
+        String imagePath = "src/main/resources/images/gem.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
 
         // Set the fixed size of the Gem node to match the cell size
         setPrefHeight(10);  // Set the preferred height to 10 pixels
         setPrefWidth(8);    // Set the preferred width to 8 pixels
 
 
-        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+        this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                 "-fx-background-size: contain; -fx-background-position: center center;");
         this.getStyleClass().add("gem");// Set a custom attribute to identify the gem cell
 
