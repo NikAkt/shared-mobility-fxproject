@@ -527,7 +527,7 @@ public class GameController {
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
     public void updateScalePivot(Node node, double newPivotX, double newPivotY, double durationSeconds) {
-        //Eamonn Check this part.
+        //*****Eamonn Check this part. *****
         if (gameView.scale == null) {
             gameView.scale = new Scale();
             node.getTransforms().add(gameView.scale);
