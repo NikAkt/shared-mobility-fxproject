@@ -89,6 +89,16 @@ public class GameController {
         this.cellHeight = gameView.grid.height/gameView.grid.rows;
         this.sceneController.initGameScene();
         this.startPlayingGame();
+        double pivotX = gameView.scale.getPivotX();
+        double pivotY = gameView.scale.getPivotY();
+
+// Calculate the translation needed to recenter the scale
+        double translateX = playerUno.getCoordX() * cellWidth * (1 - gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (1 - gameView.scale.getY()) - pivotY;
+
+// Apply translation to the grid to recenter
+        gameView.grid.setTranslateX(gameView.grid.getTranslateX() - translateX);
+        gameView.grid.setTranslateY(gameView.grid.getTranslateY() - translateY);
     }
 
     public void startPlayingGame() {
@@ -511,11 +521,19 @@ public class GameController {
 
         double oldPivotX = node.getScaleX();
         double oldPivotY = node.getScaleY();
+        double deltaX = newPivotX - oldPivotX;
+        double deltaY = newPivotY - oldPivotY;
 
+        // Adjust the pivot based on the player's movement
+        double updatedPivotX = oldPivotX + deltaX;
+        double updatedPivotY = oldPivotY + deltaY;
 
         Timeline timeline = new Timeline();
-        KeyValue kvX = new KeyValue(gameView.scale.pivotXProperty(), newPivotX);
-        KeyValue kvY = new KeyValue(gameView.scale.pivotYProperty(), newPivotY);
+        KeyValue kvX = new KeyValue(gameView.scale.pivotXProperty(), updatedPivotX*3
+
+
+        );
+        KeyValue kvY = new KeyValue(gameView.scale.pivotYProperty(), updatedPivotY*3);
         KeyFrame kf = new KeyFrame(duration, kvX, kvY);
 
         timeline.getKeyFrames().add(kf);
@@ -526,8 +544,7 @@ public class GameController {
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
-        double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
-        double pivotY = playerUno.getCoordY() * cellHeight;
+
         if (gameView.isMetroSceneActive) {
             playerUno.getCell().unhighlight();
 
@@ -552,6 +569,9 @@ public class GameController {
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
+            double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+            double pivotY = playerUno.getCoordY() * cellHeight;
+            System.out.println(pivotX+" "+playerUno.getCoordX()*cellWidth);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
 
