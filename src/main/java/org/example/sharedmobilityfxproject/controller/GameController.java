@@ -526,8 +526,8 @@ public class GameController {
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
-        double pivotX = (newColumn + 0.5) * cellWidth;  // cellWidth is the width of one grid cell
-        double pivotY = (newRow + 0.5) * cellHeight;
+        double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+        double pivotY = playerUno.getCoordY() * cellHeight;
         if (gameView.isMetroSceneActive) {
             playerUno.getCell().unhighlight();
 
@@ -555,7 +555,7 @@ public class GameController {
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
 
-            updateScalePivot(gameView.grid, pivotX, pivotY, 1);
+            updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
             // Setup to follow player
 
 //            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
