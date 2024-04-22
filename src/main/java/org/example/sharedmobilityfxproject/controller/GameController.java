@@ -38,12 +38,21 @@ public class GameController {
     public int currentRow;
     public int currentColumn;
 
+
+    //GameStart flag
+    private boolean isGameStarted = false;
     // Newly Added
     public boolean playerMovementEnabled = true;
     public boolean onBus = false;
     public boolean inTaxi = false;
     public boolean onBicycle = false;
     public Player playerUno;
+
+    //Stamina related
+    private int lastX, lastY;  // Last coordinates of the player
+    private int stationaryTime = 0;  // Time to stay
+
+
 
     public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
@@ -58,6 +67,7 @@ public class GameController {
     private ScrollPane scrollPane;
     private double cellWidth;
     private double cellHeight;
+    private GameOverListener gameOverListener;
 
     private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
 
@@ -75,6 +85,9 @@ public class GameController {
         }, delayInMilliseconds);
     }
 
+    //Player Movement Check for Stamina
+    private int moveCounter = 0;
+
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -87,6 +100,9 @@ public class GameController {
         this.playerUno = playerUno;
         this.cellWidth = gameView.grid.width/gameView.grid.columns;
         this.cellHeight = gameView.grid.height/gameView.grid.rows;
+        Timeline checkStationary = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAndIncreaseStamina()));
+        checkStationary.setCycleCount(Timeline.INDEFINITE);
+        checkStationary.play();
         this.sceneController.initGameScene();
         this.startPlayingGame();
         double pivotX = gameView.scale.getPivotX();
@@ -101,8 +117,9 @@ public class GameController {
         gameView.grid.setTranslateY(gameView.grid.getTranslateY() - translateY);
     }
 
-    public void startPlayingGame() {
-
+    public void startPlayingGame(String stageName) {
+        this.sceneController.initGameScene(stageName);
+        this.isGameStarted = true;
         // Before showing the primary stage, set the close request handler to save the game state
         gameView.getPrimaryStage().setOnCloseRequest(event -> {
             saveGameState();
@@ -318,10 +335,20 @@ public class GameController {
         for (int i = 0; i < numberOfGems; i++) {
             int gemColumn;
             int gemRow;
+            boolean isObstacle;
             do {
                 gemColumn = (int) (Math.random() * gameView.getColumns());
-                gemRow = (int) (Math.random() * gameView.getRows());
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+                gemRow = (int) (Math.random(
+
+                ) * gameView.getRows());
+                int finalGemColumn = gemColumn;
+                int finalGemRow = gemRow;
+
+                //It is called before gemGeneration
+                // obstacleCoordinates is the list of obstacles's coordinates
+                isObstacle = obstacleCoordinates.stream().anyMatch(coords -> coords[0] == finalGemColumn && coords[1] == finalGemRow);
+                //Check
+            } while (isObstacle || (gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
 
             Gem gem = new Gem(gemColumn, gemRow);
@@ -540,6 +567,13 @@ public class GameController {
         timeline.play();
     }
     private void movePlayer(int dx, int dy) {
+        playerUno.setIsWalking(true);
+
+        if (playerUno.getStamina() <= 0) {
+            System.out.println("Not enough stamina to move.");
+            gameView.playNoStaminaSound();
+            return;
+        }
 
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
@@ -563,7 +597,6 @@ public class GameController {
             playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
             System.out.println("Player has entered a metro entrance" + gameView.grid);
 
-
         }
         if (canMoveTo(newColumn, newRow)) {
             playerUno.getCell().unhighlight();
@@ -578,10 +611,24 @@ public class GameController {
             updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
             // Setup to follow player
 
-//            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
-//                scrollPane.setHvalue(playerUno.getCoordX() / gameView.grid.getWidth());
-//                scrollPane.setVvalue(playerUno.getCoordY() / gameView.grid.getHeight());
-//            });
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
+            if (inTaxi && !(playerUno.isWalking)) {
+                // Assuming taximan is accessible from here, or find a way to access it
+                moveTaxi(gameView.grid, taximan, newColumn, newRow);
+            }
+//MoveCounter for walking and decrease stamina every 5 moves
+            if (!inTaxi && playerUno.getIsWalking()) {
+                moveCounter++;
+                System.out.println("Move Counter: " + moveCounter);
+                //Decrease stamina every 5 moves
+                if (moveCounter >= 5) {
+                    playerUno.decreaseStamina();
+                    gameView.updateStamina(playerUno.getStamina());
+                    moveCounter = 0;
+                }
+            }
+
         }
         interactWithCell(gameView.grid.getCell(newColumn, newRow));
         if (inTaxi) {
@@ -637,8 +684,15 @@ public class GameController {
     private void hailTaxi() {
         if (taximan.hailed) {
             taximan.hailed = !taximan.hailed;
-        }
-        else{
+        } else {
+            // Hail taxt, limit Co2 not be over 100%
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2 = currentCo2 + 30.0;
+            if (potentialCo2 > 100.0) {
+                gameFailedCall();
+            } else {
+                sceneController.increaseCo2GaugeUpdate(30.0); // Safely increase CO2
+            }
             taximan.hailed = true;
         }
     }
@@ -806,4 +860,25 @@ public class GameController {
         generateGems(gameView.grid, numberOfInitialGems - gemCounts);
     }
 
+    private void checkAndIncreaseStamina() {
+        if (isGameStarted && playerUno.getStamina() < 100) {
+            if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
+                stationaryTime += 1;
+                if (stationaryTime >= 1) {
+                    playerUno.increaseStamina();  // 스태미나 회복
+                    gameView.updateStamina(playerUno.getStamina());
+                    stationaryTime = 0;
+                }
+            } else {
+                stationaryTime = 0;
+                lastX = playerUno.getCoordX();
+                lastY = playerUno.getCoordY();
+            }
+        }
+    }
+
+    private void gameFailedCall() {
+        sceneController.setCo2Gauge(100.0); // Set CO2 to maximum if overflown
+        sceneController.missionFail();  // Call mission fail function
+    }
 }

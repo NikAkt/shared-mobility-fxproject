@@ -8,6 +8,7 @@ import org.example.sharedmobilityfxproject.model.Cell;
 import org.example.sharedmobilityfxproject.model.Grid;
 import org.example.sharedmobilityfxproject.model.busStop;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Bus extends Cell {
@@ -28,15 +29,12 @@ public class Bus extends Cell {
         this.y = j;
         //this.getStyleClass().add("bus");
         stopList  = stops;
-//        Image sprite = new Image(String.valueOf(getClass().getResource("/images/bus.png")));
-//        this.busVisual = new ImageView(sprite);
-//        ((ImageView) this.busVisual).setFitHeight(10); // Set the size as needed
-//        ((ImageView) this.busVisual).setFitWidth(30);
-//        ((ImageView) this.busVisual).setPreserveRatio(true);
 
          // Initial carbon footprint amount for Bus
-        String imagePath = getClass().getResource("/images/bus.png").toExternalForm();
-        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+        String imagePath = "src/main/resources/images/bus.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
+        this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                 "-fx-background-size: cover; -fx-background-position: center center;");
         this.getStyleClass().add("cell-obstacle");
     }
