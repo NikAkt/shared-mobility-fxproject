@@ -277,6 +277,7 @@ public class GameController {
 // Apply translation to the grid to recenter
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
         this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
+        System.out.println(busStopCoordinates.toString());
 
     }
 
@@ -316,13 +317,7 @@ public class GameController {
                         break;
                     case 4:  // Mark as bus stop
                         busStop busS = new busStop(column,row);
-
-                        // Sort the busStops ArrayList
-                        Collections.sort(busStops, busStopComparator);
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
-                        // And sort again after adding
-                        Collections.sort(busStops, busStopComparator);
-
                         busStops.add(busS);
                         break;
                     default:
@@ -331,22 +326,54 @@ public class GameController {
                 }
             }
         }
+        // Sort bus stops after all are added
+        busStops.sort((busStop1, busStop2) -> {
+            // First, compare Y-coordinates in ascending order
+            if (busStop1.getY() > busStop2.getY() && busStop1.getX() <= busStop2.getX() && busStop1.getY() >= busStop1.getX()){
+                return -1; // busStop1 should come before busStop2 (because it's lower)
+            } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() >= busStop2.getX())){
+                return 1; // busStop1 should come after busStop2 (because it's higher)
+            } else if ((busStop1.getY() > busStop2.getY()) && (busStop1.getX() > busStop2.getX()) && busStop1.getY() >= busStop1.getX()){
+                return -1; // busStop1 should come before busStop2 (because it's lower)
+            } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() < busStop2.getX())){
+                return -1; // busStop1 should come before busStop2 (because it's lower)
+            } else {
+                return 0; // busStop1 and busStop2 are at the same position
+            }
+        });
+        // Optionally, print bus stop coordinates
+        busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
+
+        ArrayList<Integer> originalList = new ArrayList<>();
+        Collections.addAll(originalList, 1, 2, 3, 4);
+
+        ArrayList<Integer> reversedList = new ArrayList<>(originalList);
+        Collections.reverse(reversedList);
+        reversedList.remove(0);
+
+        ArrayList<Integer> newList = new ArrayList<>(originalList);
+        newList.addAll(reversedList);
     }
 
-    // Custom comparator for busStops
-    Comparator<busStop> busStopComparator = (busStop1, busStop2) -> {
-        if (busStop1.getY() > busStop2.getY() && busStop1.getX() == busStop2.getX()) {
-            return -1;
-        } else if (busStop1.getY() == busStop2.getY() && busStop1.getX() < busStop2.getX()) {
-            return -1;
-        } else if (busStop1.getY() < busStop2.getY() && busStop1.getX() == busStop2.getX()) {
-            return 1;
-        } else if (busStop1.getY() == busStop2.getY() && busStop1.getX() > busStop2.getX()) {
-            return 1;
+    public int compare(busStop bs1, busStop bs2) {
+        // Compare Y-coordinates in ascending order
+        if (bs1.getY() != bs2.getY()) {
+            if (bs1.getY() < bs2.getY()) {
+                return -1; // bs1 is lower, so comes first
+            } else {
+                return 1;  // bs2 is lower, so comes first
+            }
         } else {
-            return 0;
+            // Y-coordinates are the same, so compare X-coordinates in ascending order
+            if (bs1.getX() < bs2.getX()) {
+                return -1; // bs1 is more to the left, so comes first
+            } else if (bs1.getX() > bs2.getX()) {
+                return 1;  // bs2 is more to the left, so comes first
+            } else {
+                return 0;  // bs1 and bs2 are at the same position
+            }
         }
-    };
+    }
 
 
     private void generateGems(Grid grid, int numberOfGems) {
