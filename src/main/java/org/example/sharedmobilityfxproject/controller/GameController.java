@@ -470,7 +470,7 @@ public class GameController {
     }
 
     public void setupKeyboardActions(KeyCode key) {
-        if (this.inTaxi) {
+        if (this.inTaxi&&playerTimeout) {
             switch (key) {
                 case D -> movePlayer(2, 0);
                 case A -> movePlayer(-2, 0);
@@ -489,6 +489,7 @@ public class GameController {
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
             }
 
+            enableMovementAfterDelay(taximan.timeSpeed);
         } else if (onBicycle && playerMovementEnabled && playerTimeout) {
             System.out.println("Bicycle time: " + cycleman.bikeTime + " you are still on bike");
             switch (key) {
@@ -502,6 +503,7 @@ public class GameController {
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
             }
+            System.out.println(taximan.timeSpeed);
             enableMovementAfterDelay(taximan.timeSpeed);
         } else if (playerMovementEnabled && playerTimeout) {
             switch (key) {
@@ -581,7 +583,18 @@ public class GameController {
     }
     private void movePlayer(int dx, int dy) {
         playerUno.setIsWalking(true);
+        boolean isDoubleMove = Math.abs(dx) == 2 || Math.abs(dy) == 2;
+        boolean onedist = true;
+        if (isDoubleMove) {
+            // Calculate the target cell coordinates
+            int targetX = playerUno.getCoordX() + (dx / 2);
+            int targetY = playerUno.getCoordY() + (dy / 2);
 
+            // Check if the player can move to the target cell
+            if (!canMoveTo(targetX, targetY)) {
+                onedist = false;
+            }
+        }
         if (playerUno.getStamina() <= 0) {
             System.out.println("Not enough stamina to move.");
             gameView.playNoStaminaSound();
@@ -611,7 +624,7 @@ public class GameController {
             System.out.println("Player has entered a metro entrance" + gameView.grid);
 
         }
-        if (canMoveTo(newColumn, newRow)) {
+        if (canMoveTo(newColumn, newRow)&&!inTaxi) {
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
@@ -645,7 +658,22 @@ public class GameController {
 
         }
         interactWithCell(gameView.grid.getCell(newColumn, newRow));
-        if (inTaxi) {
+        if (inTaxi&&canMoveTo(newColumn, newRow)&&onedist) {
+            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
+            playerUno.getCell().unhighlight();
+            playerUno.setX(newColumn);
+            playerUno.setY(newRow);
+            double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+            double pivotY = playerUno.getCoordY() * cellHeight;
+
+//            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
+            playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
+
+            updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
+            // Setup to follow player
+
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
             // Assuming taximan is accessible from here, or find a way to access it
             moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
