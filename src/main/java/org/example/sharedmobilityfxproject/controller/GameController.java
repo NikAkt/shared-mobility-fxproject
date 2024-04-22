@@ -179,13 +179,13 @@ public class GameController {
         gameView.grid.add(finishCell, finishColumn, finishRow);
 
 //        //bus SHITE
-//        busStop busS1 = new busStop(4,4);
-//        busStop busS2 = new busStop(110,4);
-//        busStop busS3 = new busStop(57,25);
-//        busStop busS4 = new busStop(110,64);
-//        busStop busS5 = new busStop(57,64);
-//        busStop busS6 = new busStop(4,64);
-//        busStop busS7 = new busStop(4,34);
+        busStop busS1 = new busStop(27,6);
+        busStop busS2 = new busStop(62,6);
+        busStop busS3 = new busStop(97,6);
+        busStop busS4 = new busStop(98,30);
+        busStop busS5 = new busStop(98,60);
+        busStop busS6 = new busStop(60,55);
+        busStop busS7 = new busStop(31,55);
 
         metroStop metro1 = new metroStop(2,30);
         gameView.grid.add(metro1,2,30);
@@ -199,13 +199,13 @@ public class GameController {
 //        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
 //
 //
-//        busStops.add(busS1);
-//        busStops.add(busS2);
-//        busStops.add(busS3);
-//        busStops.add(busS4);
-//        busStops.add(busS5);
-//        busStops.add(busS6);
-//        busStops.add(busS7);
+        busStops.add(busS1);
+        busStops.add(busS2);
+        busStops.add(busS3);
+        busStops.add(busS4);
+        busStops.add(busS5);
+        busStops.add(busS6);
+        busStops.add(busS7);
 
 
 
@@ -317,11 +317,11 @@ public class GameController {
                     case 3:  // Color the cell blue
                         gameView.grid.setCellColor(column, row, "BLUE");
                         break;
-                    case 4:  // Mark as bus stop
-                        busStop busS = new busStop(column,row);
-                        busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
-                        busStops.add(busS);
-                        break;
+//                    case 4:  // Mark as bus stop
+//                        busStop busS = new busStop(column,row);
+//                        busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
+//                        busStops.add(busS);
+//                        break;
                     default:
                         // Optionally handle default case if needed
                         break;
@@ -600,12 +600,13 @@ public class GameController {
 
         }
         if (canMoveTo(newColumn, newRow)) {
+            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
             double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
             double pivotY = playerUno.getCoordY() * cellHeight;
-            System.out.println(pivotX+" "+playerUno.getCoordX()*cellWidth);
+
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
 

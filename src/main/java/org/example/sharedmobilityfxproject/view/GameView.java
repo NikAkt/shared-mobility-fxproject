@@ -1039,7 +1039,7 @@ public class GameView {
         double staminaFraction = newStamina / 100.0;
         this.staminaBar.setProgress(staminaFraction);
         this.staminaLabel.setText("Stamina: " + newStamina + "%");
-        System.out.println("Updated Stamina: " + this.staminagauge + ", Progress: " + staminaFraction);
+
     }
 
     /**
