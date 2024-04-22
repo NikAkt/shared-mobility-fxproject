@@ -341,18 +341,22 @@ public class GameController {
                 return 0; // busStop1 and busStop2 are at the same position
             }
         });
+
+        // Reverse the bus stops list to get the correct order
+        ArrayList<busStop> reversedList = new ArrayList<>(busStops);
+        // Remove the first and last elements
+        reversedList.removeFirst();
+        reversedList.removeLast();
+        // Reverse the list
+        Collections.reverse(reversedList);
+
+        ArrayList<busStop> newList = new ArrayList<>(busStops);
+        newList.addAll(reversedList);
+        // Update the bus stops list with the sorted list
+        busStops = newList;
+
         // Optionally, print bus stop coordinates
         busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
-
-        ArrayList<Integer> originalList = new ArrayList<>();
-        Collections.addAll(originalList, 1, 2, 3, 4);
-
-        ArrayList<Integer> reversedList = new ArrayList<>(originalList);
-        Collections.reverse(reversedList);
-        reversedList.remove(0);
-
-        ArrayList<Integer> newList = new ArrayList<>(originalList);
-        newList.addAll(reversedList);
     }
 
     public int compare(busStop bs1, busStop bs2) {
