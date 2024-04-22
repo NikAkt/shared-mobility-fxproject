@@ -190,13 +190,13 @@ public class GameController {
         metroStop metro1 = new metroStop(2,30);
         gameView.grid.add(metro1,2,30);
 
-//        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-//        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-//        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-//        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-//        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-//        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-//        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
 //
 //
         busStops.add(busS1);
