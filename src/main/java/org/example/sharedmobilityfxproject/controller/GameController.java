@@ -479,7 +479,8 @@ public class GameController {
                 case T -> {
                     this.inTaxi = false;
                 playerUno. playerVisual.setVisible(true); // Hide player sprite when T is pressed
-
+                    taximan.hailed = !taximan.hailed;
+                    taximan.arrived = false;
             }
                 case E -> togglePlayerMovement();
                 case C ->
@@ -751,12 +752,13 @@ public class GameController {
     }
 
     private void hailTaxi() {
+        System.out.println(taximan.hailed);
         if (taximan.hailed) {
             taximan.hailed = !taximan.hailed;
         } else {
             // Hail taxt, limit Co2 not be over 100%
             double currentCo2 = sceneController.getCo2Gauge();
-            double potentialCo2 = currentCo2 + 30.0;
+            double potentialCo2 = currentCo2 + 3.0;
             if (potentialCo2 > 100.0) {
                 gameFailedCall();
             } else {
