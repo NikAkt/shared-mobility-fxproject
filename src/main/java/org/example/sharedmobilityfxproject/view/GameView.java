@@ -133,7 +133,7 @@ public class GameView {
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
     public Button gameEndbtn;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(3);
+    IntegerProperty timeSeconds;
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
@@ -359,6 +359,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
+        timeSeconds = new SimpleIntegerProperty(10);
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -423,8 +424,18 @@ public class GameView {
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
+        boolean isNextStage = isNextStage(stage);
 
-        if (!isStageCleared) {
+        if (!isStageCleared && isNextStage) {
+            stageImage.setOpacity(0.75);
+            Label nextMark = new Label("Next");
+            nextMark.setFont(new Font("Arial", 24));
+            nextMark.setStyle("-fx-text-fill: orange;");
+
+            StackPane buttonGraphic = new StackPane(stageImage, nextMark);
+            stageBtn.setGraphic(buttonGraphic);
+        } else if (!isStageCleared) {
+
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(-1);
             stageImage.setEffect(colorAdjust);
@@ -436,8 +447,10 @@ public class GameView {
             StackPane buttonGraphic = new StackPane(stageImage, xMark);
             stageBtn.setGraphic(buttonGraphic);
         } else {
+            // If the stage is cleared, just set the image without any marks
             stageBtn.setGraphic(stageImage);
         }
+
         stageBtn.setContentDisplay(ContentDisplay.TOP);
         return stageBtn;
     }
@@ -887,7 +900,7 @@ public class GameView {
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
                         "          My Dearest team mates\n          OilWrestlingLovers :)" +
-                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n          and \n          Gyuwon Jung"
+                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis\" +    and \n          Gyuwon Jung"
 
         );
         startMessageLabel.setWrapText(true);
@@ -1098,20 +1111,6 @@ public class GameView {
         mediaPlayer.setVolume(newVolume);
     }
 
-    public void setNextStageCleared(String currentStageName) {
-        System.out.println("setNextStageCleared enter!!! ");
-        int currentIndex = stageOrder.indexOf(currentStageName);
-        System.out.println("currentStage Index " + currentIndex);
-
-        // Check if there is a next stage
-        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
-            System.out.println("next Stage Name " + stageOrder.get(currentIndex + 1));
-            String nextStageName = stageOrder.get(currentIndex + 1);
-            stageClearFlags.put(nextStageName, true);
-
-        }
-    }
-
     private void initializeStageClearFlags() {
         stageClearFlags = new LinkedHashMap<>();
         stageOrder = new ArrayList<>(Arrays.asList("Dublin", "Athens", "Seoul", "Vilnius", "Istanbul"));
@@ -1131,5 +1130,32 @@ public class GameView {
         gemCount = 0;
         updateGemCountLabel();
     }
+
+
+    public void setNextStageCleared(String currentStageName) {
+        System.out.println("들어옴");
+        System.out.println("Current Stage Name!!! in setNextCleared: " + currentStageName);
+        int currentIndex = stageOrder.indexOf(currentStageName);
+
+        // Check if there is a next stage
+        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
+            String nextStageName = stageOrder.get(currentIndex + 1);
+            System.out.println("들어옴2");
+
+            stageClearFlags.put(nextStageName, true);
+        }
+    }
+
+
+    private boolean isNextStage(String stage) {
+        // Find the first stage that is not cleared
+        for (String s : stageOrder) {
+            if (!stageClearFlags.get(s)) {
+                return s.equals(stage);
+            }
+        }
+        return false;
+    }
+
 
 }
