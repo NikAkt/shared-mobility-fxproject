@@ -758,6 +758,14 @@ public class GameView {
 
     }
 
+    public Map<String, Boolean> getStageClearFlags() {
+        return stageClearFlags;
+    }
+
+    public void setStageClearFlags(Map<String, Boolean> stageClearFlags) {
+        this.stageClearFlags = stageClearFlags;
+    }
+
     /**
      * Displays an educational popup with a random message from a list of messages stored in a JSON file.
      * The popup is a modal dialog with a title, a random educational message, and a close button.
@@ -978,10 +986,10 @@ public class GameView {
 
         Label noticeLabel = new Label("Notice");
         noticeLabel.setFont(Font.font(titleFont.getFamily(), FontWeight.BOLD, 20));
-        noticeLabel.setPadding(new Insets(10, 0, 10, 0));
+        noticeLabel.setPadding(new Insets(10, 0, 0, 0));
         noticeLabel.setAlignment(Pos.TOP_CENTER);
 
-        Label messageLabel = new Label("This stage cannot be cleared yet.\nPlease clear the previous stages first.");
+        Label messageLabel = new Label("This stage cannot be accessed yet.\nPlease complete the previous stages first.");
         messageLabel.setFont(Font.font(contentFont.getFamily(), FontWeight.NORMAL, 16));
         messageLabel.setWrapText(true);
         messageLabel.setAlignment(Pos.CENTER);
