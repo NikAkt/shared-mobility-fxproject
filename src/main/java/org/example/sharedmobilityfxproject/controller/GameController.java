@@ -707,6 +707,7 @@ public class GameController {
             int[] playerLocation = {playerUno.getCoordX(), playerUno.getCoordY()};
             boolean atBusStop = busStopCoordinates.stream()
                     .anyMatch(location -> location[0] == playerLocation[0] && location[1] == playerLocation[1]);
+            System.out.println(atBusStop);
             if (atBusStop) {
                 playerMovementEnabled = true;
                 onBus = false;
