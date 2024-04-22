@@ -529,7 +529,11 @@ public class GameController {
 //        int x = bus.getX();
 //        int y = bus.getY();
         //Cell cell = grid.getCell(x,y);
-
+        if(this.onBus) {
+            double pivX = newX*cellWidth;
+            double pivY = newY*cellHeight;
+            updateScalePivot(gameView.grid, pivX, pivY, bus.timeSpeed);
+        }
         gameView.grid.moveCell(bus, newX, newY);
 
         bus.setX(newX);

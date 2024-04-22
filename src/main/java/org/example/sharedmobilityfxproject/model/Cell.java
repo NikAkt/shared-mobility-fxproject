@@ -10,7 +10,7 @@ import javafx.scene.layout.StackPane;
 public class Cell extends StackPane {
     int column;
     int row;
-
+    public double timeSpeed = .07;
     public Cell(int column, int row) {
         this.column = column;
         this.row = row;
