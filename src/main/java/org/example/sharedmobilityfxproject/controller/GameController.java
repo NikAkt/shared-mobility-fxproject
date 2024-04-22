@@ -71,9 +71,9 @@ public class GameController {
 
     private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
 
-    private void enableMovementAfterDelay() {
+    private void enableMovementAfterDelay(double timespeed) {
         playerTimeout = false;  // Disable further moves immediately when this method is called
-        int delayInMilliseconds = (int) (playerUno.speedTime * 1000);  // Convert seconds to milliseconds
+        int delayInMilliseconds = (int) ((timespeed * 1000)+75);  // Convert seconds to milliseconds
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -357,9 +357,12 @@ public class GameController {
     }
 
     public void moveTaxiTowardsPlayer(Grid grid, Taxi bus) {
-        System.out.println("moving taxi");
+
         if (bus.getX() == playerUno.getCoordX() && bus.getY() == playerUno.getCoordY() && taximan.arrived && !inTaxi) {
+            System.out.println("arrived at player");
             inTaxi = true;
+            System.out.println("hiding player");
+            playerUno.playerVisual.setVisible(false);
 
         }
 //        System.out.println(distanceIfMoveX+"   "+distanceIfMoveY);
@@ -397,7 +400,7 @@ public class GameController {
                 if (bus.hailed && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
                     System.out.println("----------- You just got in the taxia---------");
                     inTaxi = true;
-
+                    playerUno.playerVisual.setVisible(false);
                 } else if (inTaxi) {
 
                     System.out.println("----------- Press E to get off  ---------");
@@ -473,7 +476,11 @@ public class GameController {
                 case A -> movePlayer(-2, 0);
                 case W -> movePlayer(0, -2);
                 case S -> movePlayer(0, 2);
-                case T -> this.inTaxi = false;
+                case T -> {
+                    this.inTaxi = false;
+                playerUno. playerVisual.setVisible(true); // Hide player sprite when T is pressed
+
+            }
                 case E -> togglePlayerMovement();
                 case C ->
                         System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
@@ -481,6 +488,7 @@ public class GameController {
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
             }
+
         } else if (onBicycle && playerMovementEnabled && playerTimeout) {
             System.out.println("Bicycle time: " + cycleman.bikeTime + " you are still on bike");
             switch (key) {
@@ -494,7 +502,7 @@ public class GameController {
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
             }
-            enableMovementAfterDelay();
+            enableMovementAfterDelay(taximan.timeSpeed);
         } else if (playerMovementEnabled && playerTimeout) {
             switch (key) {
                 case D -> movePlayer(1, 0);
@@ -504,7 +512,7 @@ public class GameController {
                 case T -> hailTaxi();
                 case E -> togglePlayerMovement();
             }
-            enableMovementAfterDelay();
+            enableMovementAfterDelay(playerUno.speedTime);
         } else if (key == KeyCode.E) {
             togglePlayerMovement();
         } else if (key == KeyCode.E) {
@@ -774,6 +782,7 @@ public class GameController {
                 if (bus.hailed && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
                     System.out.println("----------- You just got in the taxia---------");
                     inTaxi = true;
+                    bus.timeSpeed = playerUno.speedTime;
 
                 } else if (inTaxi) {
 
