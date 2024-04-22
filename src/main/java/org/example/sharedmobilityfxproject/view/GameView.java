@@ -758,6 +758,14 @@ public class GameView {
 
     }
 
+    public Map<String, Boolean> getStageClearFlags() {
+        return stageClearFlags;
+    }
+
+    public void setStageClearFlags(Map<String, Boolean> stageClearFlags) {
+        this.stageClearFlags = stageClearFlags;
+    }
+
     /**
      * Displays an educational popup with a random message from a list of messages stored in a JSON file.
      * The popup is a modal dialog with a title, a random educational message, and a close button.
