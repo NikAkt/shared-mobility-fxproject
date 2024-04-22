@@ -16,7 +16,7 @@ import java.io.File;
         private double stamina; // stamina
         private int speed; // speed
         public double speedTime = .25;
-        private Node playerVisual;
+        public Node playerVisual;
         private double co2; // co2 produced
         private Cell playerCell;
 

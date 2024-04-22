@@ -124,7 +124,7 @@ public class GameView {
     public GameOverListener gameOverListener;
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(60);
+    IntegerProperty timeSeconds = new SimpleIntegerProperty(600);
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
@@ -758,6 +758,14 @@ public class GameView {
 
     }
 
+    public Map<String, Boolean> getStageClearFlags() {
+        return stageClearFlags;
+    }
+
+    public void setStageClearFlags(Map<String, Boolean> stageClearFlags) {
+        this.stageClearFlags = stageClearFlags;
+    }
+
     /**
      * Displays an educational popup with a random message from a list of messages stored in a JSON file.
      * The popup is a modal dialog with a title, a random educational message, and a close button.
@@ -1039,7 +1047,7 @@ public class GameView {
         double staminaFraction = newStamina / 100.0;
         this.staminaBar.setProgress(staminaFraction);
         this.staminaLabel.setText("Stamina: " + newStamina + "%");
-        System.out.println("Updated Stamina: " + this.staminagauge + ", Progress: " + staminaFraction);
+
     }
 
     /**

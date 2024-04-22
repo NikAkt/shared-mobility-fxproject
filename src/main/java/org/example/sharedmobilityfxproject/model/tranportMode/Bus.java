@@ -72,7 +72,7 @@ public class Bus extends Cell {
         if(this.x == stop.getX() && this.y == stop.getY()&& !this.isWaiting) {
             // Bus is waiting at a stop
             this.isWaiting = true;
-            this.waitTime = 10;
+            this.waitTime = 50;
         } else {
             this.isWaiting = false;
         }
