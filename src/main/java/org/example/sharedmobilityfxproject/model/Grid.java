@@ -10,11 +10,11 @@ import javafx.util.Duration;
  */
 public class Grid extends Pane {
 
-    int rows;
-    int columns;
+    public int rows;
+    public int columns;
 
-    double width;
-    double height;
+    public double width;
+    public double height;
 
     private Cell[][] cells;
 

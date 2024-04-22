@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class MainController {
+public class MainController implements GameOverListener {
 
 
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
@@ -43,21 +43,8 @@ public class MainController {
     public StackPane root;
     public static Label gemCountLabel;
 
-
-    //****FXML ****
-    @FXML
-    public ProgressBar progressBar;
-
-
     int co2Points = 0;
     int staminaPoints = 0;
-
-
-    @FXML
-    public Text text;
-    // Boolean flag to control hover cursor visibility
-    boolean showHoverCursor = true;
-
 
     public static final double BUTTON_WIDTH = 200;
     public static final int ROWS = 80;
@@ -85,7 +72,6 @@ public class MainController {
         this.sceneController = sceneController;
         this.gameController = initGameController();
 
-        //this function will start the game when Gyuwon fixes his stuff but for right now it will be commented
         this.startGame();
 
     }
@@ -102,22 +88,40 @@ public class MainController {
         sceneController.initMainMenu();
 
         setupKeyControls(gameView.getScene());
-        //Main Menu
+
+        //Main Menu Buttons Listeners
         gameView.getGameStartbtn().requestFocus();
-        gameView.getGameStartbtn().setOnAction(event -> this.mapSelectionScene());
         gameView.getGameCreditbtn().setOnAction(event -> SceneController.switchToGameCredits());
         gameView.getBtnExit().setOnAction(event -> System.exit(0));
-
+        gameView.getGameStartbtn().setOnAction(event -> this.mapSelectionScene());
 
     }
-
+    /**
+     * Switches the scene to the stage selection scene.
+     * This method sets an action for each stage button. When a stage button is clicked, it checks if the stage has been cleared.
+     * If the stage has not been cleared, it displays a message to clear the previous stages first.
+     * If the stage has been cleared, it starts the game for the selected stage.
+     */
     public void mapSelectionScene() {
-        //Stage Selection
         sceneController.switchStageChoose();
-        gameView.getGetStagebtn().setOnAction(event -> gameController.startPlayingGame());
-
+        gameView.getAllStageButtons().forEach(button -> {
+            button.setOnAction(event -> {
+                String stage = button.getText();
+                if (!gameView.isStageCleared(stage)) {
+                    sceneController.mapClearCheck("This stage has not been cleared yet.\nPlease clear the previous stages first. :)");
+                } else {
+                    gameController.startPlayingGame(stage);
+                    System.out.println("stageName in MainController: " + stage);
+                }
+            });
+        });
     }
-
+    /**
+     * Sets up key controls for the provided scene.
+     * This method sets an action for the ENTER key. When the ENTER key is pressed, it triggers the action of the currently focused button.
+     *
+     * @param scene The scene for which the key controls are to be set up.
+     */
     private void setupKeyControls(Scene scene) {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -136,38 +140,7 @@ public class MainController {
     int carbonFootprint = 0;
     Label carbonFootprintLabel; // Label to display carbon footprint
 
-//    public void setupKeyControls(Scene scene) {
-//        scene.setOnKeyPressed(event -> {
-//            if (event.getCode() == KeyCode.DOWN) {
-//                if (btnStartGame.isFocused()) {
-//                    btnExit.requestFocus();
-//                }
-//            } else if (event.getCode() == KeyCode.UP) {
-//                if (btnExit.isFocused()) {
-//                    btnStartGame.requestFocus();
-//                }
-//            }
-//        });
-//    }
 
-
-    ///CO2
-    public void updateCarbonFootprintLabel() {
-        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
-    }
-
-
-    public void increaseGemCount() {
-        gameView.gemCountLabel = new Label();
-        gemCount++;
-        gameView.gemCountLabel.setText("Gem Count: " + gemCount);
-    }
-
-
-//    public static void updateGemCountLabel() {
-//        System.out.print(gemCount);//works
-//        gameView.gemCountLabel.setText("Gem Count: " + gemCount); //null
-//    }
 
 
     public boolean containsPointInArray(ArrayList<int[]> array, int x, int y) {
@@ -191,11 +164,14 @@ public class MainController {
         mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
     }
 
+    @Override
+    public void onGameOver() {
+        sceneController.switchStageChoose();
+    }
 
-    // Method to update the carbon footprint label
-//    private void updateCarbonFootprintLabel() {
-//        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
-//    }
-
+    ///CO2
+    public void updateCarbonFootprintLabel() {
+        carbonFootprintLabel.setText("Carbon Footprint: " + carbonFootprint);
+    }
 
 }

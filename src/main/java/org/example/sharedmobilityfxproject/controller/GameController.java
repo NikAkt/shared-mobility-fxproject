@@ -1,8 +1,6 @@
 package org.example.sharedmobilityfxproject.controller;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
@@ -15,6 +13,7 @@ import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -39,12 +38,21 @@ public class GameController {
     public int currentRow;
     public int currentColumn;
 
+
+    //GameStart flag
+    private boolean isGameStarted = false;
     // Newly Added
     public boolean playerMovementEnabled = true;
     public boolean onBus = false;
     public boolean inTaxi = false;
     public boolean onBicycle = false;
     public Player playerUno;
+
+    //Stamina related
+    private int lastX, lastY;  // Last coordinates of the player
+    private int stationaryTime = 0;  // Time to stay
+
+
 
     public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
@@ -57,6 +65,11 @@ public class GameController {
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
     private Timer timer = new Timer();  // Create a Timer object
     private ScrollPane scrollPane;
+    private double cellWidth;
+    private double cellHeight;
+    private GameOverListener gameOverListener;
+
+    private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
 
     private void enableMovementAfterDelay() {
         playerTimeout = false;  // Disable further moves immediately when this method is called
@@ -72,6 +85,9 @@ public class GameController {
         }, delayInMilliseconds);
     }
 
+    //Player Movement Check for Stamina
+    private int moveCounter = 0;
+
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -82,13 +98,25 @@ public class GameController {
         this.sceneController = sceneController;
         this.gameView = gameView;
         this.playerUno = playerUno;
+        this.cellWidth = gameView.grid.width/gameView.grid.columns;
+        this.cellHeight = gameView.grid.height/gameView.grid.rows;
+        Timeline checkStationary = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAndIncreaseStamina()));
+        checkStationary.setCycleCount(Timeline.INDEFINITE);
+        checkStationary.play();
 
-        this.sceneController.initGameScene();
-        this.startPlayingGame();
+
     }
 
-    public void startPlayingGame() {
-        sceneController.initGameScene();
+    public void startPlayingGame(String stageName) {
+        this.sceneController.initGameScene(stageName);
+        this.isGameStarted = true;
+        // Before showing the primary stage, set the close request handler to save the game state
+        gameView.getPrimaryStage().setOnCloseRequest(event -> {
+            saveGameState();
+            System.out.println("Game state saved on close.");
+        });
+
+
         System.out.println("GameController startPlayingGame");
 
         // Fill the grid with cells
@@ -138,7 +166,7 @@ public class GameController {
         }
         System.out.println("Obstacle Coordinates: ");
 
-        generateGems(gameView.grid, 5); // Replace 5 with the number of gems you want to generate
+        generateGems(gameView.grid, numberOfInitialGems); // Replace 5 with the number of gems you want to generate
 
         // Place the finish cell after the grid is filled and the player's position is initialised
         int finishColumn;
@@ -240,6 +268,19 @@ public class GameController {
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
+        // Load the gameState
+        loadGameState();
+        double pivotX = this.gameView.scale.getPivotX();
+        double pivotY = this.gameView.scale.getPivotY();
+
+// Calculate the translation needed to recenter the scale
+        double translateX = playerUno.getCoordX() * cellWidth * (1.60 - this.gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (1.55 - this.gameView.scale.getY()) - pivotY;
+
+// Apply translation to the grid to recenter
+        this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
+        this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
+
     }
 
     /**
@@ -273,9 +314,7 @@ public class GameController {
                     case 2:  // Color the cell green
                         gameView.grid.setCellColor(column, row, "GREEN");
                         break;
-                    case 3:  // Initialise water as obstalces and then colour the cell blue
-                        Obstacle obstacleWater = new Obstacle(gameView.grid, column, row);
-                        obstacles.add(obstacleWater);
+                    case 3:  // Color the cell blue
                         gameView.grid.setCellColor(column, row, "BLUE");
                         break;
                     case 4:  // Mark as bus stop
@@ -296,10 +335,20 @@ public class GameController {
         for (int i = 0; i < numberOfGems; i++) {
             int gemColumn;
             int gemRow;
+            boolean isObstacle;
             do {
                 gemColumn = (int) (Math.random() * gameView.getColumns());
-                gemRow = (int) (Math.random() * gameView.getRows());
-            } while ((gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
+                gemRow = (int) (Math.random(
+
+                ) * gameView.getRows());
+                int finalGemColumn = gemColumn;
+                int finalGemRow = gemRow;
+
+                //It is called before gemGeneration
+                // obstacleCoordinates is the list of obstacles's coordinates
+                isObstacle = obstacleCoordinates.stream().anyMatch(coords -> coords[0] == finalGemColumn && coords[1] == finalGemRow);
+                //Check
+            } while (isObstacle || (gemColumn == 0 && gemRow == 0) || grid.getCell(gemColumn, gemRow).getUserData() != null); // Ensure gem doesn't spawn at player's starting position or on another gem
 
 
             Gem gem = new Gem(gemColumn, gemRow);
@@ -494,8 +543,38 @@ public class GameController {
         // Return true if it can move, false if there's an obstacle
         return obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
     }
+    public void updateScalePivot(Node node, double newPivotX, double newPivotY, double durationSeconds) {
+        Duration duration = Duration.seconds(durationSeconds);
 
+        double oldPivotX = node.getScaleX();
+        double oldPivotY = node.getScaleY();
+        double deltaX = newPivotX - oldPivotX;
+        double deltaY = newPivotY - oldPivotY;
+
+        // Adjust the pivot based on the player's movement
+        double updatedPivotX = oldPivotX + deltaX;
+        double updatedPivotY = oldPivotY + deltaY;
+
+        Timeline timeline = new Timeline();
+        KeyValue kvX = new KeyValue(gameView.scale.pivotXProperty(), updatedPivotX*1.5
+
+
+
+        );
+        KeyValue kvY = new KeyValue(gameView.scale.pivotYProperty(), updatedPivotY*1.5);
+        KeyFrame kf = new KeyFrame(duration, kvX, kvY);
+
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+    }
     private void movePlayer(int dx, int dy) {
+        playerUno.setIsWalking(true);
+
+        if (playerUno.getStamina() <= 0) {
+            System.out.println("Not enough stamina to move.");
+            gameView.playNoStaminaSound();
+            return;
+        }
 
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
@@ -519,16 +598,39 @@ public class GameController {
             playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
             System.out.println("Player has entered a metro entrance" + gameView.grid);
 
-
         }
         if (canMoveTo(newColumn, newRow)) {
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
+            double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+            double pivotY = playerUno.getCoordY() * cellHeight;
+            System.out.println(pivotX+" "+playerUno.getCoordX()*cellWidth);
 //            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
             playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
-        }
 
+            updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
+            // Setup to follow player
+
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
+            if (inTaxi && !(playerUno.isWalking)) {
+                // Assuming taximan is accessible from here, or find a way to access it
+                moveTaxi(gameView.grid, taximan, newColumn, newRow);
+            }
+//MoveCounter for walking and decrease stamina every 5 moves
+            if (!inTaxi && playerUno.getIsWalking()) {
+                moveCounter++;
+                System.out.println("Move Counter: " + moveCounter);
+                //Decrease stamina every 5 moves
+                if (moveCounter >= 5) {
+                    playerUno.decreaseStamina();
+                    gameView.updateStamina(playerUno.getStamina());
+                    moveCounter = 0;
+                }
+            }
+
+        }
         interactWithCell(gameView.grid.getCell(newColumn, newRow));
         if (inTaxi) {
             // Assuming taximan is accessible from here, or find a way to access it
@@ -536,8 +638,6 @@ public class GameController {
 
         }
     }
-
-
 
     private boolean canMoveTo(int x, int y) {
         return this.obstacles.stream().noneMatch(obstacle -> obstacle.getColumn() == x && obstacle.getRow() == y);
@@ -585,8 +685,15 @@ public class GameController {
     private void hailTaxi() {
         if (taximan.hailed) {
             taximan.hailed = !taximan.hailed;
-        }
-        else{
+        } else {
+            // Hail taxt, limit Co2 not be over 100%
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2 = currentCo2 + 30.0;
+            if (potentialCo2 > 100.0) {
+                gameFailedCall();
+            } else {
+                sceneController.increaseCo2GaugeUpdate(30.0); // Safely increase CO2
+            }
             taximan.hailed = true;
         }
     }
@@ -673,4 +780,106 @@ public class GameController {
             }
 
         }}
+
+    // Methods to Save and Load Game
+
+    /**
+     * This method is used to save the current state of the game.
+     * It creates a new SaveGame object with the current positions of the player and the bus,
+     * as well as the current gem count. This object is then serialized and written to a file named "gameSave.ser".
+     * If the game state is saved successfully, a message is printed to the console.
+     * If an IOException occurs during this process, the stack trace is printed and a failure message is displayed.
+     */
+    private void saveGameState() {
+        // Create a new SaveGame object with the current game state
+        SaveGame saveGame = new SaveGame(
+                playerUno.getCoordX(),
+                playerUno.getCoordY(),
+                busman.getX(),
+                busman.getY(),
+                gameView.getGemCount()
+        );
+
+        // Try to write the SaveGame object to a file
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("gameSave.ser"))) {
+            oos.writeObject(saveGame);
+            System.out.println("Game saved successfully.");
+        } catch (IOException e) {
+            // Print the stack trace and a failure message if an IOException occurs
+            e.printStackTrace();
+            System.out.println("Failed to save game.");
+        }
+    }
+
+    /**
+     * This method is used to load the saved state of the game.
+     * It reads a serialized SaveGame object from a file named "gameSave.ser".
+     * The player's position, the bus's position, the gem locations, and the gem counter are restored from the SaveGame object.
+     * If the game state is loaded successfully, a message is printed to the console.
+     * If an IOException or ClassNotFoundException occurs during this process, the stack trace is printed and a failure message is displayed.
+     */
+    private void loadGameState() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("gameSave.ser"))) {
+            // Read the SaveGame object from the file
+            SaveGame saveGame = (SaveGame) ois.readObject();
+
+            // Restore the player's position
+            playerUno.setCellByCoords(gameView.grid, saveGame.getPlayerX(), saveGame.getPlayerY());
+
+            // Restore the bus's position
+            busman.setX(saveGame.getBusX());
+            busman.setY(saveGame.getBusY());
+
+            // Restore the gem locations
+            recreateGems(saveGame.getGemCounter());
+
+            // Restore the gem counter
+            gameView.setGemCoount(saveGame.getGemCounter());
+
+            System.out.println("Game loaded successfully.");
+        } catch (IOException | ClassNotFoundException e) {
+            // Print the stack trace and a failure message if an exception occurs
+            e.printStackTrace();
+            System.out.println("Failed to load game.");
+        }
+    }
+
+    /**
+     * This method is used to recreate the gems in the game.
+     * It first removes all the existing gems from the game grid.
+     * Then, it generates new gems at random locations.
+     * The number of new gems is determined by subtracting the number of collected gems (gemCounts) from the initial number of gems.
+     *
+     * @param gemCounts The number of gems that have been collected by the player.
+     */
+    private void recreateGems(int gemCounts) {
+        // Clear current gems from the game grid
+        gameView.grid.getChildren().removeIf(cell -> cell instanceof Gem);
+
+        // Generate new random gems at different locations
+        // The number of new gems is based on the initial number of gems minus the number of collected gems
+        generateGems(gameView.grid, numberOfInitialGems - gemCounts);
+    }
+
+    private void checkAndIncreaseStamina() {
+        if (isGameStarted && playerUno.getStamina() < 100) {
+            if (playerUno.getCoordX() == lastX && playerUno.getCoordY() == lastY) {
+                stationaryTime += 1;
+                if (stationaryTime >= 1) {
+                    playerUno.increaseStamina();  // 스태미나 회복
+                    gameView.updateStamina(playerUno.getStamina());
+                    stationaryTime = 0;
+                }
+            } else {
+                stationaryTime = 0;
+                lastX = playerUno.getCoordX();
+                lastY = playerUno.getCoordY();
+            }
+        }
+    }
+
+    private void gameFailedCall() {
+        sceneController.setCo2Gauge(100.0); // Set CO2 to maximum if overflown
+        sceneController.missionFail();  // Call mission fail function
+    }
 }

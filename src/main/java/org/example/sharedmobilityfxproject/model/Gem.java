@@ -7,6 +7,8 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 
+import static org.example.sharedmobilityfxproject.controller.SceneController.gameView;
+
 public class Gem extends Cell {
     public boolean isCollected = false; // Flag to track if the gem has been collected
     public MainController mainController;
@@ -18,17 +20,16 @@ public class Gem extends Cell {
         super(column, row);
         getStyleClass().add("gem");
         setUserData("gem");
-        String imagePath = getClass().getResource("/images/gem.png").toExternalForm();
-
-
-
+        String imagePath = "src/main/resources/images/gem.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
 
         // Set the fixed size of the Gem node to match the cell size
         setPrefHeight(10);  // Set the preferred height to 10 pixels
         setPrefWidth(8);    // Set the preferred width to 8 pixels
 
 
-        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+        this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                 "-fx-background-size: contain; -fx-background-position: center center;");
         this.getStyleClass().add("gem");// Set a custom attribute to identify the gem cell
 
@@ -41,7 +42,7 @@ public class Gem extends Cell {
         if (!isCollected) {
             System.out.println("Gem collected"); //debug
             playGemCollectSound(); // Play the gem collect sound
-//            gameController.incrementGemCount(); // Increment the gem count
+            gameView.incrementGemCount(); // Increment the gem count
             isCollected = true; // Set the flag to true after the gem is collected
         }
     }
