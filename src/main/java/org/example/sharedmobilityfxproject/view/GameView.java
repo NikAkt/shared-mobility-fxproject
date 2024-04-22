@@ -978,10 +978,10 @@ public class GameView {
 
         Label noticeLabel = new Label("Notice");
         noticeLabel.setFont(Font.font(titleFont.getFamily(), FontWeight.BOLD, 20));
-        noticeLabel.setPadding(new Insets(10, 0, 10, 0));
+        noticeLabel.setPadding(new Insets(10, 0, 0, 0));
         noticeLabel.setAlignment(Pos.TOP_CENTER);
 
-        Label messageLabel = new Label("This stage cannot be cleared yet.\nPlease clear the previous stages first.");
+        Label messageLabel = new Label("This stage cannot be accessed yet.\nPlease complete the previous stages first.");
         messageLabel.setFont(Font.font(contentFont.getFamily(), FontWeight.NORMAL, 16));
         messageLabel.setWrapText(true);
         messageLabel.setAlignment(Pos.CENTER);
