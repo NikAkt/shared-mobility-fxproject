@@ -25,8 +25,8 @@ public class busStop extends Cell {
         setPrefHeight(10);  // Set the preferred height to 10 pixels
         setPrefWidth(3);
         this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
-                "-fx-background-size: contain; -fx-background-position: center center;");
-        getStyleClass().add("busStop");
+                "-fx-background-size: contain; -fx-background-position: center center;" +
+                "-fx-background-repeat: no-repeat;");getStyleClass().add("busStop");
     }
 
     public int getX() {

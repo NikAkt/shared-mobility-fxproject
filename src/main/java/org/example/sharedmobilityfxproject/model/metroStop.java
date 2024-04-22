@@ -16,7 +16,11 @@ public class metroStop extends Cell {
         super(i, j);
         this.x = i;
         this.y = j;
+        String imagePath = "src/main/resources/images/metroStop.png";
         this.flagIsPlayerHere = false; // Initialize to false
+        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                "-fx-background-size: contain; -fx-background-position: center center;" +
+                "-fx-background-repeat: no-repeat;");getStyleClass().add("busStop");
         getStyleClass().add("metroStop");
     }
 

@@ -187,7 +187,7 @@ public class GameController {
         busStop busS6 = new busStop(60,55);
         busStop busS7 = new busStop(31,55);
 
-        metroStop metro1 = new metroStop(2,30);
+        metroStop metro1 = new metroStop(20,6);
         gameView.grid.add(metro1,2,30);
 
         busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
@@ -217,7 +217,7 @@ public class GameController {
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
         }
-
+        gameView.grid.add(metro1, metro1.getX(), metro1.getY());
         gameView.grid.add(busman, busman.getX(), busman.getY());// Example starting position
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
