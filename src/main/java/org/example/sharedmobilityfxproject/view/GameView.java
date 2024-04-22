@@ -124,7 +124,7 @@ public class GameView {
     public GameOverListener gameOverListener;
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(60);
+    IntegerProperty timeSeconds = new SimpleIntegerProperty(600);
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
