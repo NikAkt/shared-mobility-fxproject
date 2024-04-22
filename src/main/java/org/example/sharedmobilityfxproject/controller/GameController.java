@@ -274,8 +274,8 @@ public class GameController {
         double pivotY = this.gameView.scale.getPivotY();
 
 // Calculate the translation needed to recenter the scale
-        double translateX = playerUno.getCoordX() * cellWidth * (1 - this.gameView.scale.getX()) - pivotX;
-        double translateY = playerUno.getCoordY() * cellHeight * (1 - this.gameView.scale.getY()) - pivotY;
+        double translateX = playerUno.getCoordX() * cellWidth * (1.60 - this.gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (1.55 - this.gameView.scale.getY()) - pivotY;
 
 // Apply translation to the grid to recenter
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
@@ -556,11 +556,12 @@ public class GameController {
         double updatedPivotY = oldPivotY + deltaY;
 
         Timeline timeline = new Timeline();
-        KeyValue kvX = new KeyValue(gameView.scale.pivotXProperty(), updatedPivotX*3
+        KeyValue kvX = new KeyValue(gameView.scale.pivotXProperty(), updatedPivotX*1.5
+
 
 
         );
-        KeyValue kvY = new KeyValue(gameView.scale.pivotYProperty(), updatedPivotY*3);
+        KeyValue kvY = new KeyValue(gameView.scale.pivotYProperty(), updatedPivotY*1.5);
         KeyFrame kf = new KeyFrame(duration, kvX, kvY);
 
         timeline.getKeyFrames().add(kf);
