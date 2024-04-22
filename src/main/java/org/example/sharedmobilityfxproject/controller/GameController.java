@@ -658,6 +658,8 @@ public class GameController {
 
         }
         interactWithCell(gameView.grid.getCell(newColumn, newRow));
+
+
         if (inTaxi&&canMoveTo(newColumn, newRow)&&onedist) {
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
@@ -677,7 +679,32 @@ public class GameController {
             // Assuming taximan is accessible from here, or find a way to access it
             moveTaxi(gameView.grid, taximan, newColumn, newRow);
 
+
         }
+        else if(inTaxi&&onedist){
+            System.out.println("movin 1 ");
+            int oneRow = Math.min(Math.max(playerUno.getCoordY() + (dy/2), 0), gameView.grid.getRows() - 1);
+            int oneColumn = Math.min(Math.max(playerUno.getCoordX() + (dx/2), 0), gameView.grid.getColumns() - 1);
+            if (inTaxi&&canMoveTo(oneColumn, oneRow)) {
+                System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
+                playerUno.getCell().unhighlight();
+                playerUno.setX(oneColumn);
+                playerUno.setY(oneRow);
+                double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+                double pivotY = playerUno.getCoordY() * cellHeight;
+
+//            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
+                playerUno.setCell(gameView.grid.getCell(oneColumn, oneRow), gameView.grid);
+
+                updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
+
+
+                playerUno.getCell().highlight();
+                interactWithCell(playerUno.getCell());
+                // Assuming taximan is accessible from here, or find a way to access it
+                moveTaxi(gameView.grid, taximan, oneColumn, oneRow);
+
+            }}
     }
 
     private boolean canMoveTo(int x, int y) {
