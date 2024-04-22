@@ -153,7 +153,7 @@ public class GameController {
 
         // Start filling the grid with obstacles and other stuff
         Map map = new Map();
-        fillGridWithMapArray(map);
+        fillGridWithMapArray(map, stageName);
 
 
 
@@ -209,7 +209,7 @@ public class GameController {
 
 
 
-        busman = new Bus(busStops,3, 4);
+        busman = new Bus(busStops,busS1.getX()-1, busS1.getY());
 
         taximan = new Taxi (58,28);
         cycleman= new Bicycle(10,4);
@@ -295,10 +295,10 @@ public class GameController {
      * - 9: Also creates and adds an Obstacle, similar to 1.
      * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
      */
-    public void fillGridWithMapArray(Map map) {
+    public void fillGridWithMapArray(Map map, String stageName) {
         int[][] mapArray = new int[80][120];  // Default map size initialization
         try {
-            mapArray = map.getMapArray();  // Attempt to retrieve the map array
+            mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
