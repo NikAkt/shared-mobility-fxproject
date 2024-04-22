@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
@@ -612,19 +613,19 @@ public class GameController {
             playerUno.getCell().highlight();
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
         }
-        if (playerUno.getCell() instanceof metroStop) {
-
-            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
-            gameView.switchSceneToMetro();// Metro scene is now active
-            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
-            playerUno.isUnderground = true;
-            System.out.println(gameView.grid);
-
-
-            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
-            System.out.println("Player has entered a metro entrance" + gameView.grid);
-
-        }
+//        if (playerUno.getCell() instanceof metroStop) {
+//
+//            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
+//            gameView.switchSceneToMetro();// Metro scene is now active
+//            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
+//            playerUno.isUnderground = true;
+//            System.out.println(gameView.grid);
+//
+//
+//            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
+//            System.out.println("Player has entered a metro entrance" + gameView.grid);
+//
+//        }
         if (canMoveTo(newColumn, newRow)&&!inTaxi) {
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
@@ -727,8 +728,24 @@ public class GameController {
             cycleman.bikeTime=300;
             System.out.println(onBicycle
             );
+        } else if (cell instanceof  metroStop){
+            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
+            gameView.switchSceneToMetro();// Metro scene is now active
+            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
+            playerUno.isUnderground = true;
+
+            System.out.println(gameView.grid);
+            Scale scale = new Scale();
+            scale.setX(3);
+            scale.setY(3);
+            gameView.metroGrid.getTransforms().add(scale);
+            gameView.metroGrid.add(playerUno.getCell(), playerUno.getCoordX(), playerUno.getCoordY());
+            playerUno.setCellByCoords(gameView.metroGrid, cell.getColumn(), cell.getRow());
+            System.out.println("Player has entered a metro entrance" + gameView.grid);
+
         }
     }
+
 
     private void collectGem(Cell gemCell) {
         gameView.grid.getChildren().remove(gemCell);

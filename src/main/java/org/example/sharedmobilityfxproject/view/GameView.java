@@ -144,7 +144,7 @@ public class GameView {
     private Scene scene;
     private Scene metroScene;
     private StackPane metroLayer;
-    private Grid metroGrid;
+    public Grid metroGrid;
     public Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
     public Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
     public MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -489,8 +489,8 @@ public class GameView {
                 metroGrid.add(cell, column, row);
             }
         }
-        metroStop under1 = new metroStop(2, 30);
-        metroGrid.add(under1, 2, 30);
+        metroStop under1 = new metroStop(20, 6);
+        metroGrid.add(under1, 20, 6);
 //        playerUno.initCell(metroGrid);
         Label testLabel = new Label("Metro System Active");
 

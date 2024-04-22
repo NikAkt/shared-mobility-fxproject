@@ -3,6 +3,8 @@ package org.example.sharedmobilityfxproject.model;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+
+import java.io.File;
 import java.util.Objects;
 
 public class metroStop extends Cell {
@@ -17,8 +19,10 @@ public class metroStop extends Cell {
         this.x = i;
         this.y = j;
         String imagePath = "src/main/resources/images/metroStop.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
         this.flagIsPlayerHere = false; // Initialize to false
-        this.setStyle("-fx-background-image: url('" + imagePath + "');" +
+        this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                 "-fx-background-size: contain; -fx-background-position: center center;" +
                 "-fx-background-repeat: no-repeat;");getStyleClass().add("busStop");
         getStyleClass().add("metroStop");
