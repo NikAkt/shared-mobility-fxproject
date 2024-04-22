@@ -71,7 +71,7 @@ public class MainController implements GameOverListener {
         this.gameView = gameView;
         this.sceneController = sceneController;
         this.gameController = initGameController();
-        this.gameController.setGameOverListener(this);
+
         this.startGame();
 
     }

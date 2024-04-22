@@ -295,8 +295,8 @@ public class GameView {
         scene = new Scene(root, WIDTH, HEIGHT);
 
         scale = new Scale();
-        scale.setX(2.8);
-        scale.setY(2.8);
+        scale.setX(1.5);
+        scale.setY(1.5);
         grid.getTransforms().add(scale);
 
         // Game Lable Setting

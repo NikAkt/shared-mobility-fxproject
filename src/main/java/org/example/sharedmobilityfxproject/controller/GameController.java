@@ -103,18 +103,8 @@ public class GameController {
         Timeline checkStationary = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAndIncreaseStamina()));
         checkStationary.setCycleCount(Timeline.INDEFINITE);
         checkStationary.play();
-        this.sceneController.initGameScene();
-        this.startPlayingGame();
-        double pivotX = gameView.scale.getPivotX();
-        double pivotY = gameView.scale.getPivotY();
 
-// Calculate the translation needed to recenter the scale
-        double translateX = playerUno.getCoordX() * cellWidth * (1 - gameView.scale.getX()) - pivotX;
-        double translateY = playerUno.getCoordY() * cellHeight * (1 - gameView.scale.getY()) - pivotY;
 
-// Apply translation to the grid to recenter
-        gameView.grid.setTranslateX(gameView.grid.getTranslateX() - translateX);
-        gameView.grid.setTranslateY(gameView.grid.getTranslateY() - translateY);
     }
 
     public void startPlayingGame(String stageName) {
@@ -126,7 +116,7 @@ public class GameController {
             System.out.println("Game state saved on close.");
         });
 
-        sceneController.initGameScene();
+
         System.out.println("GameController startPlayingGame");
 
         // Fill the grid with cells
@@ -280,6 +270,16 @@ public class GameController {
 
         // Load the gameState
         loadGameState();
+        double pivotX = this.gameView.scale.getPivotX();
+        double pivotY = this.gameView.scale.getPivotY();
+
+// Calculate the translation needed to recenter the scale
+        double translateX = playerUno.getCoordX() * cellWidth * (1 - this.gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (1 - this.gameView.scale.getY()) - pivotY;
+
+// Apply translation to the grid to recenter
+        this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
+        this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
 
     }
 
