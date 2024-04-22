@@ -785,7 +785,7 @@ public class GameController {
 
     /**
      * This method is used to save the current state of the game.
-     * It creates a new SaveGame object with the current positions of the player and the bus,
+     * It creates a new SaveGame object with the current positions of the player, the bus and more,
      * as well as the current gem count. This object is then serialized and written to a file named "gameSave.ser".
      * If the game state is saved successfully, a message is printed to the console.
      * If an IOException occurs during this process, the stack trace is printed and a failure message is displayed.
@@ -797,7 +797,8 @@ public class GameController {
                 playerUno.getCoordY(),
                 busman.getX(),
                 busman.getY(),
-                gameView.getGemCount()
+                gameView.getGemCount(),
+                gameView.getStageClearFlags()
         );
 
         // Try to write the SaveGame object to a file
@@ -835,6 +836,9 @@ public class GameController {
 
             // Restore the gem counter
             gameView.setGemCoount(saveGame.getGemCounter());
+
+            // Restore the stage clear flags
+            gameView.setStageClearFlags(saveGame.getStageClearFlags());
 
             System.out.println("Game loaded successfully.");
         } catch (IOException | ClassNotFoundException e) {
