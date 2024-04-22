@@ -1,7 +1,6 @@
 package org.example.sharedmobilityfxproject.controller;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * The SaveGame class represents the state of the game at a certain point in time.
@@ -10,6 +9,7 @@ import java.util.List;
  */
 public class SaveGame implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Map<String, Boolean> stageClearFlags;
 
     private int playerX;
     private int playerY;
@@ -20,18 +20,20 @@ public class SaveGame implements Serializable {
     /**
      * Constructs a new SaveGame object with the given player and bus positions, and gem counter.
      *
-     * @param playerX the x-coordinate of the player's position
-     * @param playerY the y-coordinate of the player's position
-     * @param busX the x-coordinate of the bus's position
-     * @param busY the y-coordinate of the bus's position
-     * @param gemCounter the current gem counter
+     * @param playerX         the x-coordinate of the player's position
+     * @param playerY         the y-coordinate of the player's position
+     * @param busX            the x-coordinate of the bus's position
+     * @param busY            the y-coordinate of the bus's position
+     * @param gemCounter      the current gem counter
+     * @param stageClearFlags
      */
-    public SaveGame(int playerX, int playerY, int busX, int busY,  int gemCounter) {
+    public SaveGame(int playerX, int playerY, int busX, int busY, int gemCounter, Map<String, Boolean> stageClearFlags) {
         this.playerX = playerX;
         this.playerY = playerY;
         this.busX = busX;
         this.busY = busY;
         this.gemCounter = gemCounter;
+        this.stageClearFlags = stageClearFlags;
     }
 
     /**
@@ -122,5 +124,15 @@ public class SaveGame implements Serializable {
      */
     public void setGemCounter(int gemCounter) {
         this.gemCounter = gemCounter;
+    }
+
+   /**
+     * Returns the map of stage clear flags.
+     * Each entry in the map represents a stage, with the key being the stage name and the value being a boolean indicating whether the stage has been cleared.
+     *
+     * @return the map of stage clear flags
+     */
+    public Map<String, Boolean> getStageClearFlags() {
+        return stageClearFlags;
     }
 }
