@@ -52,7 +52,7 @@ public class GameController {
 
     public List<Obstacle> obstacles = new ArrayList<>();
     public ArrayList<int[]> obstacleCoordinates;
-
+    public String stageName;
     public Cell finishCell;
     public Taxi taximan;
     public Bus busman;
@@ -96,15 +96,52 @@ public class GameController {
         this.playerUno = playerUno;
         this.cellWidth = gameView.grid.width/gameView.grid.columns;
         this.cellHeight = gameView.grid.height/gameView.grid.rows;
+
         Timeline checkStationary = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAndIncreaseStamina()));
         checkStationary.setCycleCount(Timeline.INDEFINITE);
+        setupGameEndListener();
         checkStationary.play();
 
 
     }
+    private void setupGameEndListener() {
+
+        this.gameView.gameEndFlagProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                this.gameView.getEndStage().setOnAction(event -> {
+                    this.gameView.mediaPlayer.stop();
+                    this.gameView.gameOverDialog.close();
+                    System.out.println("Game ended in GameController");
+
+
+                    // Mission clear
+
+                    System.out.println("시간:"+this.gameView.isTimeOut); //true
+                    System.out.println("젬:"+this.gameView.isGemCollectedEnough);//true
+                    System.out.println("CO2:"+this.gameView.isCO2Safe);//false
+
+                    if (this.gameView.isTimeOut && this.gameView.isGemCollectedEnough && this.gameView.isCO2Safe) {
+                        System.out.println("GameController Mission Clear");
+                        this.gameView.gemCountReset();
+                        System.out.println("StageName Check!! " + stageName);
+                        this.gameView.setNextStageCleared(stageName);
+                        SceneController.isGoingToNext();
+                    }else{
+                        // Mission Fail
+                        System.out.println("GameController Mission fail");
+                        SceneController.isGoingToNext();
+                    }
+
+                });
+
+
+            }
+        });
+    }
 
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
+        this.stageName = stageName;
         this.isGameStarted = true;
         // Before showing the primary stage, set the close request handler to save the game state
         gameView.getPrimaryStage().setOnCloseRequest(event -> {
