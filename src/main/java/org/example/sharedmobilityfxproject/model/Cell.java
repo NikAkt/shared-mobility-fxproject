@@ -64,6 +64,7 @@ public class Cell extends StackPane {
         this.row = j;
     }
 
+
     public String toString() {
         return this.column + "/" + this.row;
     }

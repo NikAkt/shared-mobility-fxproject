@@ -450,7 +450,7 @@ public class GameController {
             bus.waitASec();
             bus.list().add(bus.list().remove(0));
             System.out.println("now going towards :" + bus.nextStop());
-            if (!playerMovementEnabled && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
+            if (!this.onBus&&!playerMovementEnabled && playerUno.getCoordX() == bus.getX() && playerUno.getCoordY() == bus.getY()) {
                 System.out.println("----------- You just got on the bus ---------");
                 this.onBus = true;
 
@@ -534,7 +534,7 @@ public class GameController {
             double pivY = newY*cellHeight;
             updateScalePivot(gameView.grid, pivX, pivY, bus.timeSpeed);
         }
-        gameView.grid.moveCell(bus, newX, newY);
+        gameView.grid.updateCellPosition(bus, newX, newY);
 
         bus.setX(newX);
         bus.setY(newY);
