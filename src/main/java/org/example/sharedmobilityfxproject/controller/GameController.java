@@ -8,20 +8,16 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
+import org.example.sharedmobilityfxproject.model.Map;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bicycle;
 import org.example.sharedmobilityfxproject.model.tranportMode.Bus;
 import org.example.sharedmobilityfxproject.model.tranportMode.Taxi;
 import org.example.sharedmobilityfxproject.view.GameView;
 
 import java.io.*;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 
 public class GameController {
@@ -178,38 +174,38 @@ public class GameController {
         finishCell.getStyleClass().add("finish");
         gameView.grid.add(finishCell, finishColumn, finishRow);
 
-//        //bus SHITE
-        busStop busS1 = new busStop(27,6);
-        busStop busS2 = new busStop(62,6);
-        busStop busS3 = new busStop(97,6);
-        busStop busS4 = new busStop(98,30);
-        busStop busS5 = new busStop(98,60);
-        busStop busS6 = new busStop(60,55);
-        busStop busS7 = new busStop(31,55);
+////        //bus SHITE
+//        busStop busS1 = new busStop(27,6);
+//        busStop busS2 = new busStop(62,6);
+//        busStop busS3 = new busStop(97,6);
+//        busStop busS4 = new busStop(98,30);
+//        busStop busS5 = new busStop(98,60);
+//        busStop busS6 = new busStop(60,55);
+//        busStop busS7 = new busStop(31,55);
 
         metroStop metro1 = new metroStop(2,30);
         gameView.grid.add(metro1,2,30);
 
-        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
-//
-//
-        busStops.add(busS1);
-        busStops.add(busS2);
-        busStops.add(busS3);
-        busStops.add(busS4);
-        busStops.add(busS5);
-        busStops.add(busS6);
-        busStops.add(busS7);
+//        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
+//        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
+//        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+//        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+//        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
+//        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
+//        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
+////
+////
+//        busStops.add(busS1);
+//        busStops.add(busS2);
+//        busStops.add(busS3);
+//        busStops.add(busS4);
+//        busStops.add(busS5);
+//        busStops.add(busS6);
+//        busStops.add(busS7);
 
 
 
-        busman = new Bus(busStops,busS1.getX()-1, busS1.getY());
+        busman = new Bus(busStops,busStops.getFirst().getX()-1, busStops.getFirst().getY());
 
         taximan = new Taxi (58,28);
         cycleman= new Bicycle(10,4);
@@ -268,8 +264,9 @@ public class GameController {
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
-        // Load the gameState
-        loadGameState();
+//        // Load the gameState
+//        loadGameState(); TODO: later on we need to enable game load
+
         double pivotX = this.gameView.scale.getPivotX();
         double pivotY = this.gameView.scale.getPivotY();
 
@@ -317,11 +314,17 @@ public class GameController {
                     case 3:  // Color the cell blue
                         gameView.grid.setCellColor(column, row, "BLUE");
                         break;
-//                    case 4:  // Mark as bus stop
-//                        busStop busS = new busStop(column,row);
-//                        busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
-//                        busStops.add(busS);
-//                        break;
+                    case 4:  // Mark as bus stop
+                        busStop busS = new busStop(column,row);
+
+                        // Sort the busStops ArrayList
+                        Collections.sort(busStops, busStopComparator);
+                        busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
+                        // And sort again after adding
+                        Collections.sort(busStops, busStopComparator);
+
+                        busStops.add(busS);
+                        break;
                     default:
                         // Optionally handle default case if needed
                         break;
@@ -329,6 +332,21 @@ public class GameController {
             }
         }
     }
+
+    // Custom comparator for busStops
+    Comparator<busStop> busStopComparator = (busStop1, busStop2) -> {
+        if (busStop1.getY() > busStop2.getY() && busStop1.getX() == busStop2.getX()) {
+            return -1;
+        } else if (busStop1.getY() == busStop2.getY() && busStop1.getX() < busStop2.getX()) {
+            return -1;
+        } else if (busStop1.getY() < busStop2.getY() && busStop1.getX() == busStop2.getX()) {
+            return 1;
+        } else if (busStop1.getY() == busStop2.getY() && busStop1.getX() > busStop2.getX()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
 
 
     private void generateGems(Grid grid, int numberOfGems) {
