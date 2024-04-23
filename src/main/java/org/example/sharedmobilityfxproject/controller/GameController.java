@@ -341,6 +341,11 @@ public class GameController {
         for (int row = 0; row < mapArray.length; row++) {
             for (int column = 0; column < mapArray[row].length; column++) {
                 switch (mapArray[row][column]) {
+                    case 0:  // Cell is empty ie road
+                        Cell roadCell = gameView.grid.getCell(column, row);
+                        roadCell.getStyleClass().add("road");
+                        gameView.grid.add(roadCell, column, row);
+                        break;
                     case 1:  // Cell indicates an obstacle
                     case 9:  // Cell also indicates an obstacle (same behavior as 1)
                         Obstacle obstacle = new Obstacle(gameView.grid, column, row);
