@@ -105,7 +105,7 @@ public class GameController {
 
     }
     private void setupGameEndListener() {
-
+System.out.println("GameEndListener in GameController");
         this.gameView.gameEndFlagProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 this.gameView.getEndStage().setOnAction(event -> {
@@ -122,7 +122,7 @@ public class GameController {
 
                     if (this.gameView.isTimeOut && this.gameView.isGemCollectedEnough && this.gameView.isCO2Safe) {
                         System.out.println("GameController Mission Clear");
-                        this.gameView.gemCountReset();
+//                        this.gameView.gemCountReset();
                         System.out.println("StageName Check!! " + stageName);
                         this.gameView.setNextStageCleared(stageName);
                         SceneController.isGoingToNext();
