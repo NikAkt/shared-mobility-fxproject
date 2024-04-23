@@ -107,15 +107,20 @@ public class MainController implements GameOverListener {
         gameView.getAllStageButtons().forEach(button -> {
             button.setOnAction(event -> {
                 String stage = button.getText();
-                if (!gameView.isStageCleared(stage)) {
-                    sceneController.mapClearCheck("This stage has not been cleared yet.\nPlease clear the previous stages first. :)");
-                } else {
+
+                if ("Dublin".equals(stage)) {
                     gameController.startPlayingGame(stage);
                     System.out.println("stageName in MainController: " + stage);
+                } else if (gameView.isStageCleared(stage)) {
+                    gameController.startPlayingGame(stage);
+                    System.out.println("stageName in MainController: " + stage);
+                } else {
+                    sceneController.mapClearCheck("This stage has not been cleared yet.\nPlease clear the previous stages first. :)");
                 }
             });
         });
     }
+
     /**
      * Sets up key controls for the provided scene.
      * This method sets an action for the ENTER key. When the ENTER key is pressed, it triggers the action of the currently focused button.

@@ -21,13 +21,13 @@ public class Map {
     }
 
     /**
-     * The main method for testing the Map class.
+     * The main method for testing the Map class, for Manhattan map !.
      * It creates a Map object, loads a map from an image, and exports the map to a file.
      */
     public static void main(String[] args) {
         Map map = new Map();
         try {
-            int[][] arr = map.loadMap();
+            int[][] arr = map.loadMap("Manhattan");
             System.out.println(arr);
             map.exportArrayToFile(arr);
         } catch (Exception e) {
@@ -41,9 +41,9 @@ public class Map {
      * @return A 2D array representing the map.
      * @throws Exception If an error occurs while loading the image.
      */
-    public int[][] loadMap() throws Exception {
+    public int[][] loadMap(String mapName) throws Exception {
         // Load the image
-        File imageFile = new File("src/main/resources/images/Manhattan.png");
+        File imageFile = new File(String.format("src/main/resources/images/%sMap.png", mapName));
         BufferedImage image = ImageIO.read(imageFile);
 
         // The grid size
@@ -125,11 +125,11 @@ public class Map {
         }
     }
 
-    public int[][] getMapArray() {
+    public int[][] getMapArray(String mapName) {
 
         int[][] arr = new int[80][120]; // change the rows and columns for your convinience
         try {
-            arr = loadMap();
+            arr = loadMap(mapName);
         } catch (Exception e) {
             e.printStackTrace();
         }

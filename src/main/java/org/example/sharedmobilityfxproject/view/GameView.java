@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -93,13 +95,19 @@ public class GameView {
     public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
     public Player playerUno;
     // Gem count
-    static int gemCount = 0;
+    static int gemCount = 10;
     // Carbon footprint
     int carbonFootprint = 0;
 
     //**** Stage Clear Flags ****
     private Map<String, Boolean> stageClearFlags;
+    private BooleanProperty gameEndFlag = new SimpleBooleanProperty(false);
 
+    //**** Game Controller ****
+    public Stage gameOverDialog;
+    public boolean isTimeOut;
+    public boolean isGemCollectedEnough;
+    public boolean isCO2Safe;
     // **** Stamina ****
     double staminagauge;
     public StackPane mainBackground;
@@ -124,7 +132,8 @@ public class GameView {
     public GameOverListener gameOverListener;
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
-    IntegerProperty timeSeconds = new SimpleIntegerProperty(600);
+    public Button gameEndbtn;
+    IntegerProperty timeSeconds;
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);
@@ -168,13 +177,13 @@ public class GameView {
     Label co2Label;
 
     public GameView(Stage primaryStage) {
-        initializeStageClearFlags();
         this.staminaBar = new ProgressBar(1.0);
         this.staminaLabel = new Label("Stamina: 100%");
         //initialise the co2 bar
         this.co2Bar = new ProgressBar(0);
         this.co2Label = new Label("CO2: 0");
         this.primaryStage = primaryStage;
+        initializeStageClearFlags();
     }
 
     public Stage getPrimaryStage() {
@@ -294,10 +303,17 @@ public class GameView {
         StackPane root = new StackPane();
         scene = new Scene(root, WIDTH, HEIGHT);
 
-        scale = new Scale();
-        scale.setX(3);
-        scale.setY(3);
-        grid.getTransforms().add(scale);
+        if (scale == null) {
+            scale = new Scale(3, 3);  // Set the initial scale
+        } else {
+            scale.setX(3);
+            scale.setY(3);
+        }
+
+        boolean scaleExists = grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
+        if (!scaleExists) {
+            grid.getTransforms().add(scale);  // Only add scale if not already present
+        }
 
         // Game Lable Setting
 
@@ -350,6 +366,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
+        timeSeconds = new SimpleIntegerProperty(10);
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -412,11 +429,22 @@ public class GameView {
     }
 
 
+    //TODO: later on we need to enable game load
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
+        boolean isNextStage = isNextStage(stage);
 
-        if (!isStageCleared) {
+        if (!isStageCleared && isNextStage) {
+            stageImage.setOpacity(0.75);
+            Label nextMark = new Label("Next");
+            nextMark.setFont(new Font("Arial", 24));
+            nextMark.setStyle("-fx-text-fill: orange;");
+
+            StackPane buttonGraphic = new StackPane(stageImage, nextMark);
+            stageBtn.setGraphic(buttonGraphic);
+        } else if (!isStageCleared) {
+
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(-1);
             stageImage.setEffect(colorAdjust);
@@ -428,11 +456,14 @@ public class GameView {
             StackPane buttonGraphic = new StackPane(stageImage, xMark);
             stageBtn.setGraphic(buttonGraphic);
         } else {
+            // If the stage is cleared, just set the image without any marks
             stageBtn.setGraphic(stageImage);
         }
+
         stageBtn.setContentDisplay(ContentDisplay.TOP);
         return stageBtn;
     }
+
 
     public Button createButton(String text) {
         Button button = new Button(text);
@@ -600,7 +631,6 @@ public class GameView {
 
     }
 
-
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
             case "Seoul" -> "/images/seoul.jpg";
@@ -659,9 +689,10 @@ public class GameView {
      */
 
     private void gameOver(Stage primaryStage, String stageName) {
-        boolean isTimeOut = timeSeconds.get() <= 0;
-        boolean isGemCollectedEnough = gemCount >= 5;
-        boolean isCO2Safe = co2Gauge < 100;
+        System.out.println("Game Over endFLag" + gameEndFlag);
+        isTimeOut = timeSeconds.get() <= 0;
+        isGemCollectedEnough = gemCount >= 5;
+        isCO2Safe = co2Gauge < 100;
 
         // Calculate result based on game conditions
         Text resultLabel;
@@ -674,10 +705,12 @@ public class GameView {
         }
         resultLabel.setFont(contentFont);
 
+
         // Score calculation
         int scorePerGem = 100;
         double scorePenaltyPer10CO2 = 10;
         int finalScore = (gemCount * scorePerGem) - (int) (co2Gauge / 10.0 * scorePenaltyPer10CO2);
+
 
         Text gameOverGem = new Text("Total Gems: " + gemCount);
         Text gameOverCo2 = new Text("Total CO2: " + String.format("%.1f", co2Gauge));
@@ -686,40 +719,47 @@ public class GameView {
         gameOverCo2.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
         gameOverCo2.setFont(contentFont);
 
+
         Text finalScoreLabel = new Text("Final Score: " + finalScore);
         finalScoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
         finalScoreLabel.setFont(contentFont);
 
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initOwner(primaryStage);
-        dialog.initStyle(StageStyle.UNDECORATED);
+
+        gameOverDialog = new Stage();
+        gameOverDialog.initModality(Modality.APPLICATION_MODAL);
+        gameOverDialog.initOwner(primaryStage);
+        gameOverDialog.initStyle(StageStyle.UNDECORATED);
+
 
         Text gameOverLabel = new Text("GAME OVER\nGoodbye " + stageName + "!");
         gameOverLabel.textAlignmentProperty().setValue(TextAlignment.CENTER);
         gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
         gameOverLabel.setFont(titleFont);
 
+
         VBox dialogVBox = new VBox(10, gameOverLabel, gameOverGem, gameOverCo2, finalScoreLabel, resultLabel);
         dialogVBox.setAlignment(Pos.CENTER);
         dialogVBox.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
 
-        Scene dialogScene = new Scene(new StackPane(dialogVBox), 500, 400);
-        dialog.setScene(dialogScene);
-        dialog.show();
 
-        Button closeButton = new Button("Close");
-        closeButton.setOnAction(e -> {
-            mediaPlayer.stop();
-            dialog.close();
-            if (isTimeOut && isGemCollectedEnough && isCO2Safe) {
-                gemCount = 0;
-                setNextStageCleared(stageName); // Set the next stage as cleared
-                SceneController.isGoingToNext();
-            }
-        });
-        dialogVBox.getChildren().add(closeButton);
+        Scene dialogScene = new Scene(new StackPane(dialogVBox), 500, 400);
+        gameOverDialog.setScene(dialogScene);
+        gameOverDialog.show();
+
+
+        gameEndbtn = new Button("Close");
+        dialogVBox.getChildren().add(gameEndbtn);
+        gameEndFlag.set(true);
+        System.out.println("Game Over endFlag: " + gameEndFlag.get());
+
+
     }
+
+    public BooleanProperty gameEndFlagProperty() {
+        System.out.println("Game End Flag 실행");
+        return gameEndFlag;
+    }
+
 
     /**
      * Applies a specific style to a button based on its focus state.
@@ -842,25 +882,6 @@ public class GameView {
     }
 
 
-//    private void setupKeyControls(Scene scene, Button btnStartGame) {
-//        scene.setOnKeyPressed(event -> {
-//            switch (event.getCode()) {
-//                case DOWN:
-//                    if (btnStartGame.isFocused()) gameCredit.requestFocus();
-//                    else if (gameCredit.isFocused()) btnExit.requestFocus();
-//                    break;
-//                case UP:
-//                    if (btnExit.isFocused()) gameCredit.requestFocus();
-//                    else if (gameCredit.isFocused()) btnStartGame.requestFocus();
-//                    break;
-//                case ENTER:
-//                    Button focusedButton = (Button) scene.focusOwnerProperty().get();
-//                    focusedButton.fire();
-//                    break;
-//            }
-//        });
-//    }
-
     /// Game Credit
 
     /**
@@ -888,7 +909,7 @@ public class GameView {
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
                         "          My Dearest team mates\n          OilWrestlingLovers :)" +
-                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n          and \n          Gyuwon Jung"
+                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis\" +    and \n          Gyuwon Jung"
 
         );
         startMessageLabel.setWrapText(true);
@@ -1099,15 +1120,6 @@ public class GameView {
         mediaPlayer.setVolume(newVolume);
     }
 
-    private void setNextStageCleared(String currentStageName) {
-        int currentIndex = stageOrder.indexOf(currentStageName);
-        // Check if there is a next stage
-        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
-            String nextStageName = stageOrder.get(currentIndex + 1);
-            stageClearFlags.put(nextStageName, true);
-        }
-    }
-
     private void initializeStageClearFlags() {
         stageClearFlags = new LinkedHashMap<>();
         stageOrder = new ArrayList<>(Arrays.asList("Dublin", "Athens", "Seoul", "Vilnius", "Istanbul"));
@@ -1117,4 +1129,42 @@ public class GameView {
         // Assuming Dublin is already cleared as per your requirement
         stageClearFlags.put("Dublin", true);
     }
+
+    public Button getEndStage() {
+        System.out.println("getEndStage in GameView");
+        return gameEndbtn;
+    }
+
+    public void gemCountReset() {
+        gemCount = 0;
+        updateGemCountLabel();
+    }
+
+
+    public void setNextStageCleared(String currentStageName) {
+        System.out.println("들어옴");
+        System.out.println("Current Stage Name!!! in setNextCleared: " + currentStageName);
+        int currentIndex = stageOrder.indexOf(currentStageName);
+
+        // Check if there is a next stage
+        if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
+            String nextStageName = stageOrder.get(currentIndex + 1);
+            System.out.println("들어옴2");
+
+            stageClearFlags.put(nextStageName, true);
+        }
+    }
+
+
+    private boolean isNextStage(String stage) {
+        // Find the first stage that is not cleared
+        for (String s : stageOrder) {
+            if (!stageClearFlags.get(s)) {
+                return s.equals(stage);
+            }
+        }
+        return false;
+    }
+
+
 }
