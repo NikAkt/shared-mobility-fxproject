@@ -718,7 +718,7 @@ public class GameController {
             System.out.println("Player has entered a metro entrance" + gameView.grid);
 
         }
-        if (canMoveTo(newColumn, newRow)&&(!inTaxi||!onBicycle)) {
+        if (canMoveTo(newColumn, newRow)&&(!inTaxi&&!onBicycle)) {
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
