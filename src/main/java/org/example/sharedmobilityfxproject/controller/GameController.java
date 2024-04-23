@@ -59,6 +59,7 @@ public class GameController {
     public Taxi taximan;
     public Bus busman;
     public Bicycle cycleman;
+    public Bicycle cycleman2;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
     private Timer timer = new Timer();  // Create a Timer object
@@ -247,7 +248,8 @@ public class GameController {
         busman = new Bus(busStops,busStops.getFirst().getX()-1, busStops.getFirst().getY());
 
         taximan = new Taxi (58,28);
-        cycleman= new Bicycle(10,4);
+        cycleman= new Bicycle(10,5);
+        cycleman2= new Bicycle(10,10);
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
@@ -256,6 +258,7 @@ public class GameController {
         gameView.grid.add(busman, busman.getX(), busman.getY());// Example starting position
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
+        gameView.grid.add(cycleman2, cycleman2.getX(), cycleman2.getY());
 
         // Schedule the bus to move every second
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
@@ -264,7 +267,7 @@ public class GameController {
                 moveTaxiTowardsPlayer(gameView.grid, taximan);
             }
             if (onBicycle) {
-                if (cycleman.bikeTime == 0) {
+                if (cycleman.bikeTime == 0||cycleman2.bikeTime == 0) {
                     onBicycle = false;
                     Image bikeman = new Image(new File("src/main/resources/images/playerSprite.png").toURI().toString());
                     playerUno.playerVisual = new ImageView(bikeman);
@@ -272,8 +275,9 @@ public class GameController {
                     ((ImageView) playerUno.playerVisual).setFitWidth(30);
                     ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
                 }
-                if (cycleman.bikeTime >= 1) {
+                if (cycleman.bikeTime >= 1||cycleman2.bikeTime >= 1) {
                     cycleman.bikeTime -= 1;
+                    cycleman2.bikeTime -= 1;
                 }
             }
             if (!busman.isWaiting) {
@@ -869,6 +873,7 @@ private void bikeTime(){
     System.out.println("You just got on the bike");
     onBicycle = true;
     cycleman.bikeTime=300;
+    cycleman2.bikeTime=300;
     System.out.println(onBicycle
     );
 
