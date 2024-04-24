@@ -367,7 +367,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(10);
+        timeSeconds = new SimpleIntegerProperty(600);
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -434,32 +434,11 @@ public class GameView {
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
-        boolean isNextStage = isNextStage(stage);
+        System.out.println("Current isStageCleared: " + stage + " " + isStageCleared);
 
-        if (!isStageCleared && isNextStage) {
-            stageImage.setOpacity(0.75);
-            Label nextMark = new Label("Next");
-            nextMark.setFont(new Font("Arial", 24));
-            nextMark.setStyle("-fx-text-fill: orange;");
-
-            StackPane buttonGraphic = new StackPane(stageImage, nextMark);
-            stageBtn.setGraphic(buttonGraphic);
-        } else if (!isStageCleared) {
-
-            ColorAdjust colorAdjust = new ColorAdjust();
-            colorAdjust.setSaturation(-1);
-            stageImage.setEffect(colorAdjust);
-
-            Label xMark = new Label("X");
-            xMark.setFont(new Font("Arial", 100));
-            xMark.setStyle("-fx-text-fill: red;");
-
-            StackPane buttonGraphic = new StackPane(stageImage, xMark);
-            stageBtn.setGraphic(buttonGraphic);
-        } else {
             // If the stage is cleared, just set the image without any marks
             stageBtn.setGraphic(stageImage);
-        }
+
 
         stageBtn.setContentDisplay(ContentDisplay.TOP);
         return stageBtn;
@@ -556,6 +535,7 @@ public class GameView {
     public void showStageSelectionScreen() {
         //bring the Stage in gameView
         try {
+            gameEndFlag.set(false);
             System.out.println("ShowStageSelectionScreen in GameView");
             bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             bgmediaPlayer.play();
@@ -569,7 +549,7 @@ public class GameView {
                 bottomRow.setAlignment(Pos.CENTER);
 
 
-                String[] topStages = {"Dublin", "Athens", "Seoul"};
+                String[] topStages = {"Manhattan", "Dublin", "Tokyo"};
                 String[] bottomStages = {"Vilnius", "Istanbul"};
 
 
@@ -595,6 +575,7 @@ public class GameView {
                     allButtons.add(stageButton);
                 }
             }
+
             stageSelectionBox = new VBox(100, topRow, bottomRow);
             stageSelectionBox.setAlignment(Pos.CENTER);
 
@@ -634,8 +615,9 @@ public class GameView {
 
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
-            case "Seoul" -> "/images/seoul.jpg";
             case "Athens" -> "/images/athens.png";
+            case "Tokyo" -> "/images/tokyo.png";
+            case "Manhattan" -> "/images/manhattan.png";
             case "Dublin" -> "/images/dublin.png";
             case "Vilnius" -> "/images/vilnius.png";
             case "Istanbul" -> "/images/istanbul.png";
@@ -749,10 +731,17 @@ public class GameView {
 
 
         gameEndbtn = new Button("Close");
+        gameEndbtn.setFont(btnFont);
         dialogVBox.getChildren().add(gameEndbtn);
         gameEndFlag.set(true);
+        gameEndbtn.requestFocus();
         System.out.println("Game Over endFlag: " + gameEndFlag.get());
 
+        gameEndbtn.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                gameEndbtn.fire();
+            }
+        });
 
     }
 
@@ -1120,15 +1109,15 @@ public class GameView {
         double newVolume = Math.max(0.0, currentVolume - 0.2); // Decrease volume by 0.2, ensuring it doesn't go below 0
         mediaPlayer.setVolume(newVolume);
     }
-
+    //Todo : Match the stage name with the stage order
     private void initializeStageClearFlags() {
         stageClearFlags = new LinkedHashMap<>();
-        stageOrder = new ArrayList<>(Arrays.asList("Dublin", "Athens", "Seoul", "Vilnius", "Istanbul"));
+        stageOrder = new ArrayList<>(Arrays.asList("Manhattan","Dublin", "Tokyo", "Athens", "Vilnius", "Istanbul"));
         for (String city : stageOrder) {
             stageClearFlags.put(city, false);
         }
-        // Assuming Dublin is already cleared as per your requirement
-        stageClearFlags.put("Dublin", true);
+        // Assuming Manhattan is already cleared as per your requirement
+        stageClearFlags.put("Manhattan", true);
     }
 
     public Button getEndStage() {
