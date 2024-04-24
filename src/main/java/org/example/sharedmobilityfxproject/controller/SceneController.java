@@ -26,6 +26,11 @@ public class SceneController {
         }
     }
 
+    public static void loadGameSave() {
+        System.out.println("loadGameSave in SceneController");
+        gameView.loadGameSaveWindow();
+    }
+
     /**
      * Initializes the main menu of the game.
      * This method sets up the main menu, sets the scene to the main menu, sets the title of the primary stage, and shows the primary stage.

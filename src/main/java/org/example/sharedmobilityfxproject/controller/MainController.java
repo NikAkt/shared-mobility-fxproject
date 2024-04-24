@@ -94,6 +94,7 @@ public class MainController implements GameOverListener {
         gameView.getGameCreditbtn().setOnAction(event -> SceneController.switchToGameCredits());
         gameView.getBtnExit().setOnAction(event -> System.exit(0));
         gameView.getGameStartbtn().setOnAction(event -> this.mapSelectionScene());
+        gameView.getGameLoadbtn().setOnAction(event -> SceneController.loadGameSave());
 
     }
     /**

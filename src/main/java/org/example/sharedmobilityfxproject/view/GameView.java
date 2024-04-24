@@ -41,9 +41,7 @@ import org.example.sharedmobilityfxproject.Main;
 import org.example.sharedmobilityfxproject.controller.MainController;
 import org.example.sharedmobilityfxproject.model.Cell;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,6 +68,7 @@ public class GameView {
     public boolean isMetroSceneActive = false;
     public VBox buttonBox;
     public Button getGameStartbtn;
+    public Button gameLoadGamebtn;
     public Button ExitBtn;
     public Button gameCreditbtn;
     public Button stageBtn;
@@ -280,18 +279,23 @@ public class GameView {
         bgmediaPlayer.play();
 
         getGameStartbtn = createButton("Game Start");
+        gameLoadGamebtn = createButton("Load Game");
         gameCreditbtn = createButton("Game Credit");
         ExitBtn = createButton("Exit");
-        gameCreditbtn.setFocusTraversable(true);
+
+        getGameStartbtn.setFocusTraversable(true);
+        gameLoadGamebtn.setFocusTraversable(true);
         gameCreditbtn.setFocusTraversable(true);
         ExitBtn.setFocusTraversable(true);
 
-        applyButtonStyles(getGameStartbtn, false);
+        applyButtonStyles(getGameStartbtn, true);
+        applyButtonStyles(gameLoadGamebtn, false);
         applyButtonStyles(gameCreditbtn, false);
         applyButtonStyles(ExitBtn, false);
 
-        VBox buttonBox = new VBox(40, getGameStartbtn, gameCreditbtn, ExitBtn);
+        VBox buttonBox = new VBox(40, getGameStartbtn,gameLoadGamebtn, gameCreditbtn, ExitBtn);
         buttonBox.setAlignment(Pos.CENTER);
+        VBox.setMargin(buttonBox, new Insets(90, 0, 0, 0));
 
         StackPane root = new StackPane(mediaView, imageView, buttonBox);
         StackPane.setAlignment(imageView, Pos.TOP_CENTER);
@@ -909,7 +913,7 @@ public class GameView {
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
                         "          My Dearest team mates\n          OilWrestlingLovers :)" +
-                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis\" +    and \n          Gyuwon Jung"
+                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis\"    and \n          Gyuwon Jung"
 
         );
         startMessageLabel.setWrapText(true);
@@ -935,6 +939,11 @@ public class GameView {
         popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
         VBox.setMargin(closeButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
 
+        popupVbox.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                closeButton.fire();
+            }
+        });
         // Scene and stage setup
         Scene dialogScene = new Scene(popupVbox);
         dialog.setOnShown(event -> {
@@ -1082,8 +1091,6 @@ public class GameView {
         mediaPlayer.play();
     }
 
-
-
     /**
      * Increments the gem count by one and updates the gem count label.
      * This method is typically called when a player collects a gem in the game.
@@ -1171,6 +1178,85 @@ public class GameView {
      */
     public void setCOLUMNS(int COLUMNSnew) {
         COLUMNS = COLUMNSnew;
+    }
+
+    public ButtonBase getGameLoadbtn() {
+        System.out.println("getEndStage in GameView");
+        return gameLoadGamebtn;
+    }
+
+    private Object loadSerializedObject(File file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return ois.readObject();
+        }
+    }
+
+    public void loadGameSaveWindow() {
+        Stage saveDialog = new Stage();
+        saveDialog.initModality(Modality.APPLICATION_MODAL);
+        saveDialog.initOwner(this.primaryStage);
+        saveDialog.initStyle(StageStyle.UNDECORATED);
+
+        VBox popupVbox = new VBox(10);
+        popupVbox.setAlignment(Pos.CENTER);
+        popupVbox.setPrefWidth(450);
+        popupVbox.setPrefHeight(700);
+        popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+
+        Label noticeLabel = new Label("Game Load");
+        noticeLabel.setFont(creditFont);
+        noticeLabel.setAlignment(Pos.TOP_CENTER);
+
+
+        Button loadSavedGameButton1 = createButton("SavedGame1");
+        applyButtonStyles(loadSavedGameButton1,true);
+        loadSavedGameButton1.requestFocus();
+        loadSavedGameButton1.setFocusTraversable(true);
+
+        loadSavedGameButton1.setOnAction(e -> {
+            File saveFile = new File("gameSave.ser"); // Ensure this is the correct path to your .ser file
+//            try {
+//                // Load the serialized object from the .ser file
+//                GameSave savedGame = (GameSave) loadSerializedObject(saveFile);
+//
+//
+//                System.out.println("Game loaded successfully!");
+//            } catch (IOException | ClassNotFoundException ex) {
+//                ex.printStackTrace();
+//                // Handle the error scenario, maybe show an error message on the UI
+//                System.out.println("Failed to load the game.");
+//            }
+        });
+
+        // Add the new load button to the VBox
+
+        // Close Button
+        Button loadCloseButton = new Button("Close");
+        if (contentFont != null) {
+            loadCloseButton.setFont(this.btnFont);
+        } else {
+            System.out.println("Failed to load custom font. Using default font.");
+        }
+        loadCloseButton.setPrefSize(120, 60); // Set the preferred size of the button
+        // Add labels and close button to VBox
+        popupVbox.getChildren().addAll( noticeLabel, loadSavedGameButton1, loadCloseButton);
+        VBox.setMargin(loadCloseButton, new Insets(20, 0, 0, 0)); // Set the margin for the close button
+
+        // Scene and stage setup
+        Scene dialogScene = new Scene(popupVbox);
+        saveDialog.setOnShown(event -> {
+            saveDialog.setX(this.primaryStage.getX() + this.primaryStage.getWidth() / 2 - saveDialog.getWidth() / 2);
+            saveDialog.setY(this.primaryStage.getY() + this.primaryStage.getHeight() / 2 - saveDialog.getHeight() / 2);
+        });
+        popupVbox.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                loadCloseButton.fire();
+            }
+        });
+        loadCloseButton.setOnAction(e -> saveDialog.close());
+        saveDialog.setScene(dialogScene);
+        saveDialog.show();
+
     }
 
 }
