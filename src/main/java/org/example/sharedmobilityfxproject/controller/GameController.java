@@ -363,12 +363,12 @@ System.out.println("GameEndListener in GameController");
                         obstacles.add(obstacle);
                         break;
                     case 2:  // Color the cell green
-                        gameView.grid.setCellColor(column, row, "GREEN");
+                        gameView.grid.grass(column,row);
                         break;
                     case 3:  // Initialise water as an obstacle and then colour the cell blue
                         Obstacle obstacleWater = new Obstacle(gameView.grid, column, row);
                         obstacles.add(obstacleWater);
-                        gameView.grid.setCellColor(column, row, "BLUE");
+                        gameView.grid.water(column,row);
                         break;
                     case 4:  // Mark as bus stop
                         busStop busS = new busStop(column,row);
