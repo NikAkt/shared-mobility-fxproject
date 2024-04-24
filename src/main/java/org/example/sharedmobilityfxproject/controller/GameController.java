@@ -58,6 +58,9 @@ public class GameController {
     public Cell finishCell;
     public Taxi taximan;
     public Bus busman;
+    public Bus busman2;
+    public Bus busman3;
+    public Bus busman4;
     public Bicycle cycleman;
     public Bicycle cycleman2;
     public ArrayList<busStop> busStops = new ArrayList<>();
@@ -227,13 +230,15 @@ System.out.println("GameEndListener in GameController");
 
 
         busman = new Bus(busStops,busStops.getFirst().getX()-1, busStops.getFirst().getY());
-        busman2 = new Bus(busStops2,busStops2.getFirst().getX()-1, busStops2.getFirst().getY());
-        busman3 = new Bus(busStops3,busStops3.getFirst().getX()-1, busStops3.getFirst().getY());
-        busman4 = new Bus(busStops4,busStops4.getFirst().getX()-1, busStops4.getFirst().getY());
-
-        taximan = new Taxi (58,28);
-        cycleman= new Bicycle(10,5);
-        cycleman2= new Bicycle(10,10);
+        if(busStops2.size() > 0){
+            busman2 = new Bus(busStops2,busStops2.getFirst().getX()-1, busStops2.getFirst().getY());
+        }
+        if(busStops3.size() > 0){
+            busman3 = new Bus(busStops3,busStops3.getFirst().getX()-1, busStops3.getFirst().getY());
+        }
+        if(busStops4.size() > 0) {
+            busman4 = new Bus(busStops4, busStops4.getFirst().getX() - 1, busStops4.getFirst().getY());
+        }
 
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
@@ -241,49 +246,89 @@ System.out.println("GameEndListener in GameController");
         }
 
         gameView.grid.add(busman, busman.getX(), busman.getY());// Example starting position
+
+        if(busStops2.size() > 0){
+            for (int i = 0; i < busman2.list().size(); i++){
+                busStop stop = busman2.list().get(i);
+                gameView.grid.add(stop, stop.getX(), stop.getY());
+            }
+            gameView.grid.add(busman2, busman2.getX(), busman2.getY());
+        }
+        if(busStops3.size() > 0){
+            for (int i = 0; i < busman3.list().size(); i++){
+                busStop stop = busman3.list().get(i);
+                gameView.grid.add(stop, stop.getX(), stop.getY());
+            }
+            gameView.grid.add(busman3, busman3.getX(), busman3.getY());
+        }
+        if(busStops4.size() > 0){
+            for (int i = 0; i < busman4.list().size(); i++){
+                busStop stop = busman4.list().get(i);
+                gameView.grid.add(stop, stop.getX(), stop.getY());
+            }
+            gameView.grid.add(busman4, busman4.getX(), busman4.getY());
+        }
+
+        taximan = new Taxi (58,28);
+        cycleman= new Bicycle(10,5);
+        cycleman2= new Bicycle(10,10);
+
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
         gameView.grid.add(cycleman2, cycleman2.getX(), cycleman2.getY());
 
         // Schedule the bus to move every second
+        List<Bus> busmen = Arrays.asList(busman);
+
+        if(busStops2.size() > 0){
+            busmen = Arrays.asList(busman, busman2);
+        }
+        if(busStops3.size() > 0){
+            busmen = Arrays.asList(busman, busman2, busman3);
+        }
+        if(busStops4.size() > 0) {
+            busmen = Arrays.asList(busman, busman2, busman3, busman4);
+        }
+
+        // Schedule the bus to move every second
+        List<Bus> finalBusmen = busmen;
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
-            busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
-            if (taximan.hailed && !taximan.arrived) {
-                moveTaxiTowardsPlayer(gameView.grid, taximan);
-            }
-            if (onBicycle) {
-                if (cycleman.bikeTime == 0||cycleman2.bikeTime == 0) {
-                    onBicycle = false;
-                    Image bikeman = new Image(new File("src/main/resources/images/playerSprite.png").toURI().toString());
-                    playerUno.playerVisual = new ImageView(bikeman);
-                    ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
-                    ((ImageView) playerUno.playerVisual).setFitWidth(30);
-                    ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
+            for (Bus busman : finalBusmen) {
+                busStop targetBusStop = busman.nextStop(); // Assuming this method correctly returns the next bus stop
+                if (taximan.hailed && !taximan.arrived) {
+                    moveTaxiTowardsPlayer(gameView.grid, taximan);
                 }
-                if (cycleman.bikeTime >= 1||cycleman2.bikeTime >= 1) {
-                    cycleman.bikeTime -= 1;
-                    cycleman2.bikeTime -= 1;
+                if (onBicycle) {
+                    if (cycleman.bikeTime == 0 || cycleman2.bikeTime == 0) {
+                        onBicycle = false;
+                        Image bikeman = new Image(new File("src/main/resources/images/playerSprite.png").toURI().toString());
+                        playerUno.playerVisual = new ImageView(bikeman);
+                        ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
+                        ((ImageView) playerUno.playerVisual).setFitWidth(30);
+                        ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
+                    }
+                    if (cycleman.bikeTime >= 1 || cycleman2.bikeTime >= 1) {
+                        cycleman.bikeTime -= 1;
+                        cycleman2.bikeTime -= 1;
+                    }
                 }
-            }
-            if (!busman.isWaiting) {
+                if (!busman.isWaiting) {
+                    moveBusTowardsBusStop(busman, targetBusStop);
 
-
-                moveBusTowardsBusStop(busman, targetBusStop);
-
-                // Here's the updated part
-                if (onBus) {
-                    // Update player's coordinates to match the bus when the player is on the bus
-                    playerUno.setCellByCoords(gameView.grid, busman.getX(), busman.getY());
-                    System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
-                    //Increase carbon footprint amount as long as player is on the bus
-                    double carbonFootprint = 0.2; //subject to change
-//                    gameController.updateCarbonFootprintLabel();
-                }
-            } else {
-                if (busman.waitTime == 0) {
-                    busman.waitASec();
+                    // Here's the updated part
+                    if (onBus) {
+                        // Update player's coordinates to match the bus when the player is on the bus
+                        playerUno.setCellByCoords(gameView.grid, busman.getX(), busman.getY());
+                        System.out.println("Player coordinates (on bus): " + playerUno.getCoordX() + ", " + playerUno.getCoordY());
+                        //Increase carbon footprint amount as long as player is on the bus
+                        double carbonFootprint = 0.2; //subject to change
+                    }
                 } else {
-                    busman.waitTime--;
+                    if (busman.waitTime == 0) {
+                        busman.waitASec();
+                    } else {
+                        busman.waitTime--;
+                    }
                 }
             }
         }));
