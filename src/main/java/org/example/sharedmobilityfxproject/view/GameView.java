@@ -366,7 +366,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(10);
+        timeSeconds = new SimpleIntegerProperty(600);
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),

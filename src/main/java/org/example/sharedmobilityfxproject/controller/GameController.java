@@ -3,6 +3,8 @@ import javafx.animation.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -57,6 +59,7 @@ public class GameController {
     public Taxi taximan;
     public Bus busman;
     public Bicycle cycleman;
+    public Bicycle cycleman2;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
     private Timer timer = new Timer();  // Create a Timer object
@@ -245,7 +248,8 @@ System.out.println("GameEndListener in GameController");
         busman = new Bus(busStops,busStops.getFirst().getX()-1, busStops.getFirst().getY());
 
         taximan = new Taxi (58,28);
-        cycleman= new Bicycle(10,4);
+        cycleman= new Bicycle(10,5);
+        cycleman2= new Bicycle(10,10);
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
@@ -254,6 +258,7 @@ System.out.println("GameEndListener in GameController");
         gameView.grid.add(busman, busman.getX(), busman.getY());// Example starting position
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
+        gameView.grid.add(cycleman2, cycleman2.getX(), cycleman2.getY());
 
         // Schedule the bus to move every second
         Timeline busMovementTimeline = new Timeline(new KeyFrame(Duration.seconds(.1), event -> {
@@ -262,11 +267,17 @@ System.out.println("GameEndListener in GameController");
                 moveTaxiTowardsPlayer(gameView.grid, taximan);
             }
             if (onBicycle) {
-                if (cycleman.bikeTime == 0) {
+                if (cycleman.bikeTime == 0||cycleman2.bikeTime == 0) {
                     onBicycle = false;
+                    Image bikeman = new Image(new File("src/main/resources/images/playerSprite.png").toURI().toString());
+                    playerUno.playerVisual = new ImageView(bikeman);
+                    ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
+                    ((ImageView) playerUno.playerVisual).setFitWidth(30);
+                    ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
                 }
-                if (cycleman.bikeTime >= 1) {
+                if (cycleman.bikeTime >= 1||cycleman2.bikeTime >= 1) {
                     cycleman.bikeTime -= 1;
+                    cycleman2.bikeTime -= 1;
                 }
             }
             if (!busman.isWaiting) {
@@ -587,18 +598,18 @@ System.out.println("GameEndListener in GameController");
         } else if (onBicycle && playerMovementEnabled && playerTimeout) {
             System.out.println("Bicycle time: " + cycleman.bikeTime + " you are still on bike");
             switch (key) {
-                case D -> movePlayer(5, 0);
-                case A -> movePlayer(-5, 0);
-                case W -> movePlayer(0, -5);
-                case S -> movePlayer(0, 5);
+                case D -> movePlayer(2, 0);
+                case A -> movePlayer(-2, 0);
+                case W -> movePlayer(0, -2);
+                case S -> movePlayer(0, 2
+                );
                 case C ->
                         System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
                                 "\nPlayer is currently " + (onBicycle ? "on bicycle." : "not on the bicycle.") +
                                 "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
                                 "\nBicycle is at coordinates: (" + cycleman.getX() + "," + cycleman.getY() + ")");
             }
-            System.out.println(taximan.timeSpeed);
-            enableMovementAfterDelay(taximan.timeSpeed);
+            enableMovementAfterDelay(playerUno.speedTime);
         } else if (playerMovementEnabled && playerTimeout) {
             switch (key) {
                 case D -> movePlayer(1, 0);
@@ -718,7 +729,7 @@ System.out.println("GameEndListener in GameController");
             System.out.println("Player has entered a metro entrance" + gameView.grid);
 
         }
-        if (canMoveTo(newColumn, newRow)&&!inTaxi) {
+        if (canMoveTo(newColumn, newRow)&&(!inTaxi&&!onBicycle)) {
             System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
@@ -755,7 +766,6 @@ System.out.println("GameEndListener in GameController");
 
 
         if (inTaxi&&canMoveTo(newColumn, newRow)&&onedist) {
-            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
@@ -776,11 +786,9 @@ System.out.println("GameEndListener in GameController");
 
         }
         else if(inTaxi&&onedist){
-            System.out.println("movin 1 ");
             int oneRow = Math.min(Math.max(playerUno.getCoordY() + (dy/2), 0), gameView.grid.getRows() - 1);
             int oneColumn = Math.min(Math.max(playerUno.getCoordX() + (dx/2), 0), gameView.grid.getColumns() - 1);
             if (inTaxi&&canMoveTo(oneColumn, oneRow)) {
-                System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
                 playerUno.getCell().unhighlight();
                 playerUno.setX(oneColumn);
                 playerUno.setY(oneRow);
@@ -799,6 +807,52 @@ System.out.println("GameEndListener in GameController");
                 moveTaxi(gameView.grid, taximan, oneColumn, oneRow);
 
             }}
+
+        if (onBicycle&&canMoveTo(newColumn, newRow)&&onedist) {
+            System.out.println("moving 2" +
+                    "" +
+                    "");
+            playerUno.getCell().unhighlight();
+            playerUno.setX(newColumn);
+            playerUno.setY(newRow);
+            double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+            double pivotY = playerUno.getCoordY() * cellHeight;
+
+//            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
+            playerUno.setCell(gameView.grid.getCell(newColumn, newRow), gameView.grid);
+
+            updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
+            // Setup to follow player
+
+            playerUno.getCell().highlight();
+            interactWithCell(playerUno.getCell());
+            // Assuming taximan is accessible from here, or find a way to access it
+
+
+        }
+        else if(onBicycle&&onedist){
+            System.out.println("movin 1 ");
+            int oneRow = Math.min(Math.max(playerUno.getCoordY() + (dy/2), 0), gameView.grid.getRows() - 1);
+            int oneColumn = Math.min(Math.max(playerUno.getCoordX() + (dx/2), 0), gameView.grid.getColumns() - 1);
+            if (onBicycle&&canMoveTo(oneColumn, oneRow)) {
+                System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
+                playerUno.getCell().unhighlight();
+                playerUno.setX(oneColumn);
+                playerUno.setY(oneRow);
+                double pivotX = playerUno.getCoordX() * cellWidth;  // cellWidth is the width of one grid cell
+                double pivotY = playerUno.getCoordY() * cellHeight;
+
+//            gameView.grid.updateCellPosition(playerUno.getCell(),playerUno.getCoordX(),playerUno.getCoordY());
+                playerUno.setCell(gameView.grid.getCell(oneColumn, oneRow), gameView.grid);
+
+                updateScalePivot(gameView.grid, pivotX, pivotY, playerUno.speedTime);
+
+
+                playerUno.getCell().highlight();
+                interactWithCell(playerUno.getCell());
+                // Assuming taximan is accessible from here, or find a way to access it
+
+            }}
     }
 
     private boolean canMoveTo(int x, int y) {
@@ -815,14 +869,24 @@ System.out.println("GameEndListener in GameController");
         } else if (cell == finishCell) {
             finishGame();
         } else if (cell instanceof Bicycle) {
-            System.out.println("You just got on the bike");
-            onBicycle = true;
-            cycleman.bikeTime=300;
-            System.out.println(onBicycle
-            );
-        }
-    }
+            bikeTime((Bicycle) cell);  // Cast and pass the Bicycle cell directly
+        }    }
+private void bikeTime(Bicycle bike){
+    playerUno.playerVisual.setVisible(false);
 
+    Image bikeman = new Image(new File("src/main/resources/images/bike.png").toURI().toString());
+    playerUno.playerVisual = new ImageView(bikeman);
+    ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
+    ((ImageView) playerUno.playerVisual).setFitWidth(30);
+    ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
+    System.out.println("You just got on the bike");
+    onBicycle = true;
+    bike.bikeTime=300;
+
+    System.out.println(onBicycle
+    );
+
+}
     private void collectGem(Cell gemCell) {
         gameView.grid.getChildren().remove(gemCell);
         gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
