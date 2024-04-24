@@ -132,6 +132,7 @@ System.out.println("GameEndListener in GameController");
 
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
+
         this.stageName = stageName;
         this.isGameStarted = true;
         // Before showing the primary stage, set the close request handler to save the game state
@@ -333,9 +334,55 @@ System.out.println("GameEndListener in GameController");
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
         this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
         System.out.println(busStopCoordinates.toString());
+labelChangr();
+    }
+    public int manhattanDistance(int x,int y ,int px, int py) {
+        return Math.abs(x - px) + Math.abs(y - py);
+    }
+    public Gem findClosestGem(List<Gem> gems, int playerX, int playerY) {
+        Gem closest = null;
+        int minDistance = Integer.MAX_VALUE;  // Start with the largest possible distance
+
+        for (Gem gem : gems) {
+            int distance = manhattanDistance(playerUno.getCoordX(), playerUno.getCoordY(),gem.getColumn(),gem.getRow());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closest = gem;
+            }
+        }
+
+        return closest;
+    }
+    private void labelChangr() {
+
+        Gem closestGem = findClosestGem(gameView.gemlist, playerUno.getCoordX(), playerUno.getCoordY());
+        if (closestGem != null) {
+            System.out.println("New closest gem at: " + closestGem.getColumn() + ", " + closestGem.getRow());
+            gameView.gemX = closestGem.getColumn();
+            gameView.gemY = closestGem.getRow();
+            gameView.updateGemLoc();
+            findDirec(closestGem);
+            gameView.updateGemDirec();
+        } else {
+            System.out.println("No more gems left to collect.");
+            // Optionally, disable directions or handle the case when no gems are left.
+        }
+    }
+    private void findDirec(Gem closestGem){
+        if (closestGem.getColumn() < playerUno.getCoordX()){
+            gameView.toGem = "LEFT";
+        }
+        if (closestGem.getColumn() > playerUno.getCoordX()){
+            gameView.toGem = "RIGHT";
+        }
+        if (closestGem.getRow() > playerUno.getCoordY()){
+            gameView.toGem = "DOWN";
+        }
+        if (closestGem.getRow() < playerUno.getCoordY()){
+            gameView.toGem = "UP";
+        }
 
     }
-
     /**
      * This method fills the grid based on the contents of a map array from a Map object.
      * It initializes a 2D array with dimensions 80x120 and attempts to retrieve the map array.
@@ -447,6 +494,7 @@ System.out.println("GameEndListener in GameController");
 
 
     private void generateGems(Grid grid, int numberOfGems) {
+        gameView.gemlist= new ArrayList<>();
         for (int i = 0; i < numberOfGems; i++) {
             int gemColumn;
             int gemRow;
@@ -467,6 +515,7 @@ System.out.println("GameEndListener in GameController");
 
 
             Gem gem = new Gem(gemColumn, gemRow);
+            gameView.gemlist.add(gem);
             grid.add(gem, gemColumn, gemRow);
         }
     }
@@ -735,6 +784,7 @@ System.out.println("GameEndListener in GameController");
         timeline.play();
     }
     private void movePlayer(int dx, int dy) {
+        labelChangr();
         playerUno.setIsWalking(true);
         boolean isDoubleMove = Math.abs(dx) == 2 || Math.abs(dy) == 2;
         boolean onedist = true;
@@ -749,7 +799,6 @@ System.out.println("GameEndListener in GameController");
             }
         }
         if (playerUno.getStamina() <= 0) {
-            System.out.println("Not enough stamina to move.");
             gameView.playNoStaminaSound();
             return;
         }
@@ -762,23 +811,20 @@ System.out.println("GameEndListener in GameController");
             playerUno.getCell().unhighlight();
 
             playerUno.getCell().highlight();
-            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
         }
-        if (playerUno.getCell() instanceof metroStop) {
-
-            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
-            gameView.switchSceneToMetro();// Metro scene is now active
-            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
-            playerUno.isUnderground = true;
-            System.out.println(gameView.grid);
-
-
-            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
-            System.out.println("Player has entered a metro entrance" + gameView.grid);
-
-        }
+//        if (playerUno.getCell() instanceof metroStop) {
+//
+//            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
+//            gameView.switchSceneToMetro();// Metro scene is now active
+//            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
+//            playerUno.isUnderground = true;
+//            System.out.println(gameView.grid);
+//
+//
+//            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
+//
+//        }
         if (canMoveTo(newColumn, newRow)&&(!inTaxi&&!onBicycle)) {
-            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
@@ -800,7 +846,6 @@ System.out.println("GameEndListener in GameController");
 //MoveCounter for walking and decrease stamina every 5 moves
             if (!inTaxi && playerUno.getIsWalking()) {
                 moveCounter++;
-                System.out.println("Move Counter: " + moveCounter);
                 //Decrease stamina every 5 moves
                 if (moveCounter >= 5) {
                     playerUno.decreaseStamina();
@@ -857,9 +902,7 @@ System.out.println("GameEndListener in GameController");
             }}
 
         if (onBicycle&&canMoveTo(newColumn, newRow)&&onedist) {
-            System.out.println("moving 2" +
-                    "" +
-                    "");
+
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
@@ -879,11 +922,9 @@ System.out.println("GameEndListener in GameController");
 
         }
         else if(onBicycle&&onedist){
-            System.out.println("movin 1 ");
             int oneRow = Math.min(Math.max(playerUno.getCoordY() + (dy/2), 0), gameView.grid.getRows() - 1);
             int oneColumn = Math.min(Math.max(playerUno.getCoordX() + (dx/2), 0), gameView.grid.getColumns() - 1);
             if (onBicycle&&canMoveTo(oneColumn, oneRow)) {
-                System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
                 playerUno.getCell().unhighlight();
                 playerUno.setX(oneColumn);
                 playerUno.setY(oneRow);
@@ -910,7 +951,6 @@ System.out.println("GameEndListener in GameController");
     private void interactWithCell(Cell cell) {
 
         if ("gem".equals(cell.getUserData())) {
-            System.out.println("Interacting with gem ");
             collectGem(cell);
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
@@ -927,7 +967,6 @@ private void bikeTime(Bicycle bike){
     ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
     ((ImageView) playerUno.playerVisual).setFitWidth(30);
     ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
-    System.out.println("You just got on the bike");
     onBicycle = true;
     bike.bikeTime=300;
 
@@ -938,6 +977,8 @@ private void bikeTime(Bicycle bike){
         gameView.grid.getChildren().remove(gemCell);
         gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
 //        gameController.playGemCollectSound();
+        System.out.println("collected");
+    gameView.gemlist.remove(gemCell);
     }
 
     private void interactWithBusStop(busStop stop) {

@@ -80,6 +80,7 @@ public class GameView {
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
     public static Label nearestGem;
+    public static Label direction;
     public SceneController sceneController;
 
     // **** Variables Setting ****
@@ -97,6 +98,7 @@ public class GameView {
     static int gemCount = 10;
     public int gemX = 0;
     public int gemY = 0;
+    public String toGem;
     // Carbon footprint
     int carbonFootprint = 0;
 
@@ -162,6 +164,7 @@ public class GameView {
     public MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
     public MediaView mediaView = new MediaView(bgmediaPlayer);
     public ImageView imageView = new ImageView(logoImage);
+    public ArrayList gemlist;
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
@@ -379,7 +382,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(10); // TODO: Timing
+        timeSeconds = new SimpleIntegerProperty(600); // TODO: Timing
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -405,15 +408,18 @@ public class GameView {
         gemCountLabel.setFont(contentFont);
         gemCountLabel.setAlignment(Pos.TOP_LEFT);
         gemCountLabel.setPadding(new Insets(10));
-        nearestGem = new Label("Current nearest gem: " + gemX+" "+gemY);
+
+        nearestGem = new Label("Nearest Gem: " +gemX+" "+gemY);
         nearestGem.setFont(contentFont);
         nearestGem.setAlignment(Pos.TOP_LEFT);
         nearestGem.setPadding(new Insets(10));
 
-        VBox gemContainer = new VBox(gemCountLabel,nearestGem);
+        direction= new Label("Move: " +toGem);
+        direction.setFont(contentFont);
+        direction.setAlignment(Pos.TOP_LEFT);
+        direction.setPadding(new Insets(10));
+        VBox gemContainer = new VBox(gemCountLabel,nearestGem,direction);
         gemContainer.setAlignment(Pos.TOP_RIGHT);
-
-
 
         // Settings
         Image icon = new Image(new File("src/main/resources/images/icon.png").toURI().toString());
@@ -551,7 +557,6 @@ public class GameView {
     public void showStageSelectionScreen() {
         //bring the Stage in gameView
         try {
-            gameEndFlag.set(false);
             System.out.println("ShowStageSelectionScreen in GameView");
             bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             bgmediaPlayer.play();
@@ -679,7 +684,12 @@ public class GameView {
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
-
+    public void updateGemLoc() {
+        nearestGem.setText("Nearest Gem: " +gemX+" "+gemY);
+    }
+    public void updateGemDirec() {
+        direction.setText("Move: " +toGem);
+    }
     /**
      * Displays a game over dialog.
      * The dialog is a modal window with no title bar, containing a label with a game over message.
