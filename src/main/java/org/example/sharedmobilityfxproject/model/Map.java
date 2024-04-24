@@ -140,7 +140,7 @@ public class Map {
 
     public int[][] getMapArray(String mapName) {
 
-        int[][] arr = new int[80][120]; // change the rows and columns for your convinience
+        int[][] arr = new int[ROWS][COLUMNS]; // change the rows and columns for your convinience
         try {
             arr = loadMap(mapName);
         } catch (Exception e) {
