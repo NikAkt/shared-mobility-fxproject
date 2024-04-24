@@ -114,17 +114,12 @@ System.out.println("GameEndListener in GameController");
                 this.gameView.getEndStage().setOnAction(event -> {
                     this.gameView.mediaPlayer.stop();
                     this.gameView.gameOverDialog.close();
-                    System.out.println("Game ended in GameController");
-
                     if (this.gameView.isTimeOut && this.gameView.isGemCollectedEnough && this.gameView.isCO2Safe) {
-                        System.out.println("GameController Mission Clear");
-//                        this.gameView.gemCountReset();
-                        System.out.println("StageName Check!! " + stageName);
+//                       this.gameView.gemCountReset();
                         this.gameView.setNextStageCleared(stageName);
                         SceneController.isGoingToNext();
                     }else{
                         // Mission Fail
-                        System.out.println("GameController Mission fail");
                         SceneController.isGoingToNext();
                     }
 

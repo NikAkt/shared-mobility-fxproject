@@ -339,8 +339,13 @@ public class GameView {
         this.co2Label.setFont(contentFont);  // Assuming 'contentFont' is already defined elsewhere
         this.co2Label.setStyle("-fx-background-color: transparent; -fx-padding: 5px;");
 
+        Label transportLabel = new Label("TAXI[T] / BUS[E]");
+        transportLabel.setFont(contentFont);
+
         // VBox for vertical layout
-        VBox co2VBox = new VBox(this.co2Bar, this.co2Label);  // Add ProgressBar first, then the Label
+        VBox co2VBox = new VBox(transportLabel,this.co2Bar, this.co2Label);  // Add ProgressBar first, then the Label
+        VBox.setMargin(transportLabel, new Insets(0, 0, 120, 50));
+
         co2VBox.setPrefHeight(600);
         VBox.setMargin(this.co2Bar, new Insets(150, 0, 0, -150)); // Top margin of 100
         VBox.setMargin(this.co2Label, new Insets(200, 0, 0, 0));  // Add some space between the bar and the label
@@ -449,33 +454,10 @@ public class GameView {
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
-        boolean isNextStage = isNextStage(stage);
+        System.out.println("Current isStageCleared: " + stage + " " + isStageCleared);
 
-        if (!isStageCleared && isNextStage) {
-            stageImage.setOpacity(0.75);
-            Label nextMark = new Label("Next");
-            nextMark.setFont(new Font("Arial", 24));
-            nextMark.setStyle("-fx-text-fill: orange;");
-
-            StackPane buttonGraphic = new StackPane(stageImage, nextMark);
-            stageBtn.setGraphic(buttonGraphic);
-        } else if (!isStageCleared) {
-
-            ColorAdjust colorAdjust = new ColorAdjust();
-            colorAdjust.setSaturation(-1);
-            stageImage.setEffect(colorAdjust);
-
-            Label xMark = new Label("X");
-            xMark.setFont(new Font("Arial", 100));
-            xMark.setStyle("-fx-text-fill: red;");
-
-            StackPane buttonGraphic = new StackPane(stageImage, xMark);
-            stageBtn.setGraphic(buttonGraphic);
-        } else {
-            // If the stage is cleared, just set the image without any marks
-            stageBtn.setGraphic(stageImage);
-        }
-
+        // If the stage is cleared, just set the image without any marks
+        stageBtn.setGraphic(stageImage);
         stageBtn.setContentDisplay(ContentDisplay.TOP);
         return stageBtn;
     }
@@ -584,7 +566,7 @@ public class GameView {
                 bottomRow.setAlignment(Pos.CENTER);
 
 
-                String[] topStages = {"Dublin", "Athens", "Seoul"};
+                String[] topStages = {"Manhattan", "Dublin","Tokyo", "Athens"};
                 String[] bottomStages = {"Vilnius", "Istanbul"};
 
 
@@ -650,6 +632,8 @@ public class GameView {
     public ImageView createStageImage(String stageName) {
         String imagePath = switch (stageName) {
             case "Seoul" -> "/images/seoul.jpg";
+            case "Manhattan" -> "/images/manhattan.png";
+            case "Tokyo" -> "/images/tokyo.png";
             case "Athens" -> "/images/athens.png";
             case "Dublin" -> "/images/dublin.png";
             case "Vilnius" -> "/images/vilnius.png";
@@ -769,15 +753,20 @@ public class GameView {
 
 
         gameEndbtn = new Button("Close");
+        gameEndbtn.setFont(btnFont);
         dialogVBox.getChildren().add(gameEndbtn);
         gameEndFlag.set(true);
+        gameEndbtn.requestFocus();
         System.out.println("Game Over endFlag: " + gameEndFlag.get());
 
-
+        gameEndbtn.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                gameEndbtn.fire();
+            }
+        });
     }
 
     public BooleanProperty gameEndFlagProperty() {
-        System.out.println("Game End Flag 실행");
         return gameEndFlag;
     }
 
@@ -1103,31 +1092,7 @@ public class GameView {
         mediaPlayer.play();
     }
 
-    private void setNextStageFlag(String currentStage) {
-        List<String> stageNames = new ArrayList<>(stageClearFlags.keySet());
-        for (int i = 0; i < stageNames.size(); i++) {
-            if (stageNames.get(i).equals(currentStage)) {
-                if (i + 1 < stageNames.size()) {
-                    stageClearFlags.put(stageNames.get(i + 1), true);
-                }
-                break;
-            }
-        }
 
-        // Check if all stages are cleared
-        boolean allCleared = true;
-        for (boolean flag : stageClearFlags.values()) {
-            if (!flag) {
-                allCleared = false;
-                break;
-            }
-        }
-
-        // If all stages are cleared, possibly do something or nothing
-        if (allCleared) {
-            // All stages are cleared, you may want to do something here or just leave it empty
-        }
-    }
 
     /**
      * Increments the gem count by one and updates the gem count label.
@@ -1143,12 +1108,12 @@ public class GameView {
 
     private void initializeStageClearFlags() {
         stageClearFlags = new LinkedHashMap<>();
-        stageOrder = new ArrayList<>(Arrays.asList("Dublin", "Athens", "Seoul", "Vilnius", "Istanbul"));
+        stageOrder = new ArrayList<>(Arrays.asList("Manhattan", "Dublin", "Tokyo","Athens","Vilnius", "Istanbul"));
         for (String city : stageOrder) {
             stageClearFlags.put(city, false);
         }
         // Assuming Dublin is already cleared as per your requirement
-        stageClearFlags.put("Dublin", true);
+        stageClearFlags.put("Manhattan", true);
     }
 
     public Button getEndStage() {
@@ -1163,14 +1128,9 @@ public class GameView {
 
 
     public void setNextStageCleared(String currentStageName) {
-        System.out.println("들어옴");
-        System.out.println("Current Stage Name!!! in setNextCleared: " + currentStageName);
         int currentIndex = stageOrder.indexOf(currentStageName);
-
-        // Check if there is a next stage
         if (currentIndex >= 0 && currentIndex < stageOrder.size() - 1) {
             String nextStageName = stageOrder.get(currentIndex + 1);
-            System.out.println("들어옴2");
 
             stageClearFlags.put(nextStageName, true);
         }
