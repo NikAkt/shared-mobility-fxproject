@@ -1124,7 +1124,6 @@ public class GameView {
     }
 
     public Button getEndStage() {
-        System.out.println("getEndStage in GameView");
         return gameEndbtn;
     }
 
@@ -1217,8 +1216,7 @@ public class GameView {
         noticeLabel.setFont(creditFont);
         noticeLabel.setAlignment(Pos.TOP_CENTER);
 
-
-        Button loadSavedGameButton1 = createButton("SavedGame1");
+        Button loadSavedGameButton1 = createButton("Saved Game 1");
         applyButtonStyles(loadSavedGameButton1,true);
         loadSavedGameButton1.requestFocus();
         loadSavedGameButton1.setFocusTraversable(true);
@@ -1237,8 +1235,6 @@ public class GameView {
 //                System.out.println("Failed to load the game.");
 //            }
         });
-
-        // Add the new load button to the VBox
 
         // Close Button
         Button loadCloseButton = new Button("Close");
