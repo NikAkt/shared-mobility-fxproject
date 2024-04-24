@@ -80,6 +80,7 @@ public class GameView {
     public Stage primaryStage;
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
+    public static Label nearestGem;
     public SceneController sceneController;
 
     // **** Variables Setting ****
@@ -96,6 +97,8 @@ public class GameView {
     public Player playerUno;
     // Gem count
     static int gemCount = 10;
+    public int gemX = 0;
+    public int gemY = 0;
     // Carbon footprint
     int carbonFootprint = 0;
 
@@ -392,8 +395,11 @@ public class GameView {
         gemCountLabel.setFont(contentFont);
         gemCountLabel.setAlignment(Pos.TOP_LEFT);
         gemCountLabel.setPadding(new Insets(10));
-
-        VBox gemContainer = new VBox(gemCountLabel);
+        nearestGem = new Label("Current nearest gem: " + gemX+" "+gemY);
+        nearestGem.setFont(contentFont);
+        nearestGem.setAlignment(Pos.TOP_LEFT);
+        nearestGem.setPadding(new Insets(10));
+        VBox gemContainer = new VBox(gemCountLabel,nearestGem);
         gemContainer.setAlignment(Pos.TOP_RIGHT);
 
         // Settings
