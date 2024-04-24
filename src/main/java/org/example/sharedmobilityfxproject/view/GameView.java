@@ -314,17 +314,17 @@ public class GameView {
         StackPane root = new StackPane();
         scene = new Scene(root, WIDTH, HEIGHT);
 
-        if (scale == null) {
-            scale = new Scale(3, 3);  // Set the initial scale
-        } else {
-            scale.setX(3);
-            scale.setY(3);
-        }
-
-        boolean scaleExists = grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
-        if (!scaleExists) {
-            grid.getTransforms().add(scale);  // Only add scale if not already present
-        }
+//        if (scale == null) {
+//            scale = new Scale(3, 3);  // Set the initial scale TODO: scale changed here
+//        } else {
+//            scale.setX(3);
+//            scale.setY(3);
+//        }
+//
+//        boolean scaleExists = grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
+//        if (!scaleExists) {
+//            grid.getTransforms().add(scale);  // Only add scale if not already present
+//        }
 
         // Game Lable Setting
 
@@ -1121,6 +1121,8 @@ public class GameView {
         }
         // Assuming Dublin is already cleared as per your requirement
         stageClearFlags.put("Manhattan", true);
+        stageClearFlags.put("Dublin", true); //TODO: manually set the first stage to cleared, need to change this
+        stageClearFlags.put("Tokyo", true);
     }
 
     public Button getEndStage() {
