@@ -221,34 +221,8 @@ System.out.println("GameEndListener in GameController");
         finishCell.getStyleClass().add("finish");
         gameView.grid.add(finishCell, finishColumn, finishRow);
 
-////        //bus SHITE
-//        busStop busS1 = new busStop(27,6);
-//        busStop busS2 = new busStop(62,6);
-//        busStop busS3 = new busStop(97,6);
-//        busStop busS4 = new busStop(98,30);
-//        busStop busS5 = new busStop(98,60);
-//        busStop busS6 = new busStop(60,55);
-//        busStop busS7 = new busStop(31,55);
-
         metroStop metro1 = new metroStop(2,30);
         gameView.grid.add(metro1,2,30);
-
-//        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
-//        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
-//        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-//        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-//        busStopCoordinates.add(new int[]{busS5.getX(), busS5.getY()});
-//        busStopCoordinates.add(new int[]{busS6.getX(), busS6.getY()});
-//        busStopCoordinates.add(new int[]{busS7.getX(), busS7.getY()});
-////
-////
-//        busStops.add(busS1);
-//        busStops.add(busS2);
-//        busStops.add(busS3);
-//        busStops.add(busS4);
-//        busStops.add(busS5);
-//        busStops.add(busS6);
-//        busStops.add(busS7);
 
 
 
