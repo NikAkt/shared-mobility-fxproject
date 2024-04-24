@@ -1,11 +1,10 @@
 package org.example.sharedmobilityfxproject.model;
 
-
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.io.File;
+import java.util.Random;
 
 /**
  * Obstacle class represents an obstacle on the grid.
@@ -44,17 +43,21 @@ public class Obstacle {
         rows = new int[]{row};
         for (int col : columns) {
             for (int r : rows) {
-                if (col >= 0 && col < grid.getColumns() && r >= 0 && r < grid.getRows()) {
-                    Cell obstacleCell = grid.getCell(col, r);
-//
-                    String imagePath = "src/main/resources/images/house.png";
-                    File file = new File(imagePath);
-                    String absolutePath = file.toURI().toString();
-                    obstacleCell.setStyle("-fx-background-image: url('" + absolutePath + "');" +
-                            "-fx-background-size: cover; -fx-background-position: center center;");
-                    obstacleCell.getStyleClass().add("cell-obstacle");
-                }
-            }
+                File folder = new File("src/main/resources/images/obstacles");
+                File[] listOfFiles = folder.listFiles();
+                Random random = new Random();
+                File file = listOfFiles[random.nextInt(listOfFiles.length)];
+                String imagePath = file.toURI().toString();
+
+                if (column >= 0 && column < grid.getColumns() && row >= 0 && row < grid.getRows()) {
+                    Cell obstacleCell = grid.getCell(column, row);
+                    // Apply CSS directly to style the cell
+                    obstacleCell.setStyle("-fx-background-image: url('" + imagePath + "');" +
+                            "-fx-background-size: contain;" +  // Fit the image within the cell
+                            "-fx-background-position: center center;" +
+                            "-fx-background-repeat: no-repeat;");
+
+            }}
         }
     }
 
