@@ -696,7 +696,12 @@ public class GameView {
     public static void updateGemCountLabel() {
         gemCountLabel.setText("Gem Count: " + gemCount);
     }
-
+    public void updateGemLoc() {
+        nearestGem.setText("Nearest Gem: " +gemX+" "+gemY);
+    }
+    public void updateGemDirec() {
+        direction.setText("Move: " +toGem);
+    }
     /**
      * Displays a game over dialog.
      * The dialog is a modal window with no title bar, containing a label with a game over message.

@@ -360,10 +360,31 @@ labelChangr();
         return closest;
     }
     private void labelChangr(){
-        System.out.println("weeee");
+
         closestGem = findClosestGem(gameView.gemlist,playerUno.getCoordX(),playerUno.getCoordY());
+        System.out.println(closestGem.getColumn()+"   "  +closestGem.getRow());
         gameView.gemX = closestGem.getColumn();
-        gameView.gemX = closestGem.getRow();
+        gameView.gemY = closestGem.getRow();
+
+        gameView.updateGemLoc();
+        if(closestGem!=null){
+        findDirec(closestGem);
+        gameView.updateGemDirec();}
+    }
+    private void findDirec(Gem closestGem){
+        if (closestGem.getColumn() < playerUno.getCoordX()){
+            gameView.toGem = "LEFT";
+        }
+        if (closestGem.getColumn() > playerUno.getCoordX()){
+            gameView.toGem = "RIGHT";
+        }
+        if (closestGem.getRow() > playerUno.getCoordY()){
+            gameView.toGem = "DOWN";
+        }
+        if (closestGem.getRow() < playerUno.getCoordY()){
+            gameView.toGem = "UP";
+        }
+
     }
     /**
      * This method fills the grid based on the contents of a map array from a Map object.
@@ -766,6 +787,7 @@ labelChangr();
         timeline.play();
     }
     private void movePlayer(int dx, int dy) {
+        labelChangr();
         playerUno.setIsWalking(true);
         boolean isDoubleMove = Math.abs(dx) == 2 || Math.abs(dy) == 2;
         boolean onedist = true;
@@ -969,6 +991,7 @@ private void bikeTime(Bicycle bike){
         gameView.grid.getChildren().remove(gemCell);
         gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
 //        gameController.playGemCollectSound();
+    gameView.gemlist.remove(0);
     }
 
     private void interactWithBusStop(busStop stop) {
