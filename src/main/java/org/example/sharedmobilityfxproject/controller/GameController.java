@@ -67,7 +67,7 @@ public class GameController {
     private double cellWidth;
     private double cellHeight;
     private GameOverListener gameOverListener;
-    private Gem closestGem;
+
     private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
 
     private void enableMovementAfterDelay(double timespeed) {
@@ -339,7 +339,6 @@ System.out.println("GameEndListener in GameController");
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
         this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
         System.out.println(busStopCoordinates.toString());
-        closestGem = findClosestGem(gameView.gemlist,playerUno.getCoordX(),playerUno.getCoordY());
 labelChangr();
     }
     public int manhattanDistance(int x,int y ,int px, int py) {
@@ -360,7 +359,8 @@ labelChangr();
         return closest;
     }
     private void labelChangr() {
-        closestGem = findClosestGem(gameView.gemlist, playerUno.getCoordX(), playerUno.getCoordY());
+
+        Gem closestGem = findClosestGem(gameView.gemlist, playerUno.getCoordX(), playerUno.getCoordY());
         if (closestGem != null) {
             System.out.println("New closest gem at: " + closestGem.getColumn() + ", " + closestGem.getRow());
             gameView.gemX = closestGem.getColumn();
@@ -790,8 +790,6 @@ labelChangr();
     }
     private void movePlayer(int dx, int dy) {
         labelChangr();
-//        gameView.gemlist.removeFirst();
-
         playerUno.setIsWalking(true);
         boolean isDoubleMove = Math.abs(dx) == 2 || Math.abs(dy) == 2;
         boolean onedist = true;
@@ -806,7 +804,6 @@ labelChangr();
             }
         }
         if (playerUno.getStamina() <= 0) {
-            System.out.println("Not enough stamina to move.");
             gameView.playNoStaminaSound();
             return;
         }
@@ -819,23 +816,20 @@ labelChangr();
             playerUno.getCell().unhighlight();
 
             playerUno.getCell().highlight();
-            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
         }
-        if (playerUno.getCell() instanceof metroStop) {
-
-            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
-            gameView.switchSceneToMetro();// Metro scene is now active
-            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
-            playerUno.isUnderground = true;
-            System.out.println(gameView.grid);
-
-
-            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
-            System.out.println("Player has entered a metro entrance" + gameView.grid);
-
-        }
+//        if (playerUno.getCell() instanceof metroStop) {
+//
+//            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
+//            gameView.switchSceneToMetro();// Metro scene is now active
+//            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
+//            playerUno.isUnderground = true;
+//            System.out.println(gameView.grid);
+//
+//
+//            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
+//
+//        }
         if (canMoveTo(newColumn, newRow)&&(!inTaxi&&!onBicycle)) {
-            System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
@@ -857,7 +851,6 @@ labelChangr();
 //MoveCounter for walking and decrease stamina every 5 moves
             if (!inTaxi && playerUno.getIsWalking()) {
                 moveCounter++;
-                System.out.println("Move Counter: " + moveCounter);
                 //Decrease stamina every 5 moves
                 if (moveCounter >= 5) {
                     playerUno.decreaseStamina();
@@ -914,9 +907,7 @@ labelChangr();
             }}
 
         if (onBicycle&&canMoveTo(newColumn, newRow)&&onedist) {
-            System.out.println("moving 2" +
-                    "" +
-                    "");
+
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
             playerUno.setY(newRow);
@@ -936,11 +927,9 @@ labelChangr();
 
         }
         else if(onBicycle&&onedist){
-            System.out.println("movin 1 ");
             int oneRow = Math.min(Math.max(playerUno.getCoordY() + (dy/2), 0), gameView.grid.getRows() - 1);
             int oneColumn = Math.min(Math.max(playerUno.getCoordX() + (dx/2), 0), gameView.grid.getColumns() - 1);
             if (onBicycle&&canMoveTo(oneColumn, oneRow)) {
-                System.out.println("player pos: " + playerUno.getCoordX() + " " + playerUno.getCoordY());
                 playerUno.getCell().unhighlight();
                 playerUno.setX(oneColumn);
                 playerUno.setY(oneRow);
@@ -967,7 +956,6 @@ labelChangr();
     private void interactWithCell(Cell cell) {
 
         if ("gem".equals(cell.getUserData())) {
-            System.out.println("Interacting with gem ");
             collectGem(cell);
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
@@ -984,7 +972,6 @@ private void bikeTime(Bicycle bike){
     ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
     ((ImageView) playerUno.playerVisual).setFitWidth(30);
     ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
-    System.out.println("You just got on the bike");
     onBicycle = true;
     bike.bikeTime=300;
 
@@ -996,7 +983,7 @@ private void bikeTime(Bicycle bike){
         gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
 //        gameController.playGemCollectSound();
         System.out.println("collected");
-
+    gameView.gemlist.remove(gemCell);
     }
 
     private void interactWithBusStop(busStop stop) {
