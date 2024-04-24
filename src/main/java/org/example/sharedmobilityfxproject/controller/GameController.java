@@ -790,6 +790,8 @@ labelChangr();
     }
     private void movePlayer(int dx, int dy) {
         labelChangr();
+//        gameView.gemlist.removeFirst();
+
         playerUno.setIsWalking(true);
         boolean isDoubleMove = Math.abs(dx) == 2 || Math.abs(dy) == 2;
         boolean onedist = true;
@@ -967,7 +969,6 @@ labelChangr();
         if ("gem".equals(cell.getUserData())) {
             System.out.println("Interacting with gem ");
             collectGem(cell);
-            gameView.gemlist.removeFirst();
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
         } else if (cell == finishCell) {
