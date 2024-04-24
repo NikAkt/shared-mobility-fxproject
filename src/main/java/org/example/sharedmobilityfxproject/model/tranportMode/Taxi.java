@@ -30,7 +30,7 @@ public class Taxi extends Cell {
 
 
         this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
-                "-fx-background-size: contain; -fx-background-position: center center;");
+                "-fx-background-size: contain; -fx-background-position: center center;"+"-fx-background-repeat: no-repeat;");
     }
     public void setX(int i ){
         this.x = i;

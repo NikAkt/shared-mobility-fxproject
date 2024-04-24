@@ -72,7 +72,7 @@ public class GameController {
 
     private void enableMovementAfterDelay(double timespeed) {
         playerTimeout = false;  // Disable further moves immediately when this method is called
-        int delayInMilliseconds = (int) ((timespeed * 1000)+75);  // Convert seconds to milliseconds
+        int delayInMilliseconds = (int) ((timespeed * 1000)+25);  // Convert seconds to milliseconds
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -1027,9 +1027,13 @@ private void bikeTime(Bicycle bike){
             }
         } else if (playerUno.getCell() instanceof busStop) {
             playerMovementEnabled = !playerMovementEnabled;
-            System.out.println(playerMovementEnabled ? "Impatient" : "Waiting for bus");
-            ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
-        }
+            if (!playerMovementEnabled) {
+                playerUno.playerVisual.setVisible(false);
+                System.out.println("Waiting for bus");
+            } else {
+                playerUno.playerVisual.setVisible(true);
+                System.out.println("Impatient");
+            } }
     }
 
     private void moveTaxi(Taxi bus, int newX, int newY) {
