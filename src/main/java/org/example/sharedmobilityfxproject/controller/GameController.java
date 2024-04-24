@@ -184,13 +184,24 @@ public class GameController {
 //                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
 //        };
 
-        // Start filling the grid with obstacles and other stuff
-        Map map = new Map();
+        // Start filling the grid with obstacles and other stuff first checking the map size
+        /**
+         * Checks if the stage name contains "big". If it does, it sets the number of columns and rows
+         * in the game view to larger values (850 and 330 respectively). If it doesn't, it sets the number
+         * of columns and rows to smaller values (120 and 80 respectively). This is used to adjust the size
+         * of the game view based on the stage.
+         */
+        if (stageName.contains("Big")) {
+            gameView.setCOLUMNS(850);
+            gameView.setROWS(330);
+        } else {
+            gameView.setCOLUMNS(120);
+            gameView.setROWS(80);
+        }
+        // Pass the sizes to Map so it can generate the correct map array
+        Map map = new Map(gameView.getRows(), gameView.getColumns());
+        // Fill the grid with the map array, we pass the stage name to the method so it can load the correct map from the resources
         fillGridWithMapArray(map, stageName);
-
-        // Set the players position in a place that is not an obstacle
-        Cell middlePlayerCell = findRoadNearMiddle(gameView.grid);
-        playerUno.setCellByCoords(gameView.grid, middlePlayerCell.getColumn(), middlePlayerCell.getRow());
 
 
 
@@ -303,6 +314,10 @@ public class GameController {
         // give playerUno a cell goddamit
         playerUno.initCell(gameView.grid);
 
+        // Set the players position in a place that is not an obstacle
+        Cell middlePlayerCell = findRoadNearMiddle(gameView.grid);
+        playerUno.setCellByCoords(gameView.grid, middlePlayerCell.getColumn(), middlePlayerCell.getRow());
+
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
 //        // Load the gameState
@@ -335,9 +350,11 @@ public class GameController {
      * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
      */
     public void fillGridWithMapArray(Map map, String stageName) {
-        int[][] mapArray = new int[80][120];  // Default map size initialization
+        System.out.printf("Filling grid with map array %s - %s...%n", gameView.getColumns(), gameView.getRows());
+        System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
+        int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
         try {
-            mapArray = map.getMapArray("dublinBig");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
+            mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
