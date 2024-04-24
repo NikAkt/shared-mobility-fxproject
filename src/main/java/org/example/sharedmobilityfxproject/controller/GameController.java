@@ -641,7 +641,7 @@ labelChangr();
                 case D:
                     movePlayer(2, 0);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 >= 100.0) {
+                    if (potentialCo2 > 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -650,7 +650,7 @@ labelChangr();
                 case A:
                     movePlayer(-2, 0);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 >= 100.0) {
+                    if (potentialCo2 > 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -659,7 +659,7 @@ labelChangr();
                 case W:
                     movePlayer(0, -2);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 >= 100.0) {
+                    if (potentialCo2 > 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -668,7 +668,7 @@ labelChangr();
                 case S:
                     movePlayer(0, 2);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 >= 100.0) {
+                    if (potentialCo2 > 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -1003,7 +1003,7 @@ private void bikeTime(Bicycle bike){
         } else {
             // Hail taxi, limit Co2 not be over 100%
             double currentCo2 = sceneController.getCo2Gauge();
-            double potentialCo2 = currentCo2 + 3.0;
+            double potentialCo2 = currentCo2 + 10.0;
             if (potentialCo2 > 100.0) {
                 gameFailedCall();
             } else {
@@ -1029,8 +1029,17 @@ private void bikeTime(Bicycle bike){
             playerMovementEnabled = !playerMovementEnabled;
             System.out.println(playerMovementEnabled ? "Impatient" : "Waiting for bus");
             ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
+            // Increment CO2 when the player boards the bus
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2 = currentCo2 + 5.0; // or any other value as per your requirement
+            if (potentialCo2 > 100.0) {
+                gameFailedCall(); // Handle failure condition if CO2 exceeds the limit
+            } else {
+                sceneController.increaseCo2GaugeUpdate(5.0); // Safely increase CO2
+            }
         }
     }
+
 
     private void moveTaxi(Taxi bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
