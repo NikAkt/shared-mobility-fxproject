@@ -188,6 +188,10 @@ public class GameController {
         Map map = new Map();
         fillGridWithMapArray(map, stageName);
 
+        // Set the players position in a place that is not an obstacle
+        Cell middlePlayerCell = findRoadNearMiddle(gameView.grid);
+        playerUno.setCellByCoords(gameView.grid, middlePlayerCell.getColumn(), middlePlayerCell.getRow());
+
 
 
 
@@ -333,7 +337,7 @@ public class GameController {
     public void fillGridWithMapArray(Map map, String stageName) {
         int[][] mapArray = new int[80][120];  // Default map size initialization
         try {
-            mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
+            mapArray = map.getMapArray("dublinBig");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
@@ -401,25 +405,27 @@ public class GameController {
         busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
     }
 
-    public int compare(busStop bs1, busStop bs2) {
-        // Compare Y-coordinates in ascending order
-        if (bs1.getY() != bs2.getY()) {
-            if (bs1.getY() < bs2.getY()) {
-                return -1; // bs1 is lower, so comes first
-            } else {
-                return 1;  // bs2 is lower, so comes first
+
+    public Cell findRoadNearMiddle(Grid grid) {
+    int middleRow = grid.getRows() / 2;
+    int middleColumn = grid.getColumns() / 2;
+    int[] dr = {0, 1, 0, -1}; // Directions for row
+    int[] dc = {1, 0, -1, 0}; // Directions for column
+
+    for (int r = 0, c = 0, di = 0, jump = 0; r < grid.getRows() && c < grid.getColumns(); jump++, di = (di + 1) % 4) {
+        for (int j = 0; j < jump / 2 + 1; j++) {
+            if (middleRow + r >= 0 && middleRow + r < grid.getRows() && middleColumn + c >= 0 && middleColumn + c < grid.getColumns()) {
+                Cell cell = grid.getCell(middleRow + r, middleColumn + c);
+                if (cell.getStyleClass().contains("road")) {
+                    return cell;
+                }
             }
-        } else {
-            // Y-coordinates are the same, so compare X-coordinates in ascending order
-            if (bs1.getX() < bs2.getX()) {
-                return -1; // bs1 is more to the left, so comes first
-            } else if (bs1.getX() > bs2.getX()) {
-                return 1;  // bs2 is more to the left, so comes first
-            } else {
-                return 0;  // bs1 and bs2 are at the same position
-            }
+            r += dr[di];
+            c += dc[di];
         }
     }
+    return null; // Return null if no road is found
+}
 
 
     private void generateGems(Grid grid, int numberOfGems) {
