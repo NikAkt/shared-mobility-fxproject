@@ -181,8 +181,23 @@ System.out.println("GameEndListener in GameController");
 //                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
 //        };
 
-        // Start filling the grid with obstacles and other stuff
-        Map map = new Map();
+        // Start filling the grid with obstacles and other stuff first checking the map size
+        /**
+         * Checks if the stage name contains "big". If it does, it sets the number of columns and rows
+         * in the game view to larger values (850 and 330 respectively). If it doesn't, it sets the number
+         * of columns and rows to smaller values (120 and 80 respectively). This is used to adjust the size
+         * of the game view based on the stage.
+         */
+        if (stageName.contains("Big")) {
+            gameView.setCOLUMNS(850);
+            gameView.setROWS(330);
+        } else {
+            gameView.setCOLUMNS(120);
+            gameView.setROWS(80);
+        }
+        // Pass the sizes to Map so it can generate the correct map array
+        Map map = new Map(gameView.getRows(), gameView.getColumns());
+        // Fill the grid with the map array, we pass the stage name to the method so it can load the correct map from the resources
         fillGridWithMapArray(map, stageName);
 
 
@@ -304,6 +319,10 @@ System.out.println("GameEndListener in GameController");
         // give playerUno a cell goddamit
         playerUno.initCell(gameView.grid);
 
+        // Set the players position in a place that is not an obstacle
+        Cell middlePlayerCell = findRoadNearMiddle(gameView.grid);
+        playerUno.setCellByCoords(gameView.grid, middlePlayerCell.getColumn(), middlePlayerCell.getRow());
+
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
 //        // Load the gameState
@@ -313,8 +332,8 @@ System.out.println("GameEndListener in GameController");
         double pivotY = this.gameView.scale.getPivotY();
 
 // Calculate the translation needed to recenter the scale
-        double translateX = playerUno.getCoordX() * cellWidth * (1.60 - this.gameView.scale.getX()) - pivotX;
-        double translateY = playerUno.getCoordY() * cellHeight * (1.55 - this.gameView.scale.getY()) - pivotY;
+        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - this.gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - this.gameView.scale.getY()) - pivotY;
 
 // Apply translation to the grid to recenter
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
@@ -359,7 +378,9 @@ labelChangr();
      * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
      */
     public void fillGridWithMapArray(Map map, String stageName) {
-        int[][] mapArray = new int[80][120];  // Default map size initialization
+        System.out.printf("Filling grid with map array %s - %s...%n", gameView.getColumns(), gameView.getRows());
+        System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
+        int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
         try {
             mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
         } catch (Exception e) {
@@ -431,25 +452,27 @@ labelChangr();
         busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
     }
 
-    public int compare(busStop bs1, busStop bs2) {
-        // Compare Y-coordinates in ascending order
-        if (bs1.getY() != bs2.getY()) {
-            if (bs1.getY() < bs2.getY()) {
-                return -1; // bs1 is lower, so comes first
-            } else {
-                return 1;  // bs2 is lower, so comes first
+
+    public Cell findRoadNearMiddle(Grid grid) {
+    int middleRow = grid.getRows() / 2;
+    int middleColumn = grid.getColumns() / 2;
+    int[] dr = {0, 1, 0, -1}; // Directions for row
+    int[] dc = {1, 0, -1, 0}; // Directions for column
+
+    for (int r = 0, c = 0, di = 0, jump = 0; r < grid.getRows() && c < grid.getColumns(); jump++, di = (di + 1) % 4) {
+        for (int j = 0; j < jump / 2 + 1; j++) {
+            if (middleRow + r >= 0 && middleRow + r < grid.getRows() && middleColumn + c >= 0 && middleColumn + c < grid.getColumns()) {
+                Cell cell = grid.getCell(middleRow + r, middleColumn + c);
+                if (cell.getStyleClass().contains("road")) {
+                    return cell;
+                }
             }
-        } else {
-            // Y-coordinates are the same, so compare X-coordinates in ascending order
-            if (bs1.getX() < bs2.getX()) {
-                return -1; // bs1 is more to the left, so comes first
-            } else if (bs1.getX() > bs2.getX()) {
-                return 1;  // bs2 is more to the left, so comes first
-            } else {
-                return 0;  // bs1 and bs2 are at the same position
-            }
+            r += dr[di];
+            c += dc[di];
         }
     }
+    return null; // Return null if no road is found
+}
 
 
     private void generateGems(Grid grid, int numberOfGems) {

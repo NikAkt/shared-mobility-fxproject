@@ -94,7 +94,6 @@ public class GameView {
     // **** Obstacles ****
     // List to keep track of all obstacles
     public List<Obstacle> obstacles;
-    public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
     public Player playerUno;
     // Gem count
     static int gemCount = 10;
@@ -150,10 +149,12 @@ public class GameView {
     // Boolean flag to control hover cursor visibility
     boolean showHoverCursor = true;
     private static final String GEM_COLLECT_SOUND = "/music/gem_collected.mp3";    // Grid dimensions and window dimensions
-    private static final int ROWS = 80;
-    private static final int COLUMNS = 120;
+    private int ROWS = 80;
+    private int COLUMNS = 120;
     private static final double WIDTH = 1300;
     private static final double HEIGHT = 680;
+
+    public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
     private Scene scene;
     private Scene metroScene;
@@ -1181,5 +1182,40 @@ public class GameView {
         return false;
     }
 
+    /**
+     * Returns the number of rows in the grid.
+     *
+     * @return The number of rows in the grid.
+     */
+    public int getROWS() {
+        return ROWS;
+    }
+
+    /**
+     * Returns the number of columns in the grid.
+     *
+     * @return The number of columns in the grid.
+     */
+    public int getCOLUMNS() {
+        return COLUMNS;
+    }
+
+    /**
+     * Sets the number of rows in the grid.
+     *
+     * @param ROWSnew The new number of rows in the grid.
+     */
+    public void setROWS(int ROWSnew) {
+        ROWS = ROWSnew;
+    }
+
+    /**
+     * Sets the number of columns in the grid.
+     *
+     * @param COLUMNSnew The new number of columns in the grid.
+     */
+    public void setCOLUMNS(int COLUMNSnew) {
+        COLUMNS = COLUMNSnew;
+    }
 
 }

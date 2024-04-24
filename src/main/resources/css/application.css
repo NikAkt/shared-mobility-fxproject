@@ -2,9 +2,15 @@
 
 }
 
+.player {
+    -fx-background-color: rgba(0, 0, 255, 0.5);  // Semi-transparent blue
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
 .road {
     /*road url*/
-    -fx-background-image: url("../images/road3.png");
+    /*-fx-background-image: url("../images/road3.png");*/
     /*-fx-background-size: contain;*/
     /*below for road2 and road 1*/
     /*-fx-background-size: cover;*/
