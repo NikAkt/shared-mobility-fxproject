@@ -4,6 +4,8 @@ import javafx.scene.layout.Pane;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
+import java.io.File;
+
 /**
  * Grid class represents a two-dimensional grid of cells.
  * It is responsible for managing the cells and their layout within the grid.
@@ -76,5 +78,23 @@ public class Grid extends Pane {
     // Sets color of that cell
     public void setCellColor(int column, int row, String color) {
         cells[row][column].setStyle("-fx-background-color: " + color + ";");
+    }
+    public void grass(int column, int row){
+        String imagePath = "src/main/resources/images/grass.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
+        setPrefHeight(10);  // Set the preferred height to 10 pixels
+        setPrefWidth(3);
+        cells[row][column].setStyle("-fx-background-image: url('" + absolutePath + "');" +
+                "-fx-background-size: contain; -fx-background-position: center center;");
+    }
+    public void water(int column, int row){
+        String imagePath = "src/main/resources/images/water.png";
+        File file = new File(imagePath);
+        String absolutePath = file.toURI().toString();
+        setPrefHeight(10);  // Set the preferred height to 10 pixels
+        setPrefWidth(3);
+        cells[row][column].setStyle("-fx-background-image: url('" + absolutePath + "');" +
+                "-fx-background-size: contain; -fx-background-position: center center;");
     }
 }
