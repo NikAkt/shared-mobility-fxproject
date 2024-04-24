@@ -36,7 +36,7 @@ import java.io.File;
             ((ImageView) this.playerVisual).setFitHeight(10); // Set the size as needed
             ((ImageView) this.playerVisual).setFitWidth(30);
             ((ImageView) this.playerVisual).setPreserveRatio(true);
-            ((ImageView) this.playerVisual).getStyleClass().add("player");
+            ((ImageView) this.playerVisual).getStyleClass().add("player"); // TODO: not working delete it if not needed
         }
 
         public int getCoordX() {
