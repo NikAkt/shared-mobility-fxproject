@@ -61,6 +61,9 @@ public class GameController {
     public Bicycle cycleman;
     public Bicycle cycleman2;
     public ArrayList<busStop> busStops = new ArrayList<>();
+    public ArrayList<busStop> busStops2 = new ArrayList<>();
+    public ArrayList<busStop> busStops3 = new ArrayList<>();
+    public ArrayList<busStop> busStops4 = new ArrayList<>();
     public ArrayList<int[]> busStopCoordinates = new ArrayList<>();
     private Timer timer = new Timer();  // Create a Timer object
     private ScrollPane scrollPane;
@@ -250,10 +253,14 @@ System.out.println("GameEndListener in GameController");
 
 
         busman = new Bus(busStops,busStops.getFirst().getX()-1, busStops.getFirst().getY());
+        busman2 = new Bus(busStops2,busStops2.getFirst().getX()-1, busStops2.getFirst().getY());
+        busman3 = new Bus(busStops3,busStops3.getFirst().getX()-1, busStops3.getFirst().getY());
+        busman4 = new Bus(busStops4,busStops4.getFirst().getX()-1, busStops4.getFirst().getY());
 
         taximan = new Taxi (58,28);
         cycleman= new Bicycle(10,5);
         cycleman2= new Bicycle(10,10);
+
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
@@ -400,7 +407,7 @@ labelChangr();
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
         int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
         try {
-            mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
+            mapArray = map.getMapArray(stageName);  // Attempt to retrieve the map array TODO: needs to be converted to stageName
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
@@ -430,6 +437,21 @@ labelChangr();
                         busStop busS = new busStop(column,row);
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
                         busStops.add(busS);
+                        break;
+                    case 42:  // Mark as bus stop
+                        busStop busS2 = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()}); // Coordinates can stay the same only once used for player to interact with bus stop
+                        busStops2.add(busS2);
+                        break;
+                    case 43:  // Mark as bus stop
+                        busStop busS3 = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+                        busStops3.add(busS3);
+                        break;
+                    case 44:  // Mark as bus stop
+                        busStop busS4 = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+                        busStops4.add(busS4);
                         break;
                     default:
                         // Optionally handle default case if needed
