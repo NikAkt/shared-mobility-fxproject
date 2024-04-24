@@ -359,17 +359,19 @@ labelChangr();
 
         return closest;
     }
-    private void labelChangr(){
-
-        closestGem = findClosestGem(gameView.gemlist,playerUno.getCoordX(),playerUno.getCoordY());
-        System.out.println(closestGem.getColumn()+"   "  +closestGem.getRow());
-        gameView.gemX = closestGem.getColumn();
-        gameView.gemY = closestGem.getRow();
-
-        gameView.updateGemLoc();
-        if(closestGem!=null){
-        findDirec(closestGem);
-        gameView.updateGemDirec();}
+    private void labelChangr() {
+        closestGem = findClosestGem(gameView.gemlist, playerUno.getCoordX(), playerUno.getCoordY());
+        if (closestGem != null) {
+            System.out.println("New closest gem at: " + closestGem.getColumn() + ", " + closestGem.getRow());
+            gameView.gemX = closestGem.getColumn();
+            gameView.gemY = closestGem.getRow();
+            gameView.updateGemLoc();
+            findDirec(closestGem);
+            gameView.updateGemDirec();
+        } else {
+            System.out.println("No more gems left to collect.");
+            // Optionally, disable directions or handle the case when no gems are left.
+        }
     }
     private void findDirec(Gem closestGem){
         if (closestGem.getColumn() < playerUno.getCoordX()){
@@ -965,6 +967,7 @@ labelChangr();
         if ("gem".equals(cell.getUserData())) {
             System.out.println("Interacting with gem ");
             collectGem(cell);
+            gameView.gemlist.removeFirst();
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
         } else if (cell == finishCell) {
@@ -991,7 +994,8 @@ private void bikeTime(Bicycle bike){
         gameView.grid.getChildren().remove(gemCell);
         gameView.grid.add(new Cell(gemCell.getColumn(), gemCell.getRow()), gemCell.getColumn(), gemCell.getRow());
 //        gameController.playGemCollectSound();
-    gameView.gemlist.remove(0);
+        System.out.println("collected");
+
     }
 
     private void interactWithBusStop(busStop stop) {
