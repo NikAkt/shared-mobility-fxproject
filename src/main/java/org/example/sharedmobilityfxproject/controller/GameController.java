@@ -913,8 +913,7 @@ private void bikeTime(Bicycle bike){
     onBicycle = true;
     bike.bikeTime=300;
 
-    System.out.println(onBicycle
-    );
+    System.out.println(onBicycle);
 
 }
     private void collectGem(Cell gemCell) {
