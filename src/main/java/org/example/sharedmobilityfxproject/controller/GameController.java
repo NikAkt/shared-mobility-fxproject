@@ -116,13 +116,6 @@ System.out.println("GameEndListener in GameController");
                     this.gameView.gameOverDialog.close();
                     System.out.println("Game ended in GameController");
 
-
-                    // Mission clear
-
-                    System.out.println("시간:"+this.gameView.isTimeOut); //true
-                    System.out.println("젬:"+this.gameView.isGemCollectedEnough);//true
-                    System.out.println("CO2:"+this.gameView.isCO2Safe);//false
-
                     if (this.gameView.isTimeOut && this.gameView.isGemCollectedEnough && this.gameView.isCO2Safe) {
                         System.out.println("GameController Mission Clear");
 //                        this.gameView.gemCountReset();

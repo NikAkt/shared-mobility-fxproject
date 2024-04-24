@@ -108,7 +108,7 @@ public class MainController implements GameOverListener {
             button.setOnAction(event -> {
                 String stage = button.getText();
 
-                if ("Dublin".equals(stage)) {
+                if ("Manhattan".equals(stage)) {
                     gameController.startPlayingGame(stage);
                     System.out.println("stageName in MainController: " + stage);
                 } else if (gameView.isStageCleared(stage)) {
