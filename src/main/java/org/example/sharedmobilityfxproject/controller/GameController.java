@@ -570,7 +570,7 @@ public class GameController {
                 case D:
                     movePlayer(2, 0);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 > 100.0) {
+                    if (potentialCo2 >= 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -579,7 +579,7 @@ public class GameController {
                 case A:
                     movePlayer(-2, 0);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 > 100.0) {
+                    if (potentialCo2 >= 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -588,7 +588,7 @@ public class GameController {
                 case W:
                     movePlayer(0, -2);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 > 100.0) {
+                    if (potentialCo2 >= 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
@@ -597,7 +597,7 @@ public class GameController {
                 case S:
                     movePlayer(0, 2);
                     potentialCo2 = currentCo2 + 1.0;
-                    if (potentialCo2 > 100.0) {
+                    if (potentialCo2 >= 100.0) {
                         gameFailedCall();
                     } else {
                         sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
