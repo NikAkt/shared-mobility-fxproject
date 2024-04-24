@@ -563,23 +563,45 @@ public class GameController {
     }
 
     public void setupKeyboardActions(KeyCode key) {
-        if (this.inTaxi&&playerTimeout) {
+        if (this.inTaxi && playerTimeout) {
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2;
             switch (key) {
                 case D:
                     movePlayer(2, 0);
-                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 > 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
                     break;
                 case A:
                     movePlayer(-2, 0);
-                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 > 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
                     break;
                 case W:
                     movePlayer(0, -2);
-                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 > 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
                     break;
                 case S:
                     movePlayer(0, 2);
-                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 > 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
                     break;
                 case T:
                     this.inTaxi = false;
@@ -864,7 +886,7 @@ public class GameController {
         if (taximan.hailed) {
             taximan.hailed = !taximan.hailed;
         } else {
-            // Hail taxt, limit Co2 not be over 100%
+            // Hail taxi, limit Co2 not be over 100%
             double currentCo2 = sceneController.getCo2Gauge();
             double potentialCo2 = currentCo2 + 3.0;
             if (potentialCo2 > 100.0) {

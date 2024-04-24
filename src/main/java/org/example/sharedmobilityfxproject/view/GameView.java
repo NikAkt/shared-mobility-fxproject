@@ -366,7 +366,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(600);
+        timeSeconds = new SimpleIntegerProperty(600); // TODO: Timing
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -862,7 +862,7 @@ public class GameView {
                 closeButton.setOnAction(e -> {
                     dialog.close(); // Close the popup
                     // Start the timer after the popup is closed
-                    PauseTransition wait = new PauseTransition(Duration.seconds(5)); // TODO: timing
+                    PauseTransition wait = new PauseTransition(Duration.seconds(5));
                     wait.setOnFinished(event -> System.out.println("5 Seconds past"));
                     wait.play();
                 });
