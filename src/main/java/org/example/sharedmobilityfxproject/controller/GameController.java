@@ -862,9 +862,11 @@ public class GameController {
         } else if (cell == finishCell) {
             finishGame();
         } else if (cell instanceof Bicycle) {
-       bikeTime(); }
-    }
-private void bikeTime(){
+            bikeTime((Bicycle) cell);  // Cast and pass the Bicycle cell directly
+        }    }
+private void bikeTime(Bicycle bike){
+    playerUno.playerVisual.setVisible(false);
+
     Image bikeman = new Image(new File("src/main/resources/images/bike.png").toURI().toString());
     playerUno.playerVisual = new ImageView(bikeman);
     ((ImageView) playerUno.playerVisual).setFitHeight(10); // Set the size as needed
@@ -872,8 +874,8 @@ private void bikeTime(){
     ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
     System.out.println("You just got on the bike");
     onBicycle = true;
-    cycleman.bikeTime=300;
-    cycleman2.bikeTime=300;
+    bike.bikeTime=300;
+
     System.out.println(onBicycle
     );
 
