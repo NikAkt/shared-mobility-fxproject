@@ -234,7 +234,7 @@ System.out.println("GameEndListener in GameController");
             busman2 = new Bus(busStops2,busStops2.getFirst().getX()-1, busStops2.getFirst().getY());
         }
         if(busStops3.size() > 0){
-            busman3 = new Bus(busStops3,busStops3.getFirst().getX()-1, busStops3.getFirst().getY());
+            busman3 = new Bus(busStops3,busStops3.getFirst().getX(), busStops3.getFirst().getY());
         }
         if(busStops4.size() > 0) {
             busman4 = new Bus(busStops4, busStops4.getFirst().getX() - 1, busStops4.getFirst().getY());
@@ -478,37 +478,48 @@ labelChangr();
                 }
             }
         }
-        // Sort bus stops after all are added
-        busStops.sort((busStop1, busStop2) -> {
-            // First, compare Y-coordinates in ascending order
+        busStops = sortAndReverseBusStops(busStops);
+        if(busStops2.size() > 0){
+            busStops2 = sortAndReverseBusStops(busStops2);
+        }
+        if(busStops3.size() > 0){
+            busStops3 = sortAndReverseBusStops(busStops3);
+        }
+        if(busStops4.size() > 0){
+            busStops4 = sortAndReverseBusStops(busStops4);
+        }
+
+        // Optionally, print bus stop coordinates
+        busStops4.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
+    }
+
+    public ArrayList<busStop> sortAndReverseBusStops(ArrayList<busStop> busStopInstance) {
+        // Sort bus stops
+        busStopInstance.sort((busStop1, busStop2) -> {
             if (busStop1.getY() > busStop2.getY() && busStop1.getX() <= busStop2.getX() && busStop1.getY() >= busStop1.getX()){
-                return -1; // busStop1 should come before busStop2 (because it's lower)
+                return -1;
             } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() >= busStop2.getX())){
-                return 1; // busStop1 should come after busStop2 (because it's higher)
+                return 1;
             } else if ((busStop1.getY() > busStop2.getY()) && (busStop1.getX() > busStop2.getX()) && busStop1.getY() >= busStop1.getX()){
-                return -1; // busStop1 should come before busStop2 (because it's lower)
+                return -1;
             } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() < busStop2.getX())){
-                return -1; // busStop1 should come before busStop2 (because it's lower)
+                return -1;
             } else {
-                return 0; // busStop1 and busStop2 are at the same position
+                return 0;
             }
         });
 
         // Reverse the bus stops list to get the correct order
-        ArrayList<busStop> reversedList = new ArrayList<>(busStops);
-        // Remove the first and last elements
+        ArrayList<busStop> reversedList = new ArrayList<>(busStopInstance);
         reversedList.removeFirst();
         reversedList.removeLast();
-        // Reverse the list
         Collections.reverse(reversedList);
 
-        ArrayList<busStop> newList = new ArrayList<>(busStops);
+        ArrayList<busStop> newList = new ArrayList<>(busStopInstance);
         newList.addAll(reversedList);
-        // Update the bus stops list with the sorted list
-        busStops = newList;
 
-        // Optionally, print bus stop coordinates
-        busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
+        // Update the bus stops list with the sorted list
+        return newList;
     }
 
 
