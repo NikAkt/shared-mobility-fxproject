@@ -331,8 +331,8 @@ System.out.println("GameEndListener in GameController");
         double pivotY = this.gameView.scale.getPivotY();
 
 // Calculate the translation needed to recenter the scale
-        double translateX = playerUno.getCoordX() * cellWidth * (1.60 - this.gameView.scale.getX()) - pivotX;
-        double translateY = playerUno.getCoordY() * cellHeight * (1.55 - this.gameView.scale.getY()) - pivotY;
+        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - this.gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - this.gameView.scale.getY()) - pivotY;
 
 // Apply translation to the grid to recenter
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
