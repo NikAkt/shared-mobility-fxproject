@@ -81,6 +81,7 @@ public class GameView {
     public VBox stageSelectionBox;
     public static Label gemCountLabel;
     public static Label nearestGem;
+    public static Label direction;
     public SceneController sceneController;
 
     // **** Variables Setting ****
@@ -99,6 +100,7 @@ public class GameView {
     static int gemCount = 10;
     public int gemX = 0;
     public int gemY = 0;
+    public String toGem;
     // Carbon footprint
     int carbonFootprint = 0;
 
@@ -162,6 +164,7 @@ public class GameView {
     public MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
     public MediaView mediaView = new MediaView(bgmediaPlayer);
     public ImageView imageView = new ImageView(logoImage);
+    public ArrayList gemlist;
 
     // Boolean flag to track if the game has finished
     boolean gameFinished = false;
@@ -395,11 +398,17 @@ public class GameView {
         gemCountLabel.setFont(contentFont);
         gemCountLabel.setAlignment(Pos.TOP_LEFT);
         gemCountLabel.setPadding(new Insets(10));
-        nearestGem = new Label("Current nearest gem: " + gemX+" "+gemY);
+
+        nearestGem = new Label("Nearest Gem: " +gemX+" "+gemY);
         nearestGem.setFont(contentFont);
         nearestGem.setAlignment(Pos.TOP_LEFT);
         nearestGem.setPadding(new Insets(10));
-        VBox gemContainer = new VBox(gemCountLabel,nearestGem);
+
+        direction= new Label("Move: " +toGem);
+        direction.setFont(contentFont);
+        direction.setAlignment(Pos.TOP_LEFT);
+        direction.setPadding(new Insets(10));
+        VBox gemContainer = new VBox(gemCountLabel,nearestGem,direction);
         gemContainer.setAlignment(Pos.TOP_RIGHT);
 
         // Settings

@@ -67,7 +67,7 @@ public class GameController {
     private double cellWidth;
     private double cellHeight;
     private GameOverListener gameOverListener;
-
+    private Gem closestGem;
     private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
 
     private void enableMovementAfterDelay(double timespeed) {
@@ -137,6 +137,7 @@ System.out.println("GameEndListener in GameController");
 
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
+
         this.stageName = stageName;
         this.isGameStarted = true;
         // Before showing the primary stage, set the close request handler to save the game state
@@ -319,9 +320,32 @@ System.out.println("GameEndListener in GameController");
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
         this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
         System.out.println(busStopCoordinates.toString());
-
+        closestGem = findClosestGem(gameView.gemlist,playerUno.getCoordX(),playerUno.getCoordY());
+labelChangr();
     }
+    public int manhattanDistance(int x,int y ,int px, int py) {
+        return Math.abs(x - px) + Math.abs(y - py);
+    }
+    public Gem findClosestGem(List<Gem> gems, int playerX, int playerY) {
+        Gem closest = null;
+        int minDistance = Integer.MAX_VALUE;  // Start with the largest possible distance
 
+        for (Gem gem : gems) {
+            int distance = manhattanDistance(playerUno.getCoordX(), playerUno.getCoordY(),gem.getColumn(),gem.getRow());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closest = gem;
+            }
+        }
+
+        return closest;
+    }
+    private void labelChangr(){
+        System.out.println("weeee");
+        closestGem = findClosestGem(gameView.gemlist,playerUno.getCoordX(),playerUno.getCoordY());
+        gameView.gemX = closestGem.getColumn();
+        gameView.gemX = closestGem.getRow();
+    }
     /**
      * This method fills the grid based on the contents of a map array from a Map object.
      * It initializes a 2D array with dimensions 80x120 and attempts to retrieve the map array.
@@ -429,6 +453,7 @@ System.out.println("GameEndListener in GameController");
 
 
     private void generateGems(Grid grid, int numberOfGems) {
+        gameView.gemlist= new ArrayList<>();
         for (int i = 0; i < numberOfGems; i++) {
             int gemColumn;
             int gemRow;
@@ -449,6 +474,7 @@ System.out.println("GameEndListener in GameController");
 
 
             Gem gem = new Gem(gemColumn, gemRow);
+            gameView.gemlist.add(gem);
             grid.add(gem, gemColumn, gemRow);
         }
     }
