@@ -14,10 +14,25 @@ import java.io.PrintWriter;
  */
 public class Map {
 
+    // The grid size
+    final int ROWS;
+    final int COLUMNS;
+
     /**
      * Default constructor for the Map class.
      */
     public Map() {
+        this.ROWS = 80;
+        this.COLUMNS = 120;
+    }
+    /**
+     * Constructor for the Map class.
+     * @param rows The number of rows in the map.
+     * @param columns The number of columns in the map.
+     */
+    public Map(int rows, int columns) {
+        this.ROWS = rows;
+        this.COLUMNS = columns;
     }
 
     /**
@@ -47,8 +62,6 @@ public class Map {
         BufferedImage image = ImageIO.read(imageFile);
 
         // The grid size
-        final int ROWS = 80;
-        final int COLUMNS = 120;
         int[][] mapArray = new int[ROWS][COLUMNS];
 
         // Dimensions of each cell
