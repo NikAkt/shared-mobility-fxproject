@@ -565,22 +565,37 @@ public class GameController {
     public void setupKeyboardActions(KeyCode key) {
         if (this.inTaxi&&playerTimeout) {
             switch (key) {
-                case D -> movePlayer(2, 0);
-                case A -> movePlayer(-2, 0);
-                case W -> movePlayer(0, -2);
-                case S -> movePlayer(0, 2);
-                case T -> {
+                case D:
+                    movePlayer(2, 0);
+                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    break;
+                case A:
+                    movePlayer(-2, 0);
+                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    break;
+                case W:
+                    movePlayer(0, -2);
+                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    break;
+                case S:
+                    movePlayer(0, 2);
+                    sceneController.increaseCo2GaugeUpdate(1.0);
+                    break;
+                case T:
                     this.inTaxi = false;
-                playerUno. playerVisual.setVisible(true); // Hide player sprite when T is pressed
+                    playerUno.playerVisual.setVisible(true); // Hide player sprite when T is pressed
                     taximan.hailed = !taximan.hailed;
                     taximan.arrived = false;
-            }
-                case E -> togglePlayerMovement();
-                case C ->
-                        System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+                    break;
+                case E:
+                    togglePlayerMovement();
+                    break;
+                case C:
+                    System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                            "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                            "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                            "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+                    break;
             }
 
             enableMovementAfterDelay(taximan.timeSpeed);
@@ -855,7 +870,7 @@ public class GameController {
             if (potentialCo2 > 100.0) {
                 gameFailedCall();
             } else {
-                sceneController.increaseCo2GaugeUpdate(30.0); // Safely increase CO2
+                sceneController.increaseCo2GaugeUpdate(10.0); // Safely increase CO2
             }
             taximan.hailed = true;
         }

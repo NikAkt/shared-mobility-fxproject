@@ -862,7 +862,7 @@ public class GameView {
                 closeButton.setOnAction(e -> {
                     dialog.close(); // Close the popup
                     // Start the timer after the popup is closed
-                    PauseTransition wait = new PauseTransition(Duration.seconds(5));
+                    PauseTransition wait = new PauseTransition(Duration.seconds(160)); // TODO: timing
                     wait.setOnFinished(event -> System.out.println("5 Seconds past"));
                     wait.play();
                 });
