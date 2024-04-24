@@ -567,24 +567,61 @@ System.out.println("GameEndListener in GameController");
     }
 
     public void setupKeyboardActions(KeyCode key) {
-        if (this.inTaxi&&playerTimeout) {
+        if (this.inTaxi && playerTimeout) {
+            double currentCo2 = sceneController.getCo2Gauge();
+            double potentialCo2;
             switch (key) {
-                case D -> movePlayer(2, 0);
-                case A -> movePlayer(-2, 0);
-                case W -> movePlayer(0, -2);
-                case S -> movePlayer(0, 2);
-                case T -> {
+                case D:
+                    movePlayer(2, 0);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 >= 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
+                    break;
+                case A:
+                    movePlayer(-2, 0);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 >= 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
+                    break;
+                case W:
+                    movePlayer(0, -2);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 >= 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
+                    break;
+                case S:
+                    movePlayer(0, 2);
+                    potentialCo2 = currentCo2 + 1.0;
+                    if (potentialCo2 >= 100.0) {
+                        gameFailedCall();
+                    } else {
+                        sceneController.increaseCo2GaugeUpdate(1.0); // Safely increase CO2
+                    }
+                    break;
+                case T:
                     this.inTaxi = false;
-                playerUno. playerVisual.setVisible(true); // Hide player sprite when T is pressed
+                    playerUno.playerVisual.setVisible(true); // Hide player sprite when T is pressed
                     taximan.hailed = !taximan.hailed;
                     taximan.arrived = false;
-            }
-                case E -> togglePlayerMovement();
-                case C ->
-                        System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
-                                "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
-                                "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
-                                "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+                    break;
+                case E:
+                    togglePlayerMovement();
+                    break;
+                case C:
+                    System.out.println("The player is located at coordinates: (" + playerUno.getCoordX() + ", " + playerUno.getCoordY() + ")" +
+                            "\nPlayer is currently " + (onBus ? "on the bus." : "not on the bus.") +
+                            "\nPlayer is " + (playerMovementEnabled ? "moving." : "waiting.") +
+                            "\nBus is at coordinates: (" + busman.getX() + "," + busman.getY() + ")");
+                    break;
             }
 
             enableMovementAfterDelay(taximan.timeSpeed);
@@ -876,8 +913,7 @@ private void bikeTime(Bicycle bike){
     onBicycle = true;
     bike.bikeTime=300;
 
-    System.out.println(onBicycle
-    );
+    System.out.println(onBicycle);
 
 }
     private void collectGem(Cell gemCell) {
@@ -906,13 +942,13 @@ private void bikeTime(Bicycle bike){
         if (taximan.hailed) {
             taximan.hailed = !taximan.hailed;
         } else {
-            // Hail taxt, limit Co2 not be over 100%
+            // Hail taxi, limit Co2 not be over 100%
             double currentCo2 = sceneController.getCo2Gauge();
             double potentialCo2 = currentCo2 + 3.0;
             if (potentialCo2 > 100.0) {
                 gameFailedCall();
             } else {
-                sceneController.increaseCo2GaugeUpdate(30.0); // Safely increase CO2
+                sceneController.increaseCo2GaugeUpdate(10.0); // Safely increase CO2
             }
             taximan.hailed = true;
         }
