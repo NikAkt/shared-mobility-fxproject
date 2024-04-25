@@ -490,7 +490,6 @@ public class GameController {
      * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
      */
     public void fillGridWithMapArray(Map map, String stageName) {
-
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.getColumns(), gameView.getRows());
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
         int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
@@ -514,17 +513,43 @@ public class GameController {
                         obstacles.add(obstacle);
                         break;
                     case 2:  // Color the cell green
-                        gameView.grid.grass(column, row);
+                        gameView.grid.grass(column,row);
                         break;
                     case 3:  // Initialise water as an obstacle and then colour the cell blue
                         Obstacle obstacleWater = new Obstacle(gameView.grid, column, row);
                         obstacles.add(obstacleWater);
-                        gameView.grid.water(column, row);
+                        gameView.grid.water(column,row);
                         break;
                     case 4:  // Mark as bus stop
-                        busStop busS = new busStop(column, row);
+                        busStop busS = new busStop(column,row);
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
                         busStops.add(busS);
+                        break;
+                    case 42:  // Mark as bus stop
+                        busStop busS2 = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()}); // Coordinates can stay the same only once used for player to interact with bus stop
+                        busStops2.add(busS2);
+                        break;
+                    case 43:  // Mark as bus stop
+                        busStop busS3 = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
+                        busStops3.add(busS3);
+                        break;
+                    case 44:  // Mark as bus stop
+                        busStop busS4 = new busStop(column,row);
+                        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
+                        busStops4.add(busS4);
+                        break;
+                    case 6:  // Mark as cycleman
+                        if(cycleman == null) {
+                            cycleman = new Bicycle(column, row);
+                        } else if(cycleman2 == null) {
+                            cycleman2 = new Bicycle(column, row);
+                        } else if(cycleman3 == null) {
+                            cycleman2 = new Bicycle(column, row);
+                        } else if(cycleman4 == null) {
+                            cycleman2 = new Bicycle(column, row);
+                        }
                         break;
                     case 10:
                         gameView.finishCell = new Cell(column, row);
@@ -541,37 +566,48 @@ public class GameController {
                 }
             }
         }
-        // Sort bus stops after all are added
-        busStops.sort((busStop1, busStop2) -> {
-            // First, compare Y-coordinates in ascending order
-            if (busStop1.getY() > busStop2.getY() && busStop1.getX() <= busStop2.getX() && busStop1.getY() >= busStop1.getX()) {
-                return -1; // busStop1 should come before busStop2 (because it's lower)
-            } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() >= busStop2.getX())) {
-                return 1; // busStop1 should come after busStop2 (because it's higher)
-            } else if ((busStop1.getY() > busStop2.getY()) && (busStop1.getX() > busStop2.getX()) && busStop1.getY() >= busStop1.getX()) {
-                return -1; // busStop1 should come before busStop2 (because it's lower)
-            } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() < busStop2.getX())) {
-                return -1; // busStop1 should come before busStop2 (because it's lower)
+        busStops = sortAndReverseBusStops(busStops);
+        if(busStops2.size() > 0){
+            busStops2 = sortAndReverseBusStops(busStops2);
+        }
+        if(busStops3.size() > 0){
+            busStops3 = sortAndReverseBusStops(busStops3);
+        }
+        if(busStops4.size() > 0){
+            busStops4 = sortAndReverseBusStops(busStops4);
+        }
+
+        // Optionally, print bus stop coordinates
+        busStops4.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
+    }
+
+    public ArrayList<busStop> sortAndReverseBusStops(ArrayList<busStop> busStopInstance) {
+        // Sort bus stops
+        busStopInstance.sort((busStop1, busStop2) -> {
+            if (busStop1.getY() > busStop2.getY() && busStop1.getX() <= busStop2.getX() && busStop1.getY() >= busStop1.getX()){
+                return -1;
+            } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() >= busStop2.getX())){
+                return 1;
+            } else if ((busStop1.getY() > busStop2.getY()) && (busStop1.getX() > busStop2.getX()) && busStop1.getY() >= busStop1.getX()){
+                return -1;
+            } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() < busStop2.getX())){
+                return -1;
             } else {
-                return 0; // busStop1 and busStop2 are at the same position
+                return 0;
             }
         });
 
         // Reverse the bus stops list to get the correct order
-        ArrayList<busStop> reversedList = new ArrayList<>(busStops);
-        // Remove the first and last elements
+        ArrayList<busStop> reversedList = new ArrayList<>(busStopInstance);
         reversedList.removeFirst();
         reversedList.removeLast();
-        // Reverse the list
         Collections.reverse(reversedList);
 
-        ArrayList<busStop> newList = new ArrayList<>(busStops);
+        ArrayList<busStop> newList = new ArrayList<>(busStopInstance);
         newList.addAll(reversedList);
-        // Update the bus stops list with the sorted list
-        busStops = newList;
 
-        // Optionally, print bus stop coordinates
-        busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
+        // Update the bus stops list with the sorted list
+        return newList;
     }
 
 
