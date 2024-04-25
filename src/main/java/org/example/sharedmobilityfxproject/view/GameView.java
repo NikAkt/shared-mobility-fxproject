@@ -389,7 +389,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(180
+        timeSeconds = new SimpleIntegerProperty(200
         ); // TODO: Timing
         if (!flagLoadGame) {
             new Timeline(
