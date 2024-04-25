@@ -506,6 +506,14 @@ System.out.println("GameEndListener in GameController");
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
                         busStops.add(busS);
                         break;
+                    case 10:
+                        gameView.finishCell = new Cell(column,row);
+                        String imagePath = "src/main/resources/images/igor.png";
+                        File file = new File(imagePath);
+                        String absolutePath = file.toURI().toString();
+                        gameView.finishCell.setStyle("-fx-background-image: url('" + absolutePath + "');" +
+                                "-fx-background-size: contain; -fx-background-position: center center;"+"-fx-background-repeat: no-repeat;");
+                        break;
                     default:
                         // Optionally handle default case if needed
                         break;

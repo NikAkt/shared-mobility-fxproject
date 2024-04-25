@@ -83,7 +83,7 @@ public class Map {
         Color GREEN_GRASS = Color.decode("#00ff00");
         Color WHITE_ROAD = Color.decode("#FFFFFF");
         Color BLACK_BLOCKAGE = Color.decode("#000000");
-
+        Color FINISH = Color.decode("#00EE00");
         // Process each cell
         for (int row = 0; row < ROWS; row++) {
             for (int column = 0; column < COLUMNS; column++) {
@@ -124,6 +124,11 @@ public class Map {
                 } else if (pixelColor.equals(BLACK_BLOCKAGE)) {
                     // Assign a special value when the pixel color is BLACK_BLOCKAGE
                     mapArray[row][column] = 9;
+
+                    }
+                else if (pixelColor.equals(FINISH)) {
+                    // Default case, might need to adjust based on actual image
+                    mapArray[row][column] = 10;
                 } else {
                     // Default case, might need to adjust based on actual image
                     mapArray[row][column] = -1;
