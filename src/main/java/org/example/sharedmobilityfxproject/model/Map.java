@@ -64,6 +64,9 @@ public class Map {
         // The grid size
         int[][] mapArray = new int[ROWS][COLUMNS];
 
+        // Clear the array
+        clearArray(mapArray);
+
         // Dimensions of each cell
         int cellWidth = image.getWidth() / COLUMNS;
         int cellHeight = image.getHeight() / ROWS;
@@ -129,6 +132,18 @@ public class Map {
         }
 
         return mapArray;
+    }
+
+    /**
+     * Clears the given 2D array by setting all elements to 0.
+     * @param array The array to clear.
+     */
+    private void clearArray(int[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                array[i][j] = 0;
+            }
+        }
     }
 
     /**
