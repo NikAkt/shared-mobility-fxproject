@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
@@ -95,7 +96,7 @@ public class GameController {
 
     //Player Movement Check for Stamina
     private int moveCounter = 0;
-
+    private  boolean scaled = false;
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -227,8 +228,17 @@ System.out.println("GameEndListener in GameController");
         finishCell.getStyleClass().add("finish");
         gameView.grid.add(finishCell, finishColumn, finishRow);
 
-        metroStop metro1 = new metroStop(2,30);
-        gameView.grid.add(metro1,2,30);
+////        //bus SHITE
+//        busStop busS1 = new busStop(27,6);
+//        busStop busS2 = new busStop(62,6);
+//        busStop busS3 = new busStop(97,6);
+//        busStop busS4 = new busStop(98,30);
+//        busStop busS5 = new busStop(98,60);
+//        busStop busS6 = new busStop(60,55);
+//        busStop busS7 = new busStop(31,55);
+
+//        metroStop metro1 = new metroStop(2,30);
+//        gameView.grid.add(metro1,2,30);
 
 
 
@@ -243,6 +253,9 @@ System.out.println("GameEndListener in GameController");
             busman4 = new Bus(busStops4, busStops4.getFirst().getX() - 1, busStops4.getFirst().getY());
         }
 
+        taximan = new Taxi (58,28);
+        cycleman= new Bicycle(10,5);
+        cycleman2= new Bicycle(10,10);
         for (int i = 0; i < busman.list().size(); i++){
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
@@ -374,8 +387,35 @@ System.out.println("GameEndListener in GameController");
 // Apply translation to the grid to recenter
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
         this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
+        centerScaleOnPlayer();
         System.out.println(busStopCoordinates.toString());
         labelChangr();
+    }
+    private void centerScaleOnPlayer() {
+
+
+
+        boolean scaleExists = gameView.grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
+        if (!scaleExists) {
+            gameView.grid.getTransforms().add(gameView.scale);  // Only add scale if not already present
+        }
+        System.out.println("hello");
+        if(!scaled){
+
+        // Assume these are defined correctly elsewhere to reflect the current scale
+        double pivotX = gameView.scale.getPivotX();
+        double pivotY = gameView.scale.getPivotY();
+
+        // Recalculate the translation needed to center the scale on the player
+        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - gameView.scale.getY()) - pivotY;
+
+        // Apply translation to center the grid
+        gameView.grid.setTranslateX(gameView.grid.getTranslateX() - translateX);
+        gameView.grid.setTranslateY(gameView.grid.getTranslateY() - translateY);
+            System.out.println("22");
+       scaled = true;
+        }
     }
     public int manhattanDistance(int x,int y ,int px, int py) {
         return Math.abs(x - px) + Math.abs(y - py);
@@ -441,7 +481,7 @@ System.out.println("GameEndListener in GameController");
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
         int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
         try {
-            mapArray = map.getMapArray(stageName);  // Attempt to retrieve the map array TODO: stageName passed here
+            mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
@@ -472,80 +512,43 @@ System.out.println("GameEndListener in GameController");
                         busStopCoordinates.add(new int[]{busS.getX(), busS.getY()});
                         busStops.add(busS);
                         break;
-                    case 42:  // Mark as bus stop
-                        busStop busS2 = new busStop(column,row);
-                        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()}); // Coordinates can stay the same only once used for player to interact with bus stop
-                        busStops2.add(busS2);
-                        break;
-                    case 43:  // Mark as bus stop
-                        busStop busS3 = new busStop(column,row);
-                        busStopCoordinates.add(new int[]{busS3.getX(), busS3.getY()});
-                        busStops3.add(busS3);
-                        break;
-                    case 44:  // Mark as bus stop
-                        busStop busS4 = new busStop(column,row);
-                        busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
-                        busStops4.add(busS4);
-                        break;
-                    case 6:  // Mark as cycleman
-                        if(cycleman == null) {
-                            cycleman = new Bicycle(column, row);
-                        } else if(cycleman2 == null) {
-                            cycleman2 = new Bicycle(column, row);
-                        } else if(cycleman3 == null) {
-                            cycleman2 = new Bicycle(column, row);
-                        } else if(cycleman4 == null) {
-                            cycleman2 = new Bicycle(column, row);
-                        }
-                        break;
                     default:
                         // Optionally handle default case if needed
                         break;
                 }
             }
         }
-        busStops = sortAndReverseBusStops(busStops);
-        if(busStops2.size() > 0){
-            busStops2 = sortAndReverseBusStops(busStops2);
-        }
-        if(busStops3.size() > 0){
-            busStops3 = sortAndReverseBusStops(busStops3);
-        }
-        if(busStops4.size() > 0){
-            busStops4 = sortAndReverseBusStops(busStops4);
-        }
-
-        // Optionally, print bus stop coordinates
-        busStops4.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
-    }
-
-    public ArrayList<busStop> sortAndReverseBusStops(ArrayList<busStop> busStopInstance) {
-        // Sort bus stops
-        busStopInstance.sort((busStop1, busStop2) -> {
+        // Sort bus stops after all are added
+        busStops.sort((busStop1, busStop2) -> {
+            // First, compare Y-coordinates in ascending order
             if (busStop1.getY() > busStop2.getY() && busStop1.getX() <= busStop2.getX() && busStop1.getY() >= busStop1.getX()){
-                return -1;
+                return -1; // busStop1 should come before busStop2 (because it's lower)
             } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() >= busStop2.getX())){
-                return 1;
+                return 1; // busStop1 should come after busStop2 (because it's higher)
             } else if ((busStop1.getY() > busStop2.getY()) && (busStop1.getX() > busStop2.getX()) && busStop1.getY() >= busStop1.getX()){
-                return -1;
+                return -1; // busStop1 should come before busStop2 (because it's lower)
             } else if ((busStop1.getY() < busStop2.getY()) && (busStop1.getX() < busStop2.getX())){
-                return -1;
+                return -1; // busStop1 should come before busStop2 (because it's lower)
             } else {
-                return 0;
+                return 0; // busStop1 and busStop2 are at the same position
             }
         });
 
         // Reverse the bus stops list to get the correct order
-        ArrayList<busStop> reversedList = new ArrayList<>(busStopInstance);
+        ArrayList<busStop> reversedList = new ArrayList<>(busStops);
+        // Remove the first and last elements
         reversedList.removeFirst();
         reversedList.removeLast();
+        // Reverse the list
         Collections.reverse(reversedList);
 
-        ArrayList<busStop> newList = new ArrayList<>(busStopInstance);
+        ArrayList<busStop> newList = new ArrayList<>(busStops);
         newList.addAll(reversedList);
-
         // Update the bus stops list with the sorted list
-        return newList;
+        busStops = newList;
+
+        // Optionally, print bus stop coordinates
+        busStops.forEach(stop -> System.out.println("Bus Stop Coordinates: X = " + stop.getX() + ", Y = " + stop.getY()));
     }
 
 
@@ -895,12 +898,12 @@ System.out.println("GameEndListener in GameController");
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
-
-        if (gameView.isMetroSceneActive) {
-            playerUno.getCell().unhighlight();
-
-            playerUno.getCell().highlight();
-        }
+//
+//        if (gameView.isMetroSceneActive) {
+//            playerUno.getCell().unhighlight();
+//
+//            playerUno.getCell().highlight();
+//        }
 //        if (playerUno.getCell() instanceof metroStop) {
 //
 //            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
@@ -1192,11 +1195,6 @@ private void bikeTime(Bicycle bike){
         }}
 
     // Methods to Save and Load Game
-
-
-    public void setFlagLoadGame(Boolean flagLoadGameNew) {
-        flagLoadGame = flagLoadGameNew;
-    }
 
     /**
      * This method is used to save the current state of the game.

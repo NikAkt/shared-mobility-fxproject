@@ -65,7 +65,7 @@ public class GameView {
     // ****JavaFX load****
     public VBox gameModeBox;
     public Main main;
-    public boolean isMetroSceneActive = false;
+//    public boolean isMetroSceneActive = false;
     public VBox buttonBox;
     public Button getGameStartbtn;
     public Button gameLoadGamebtn;
@@ -156,9 +156,9 @@ public class GameView {
     public Grid grid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
 
     private Scene scene;
-    private Scene metroScene;
-    private StackPane metroLayer;
-    private Grid metroGrid;
+//    private Scene metroScene;
+ //   private StackPane metroLayer;
+   // private Grid metroGrid;
     public Media bgv = new Media(new File("src/main/resources/videos/opening.mp4").toURI().toString());
     public Image logoImage = new Image(new File("src/main/resources/images/Way_Back_Home.png").toURI().toString());
     public MediaPlayer bgmediaPlayer = new MediaPlayer(bgv);
@@ -436,7 +436,7 @@ public class GameView {
         // create scene and set to stage
         File cssFile = new File("src/main/resources/css/application.css");
         scene.getStylesheets().add("file:" + cssFile);
-        initializeMetroSystem();
+       // initializeMetroSystem();
     }
 
     public Button getBtnExit() {
@@ -510,29 +510,29 @@ public class GameView {
         updateGemCountLabel();
     }
 
-    private void initializeMetroSystem() {
-        metroLayer = new StackPane();
-        metroLayer.setStyle("-fx-background-color: #CCCCCC;");
-        metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
-        // Initialize metro cells
-        for (int row = 0; row < ROWS; row++) {
-            for (int column = 0; column < COLUMNS; column++) {
-                Cell cell = new Cell(column, row);
-                // Make sure cells are visible
-                metroGrid.add(cell, column, row);
-            }
-        }
-        metroStop under1 = new metroStop(2, 30);
-        metroGrid.add(under1, 2, 30);
-//        playerUno.initCell(metroGrid);
-        Label testLabel = new Label("Metro System Active");
-
-        metroLayer.getChildren().addAll(metroGrid, testLabel);
-        metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
-        File cssFile = new File("src/main/resources/css/application.css");
-        metroScene.getStylesheets().add("file:" + cssFile);
-
-    }
+//    private void initializeMetroSystem() {
+//        metroLayer = new StackPane();
+//        metroLayer.setStyle("-fx-background-color: #CCCCCC;");
+//        metroGrid = new Grid(COLUMNS, ROWS, WIDTH, HEIGHT);
+//        // Initialize metro cells
+//        for (int row = 0; row < ROWS; row++) {
+//            for (int column = 0; column < COLUMNS; column++) {
+//                Cell cell = new Cell(column, row);
+//                // Make sure cells are visible
+//                metroGrid.add(cell, column, row);
+//            }
+//        }
+//        metroStop under1 = new metroStop(2, 30);
+//        metroGrid.add(under1, 2, 30);
+////        playerUno.initCell(metroGrid);
+//        Label testLabel = new Label("Metro System Active");
+//
+//        metroLayer.getChildren().addAll(metroGrid, testLabel);
+//        metroScene = new Scene(metroLayer, WIDTH, HEIGHT);
+//        File cssFile = new File("src/main/resources/css/application.css");
+//        metroScene.getStylesheets().add("file:" + cssFile);
+//
+//    }
 
 
     /*
@@ -541,17 +541,17 @@ public class GameView {
       swith\ch scene
       flag = !flag
    */
-    public void switchSceneToMetro() {
-        if (isMetroSceneActive) {
-            primaryStage.setScene(metroScene);
-
-
-        }
-        if (!isMetroSceneActive) {
-            primaryStage.setScene(scene);
-
-        }
-    }
+//    public void switchSceneToMetro() {
+//        if (isMetroSceneActive) {
+//            primaryStage.setScene(metroScene);
+//
+//
+//        }
+//        if (!isMetroSceneActive) {
+//            primaryStage.setScene(scene);
+//
+//        }
+//    }
 
 
     public void showStageSelectionScreen() {
