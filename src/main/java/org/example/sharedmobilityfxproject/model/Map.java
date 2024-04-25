@@ -25,9 +25,11 @@ public class Map {
         this.ROWS = 80;
         this.COLUMNS = 120;
     }
+
     /**
      * Constructor for the Map class.
-     * @param rows The number of rows in the map.
+     *
+     * @param rows    The number of rows in the map.
      * @param columns The number of columns in the map.
      */
     public Map(int rows, int columns) {
@@ -53,6 +55,7 @@ public class Map {
     /**
      * Loads a map from an image.
      * The image is divided into a grid, and each cell is assigned a value based on its color.
+     *
      * @return A 2D array representing the map.
      * @throws Exception If an error occurs while loading the image.
      */
@@ -83,7 +86,7 @@ public class Map {
         Color GREEN_GRASS = Color.decode("#00ff00");
         Color WHITE_ROAD = Color.decode("#FFFFFF");
         Color BLACK_BLOCKAGE = Color.decode("#000000");
-
+        Color FINISH = Color.decode("#00EE00");
         // Process each cell
         for (int row = 0; row < ROWS; row++) {
             for (int column = 0; column < COLUMNS; column++) {
@@ -124,6 +127,9 @@ public class Map {
                 } else if (pixelColor.equals(BLACK_BLOCKAGE)) {
                     // Assign a special value when the pixel color is BLACK_BLOCKAGE
                     mapArray[row][column] = 9;
+                } else if (pixelColor.equals(FINISH)) {
+                    // Default case, might need to adjust based on actual image
+                    mapArray[row][column] = 10;
                 } else {
                     // Default case, might need to adjust based on actual image
                     mapArray[row][column] = -1;
@@ -136,6 +142,7 @@ public class Map {
 
     /**
      * Clears the given 2D array by setting all elements to 0.
+     *
      * @param array The array to clear.
      */
     private void clearArray(int[][] array) {
@@ -149,6 +156,7 @@ public class Map {
     /**
      * Exports a map to a file.
      * The map is represented as a 2D array, and each row of the array is written as a line in the file.
+     *
      * @param mapArray The 2D array representing the map.
      */
     public void exportArrayToFile(int[][] mapArray) {
