@@ -712,8 +712,8 @@ public class GameView {
         if(!flagLoadGame){
         System.out.println("Game over");
         System.out.println("Game Over endFLag" + gameEndFlag);
-        isTimeOut = timeSeconds.get() <= 0;
-        isGemCollectedEnough = gemCount >= 5;
+        isTimeOut = timeSeconds.get() > 0;
+        isGemCollectedEnough = gemCount >= 4;
         isCO2Safe = co2Gauge < 100;
 
         // Calculate result based on game conditions
