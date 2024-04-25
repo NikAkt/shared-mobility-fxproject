@@ -274,7 +274,7 @@ public class GameView {
             // Scene and stage setup
             Scene dialogScene = new Scene(popupVbox);
             dialog.setScene(dialogScene);
-            dialog.showAndWait();
+            dialog.show();
 
         }
 
