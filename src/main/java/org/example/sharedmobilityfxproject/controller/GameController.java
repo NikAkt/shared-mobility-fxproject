@@ -481,7 +481,7 @@ System.out.println("GameEndListener in GameController");
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
         int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
         try {
-            mapArray = map.getMapArray("manhattan");  // Attempt to retrieve the map array TODO: needs to be converted to stageName
+            mapArray = map.getMapArray(stageName);  // Attempt to retrieve the map array TODO: stageName passed here
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
