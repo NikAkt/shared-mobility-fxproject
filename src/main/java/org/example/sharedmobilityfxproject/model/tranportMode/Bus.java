@@ -19,6 +19,7 @@ public class Bus extends Cell {
     private int x;
     private int y;
     public boolean isWaiting = false;
+
     public int waitTime = 0;
     public int flagMove = 0;
     private ArrayList stopList;

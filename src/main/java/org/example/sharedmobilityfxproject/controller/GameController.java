@@ -78,7 +78,7 @@ public class GameController {
 
     private void enableMovementAfterDelay(double timespeed) {
         playerTimeout = false;  // Disable further moves immediately when this method is called
-        int delayInMilliseconds = (int) ((timespeed * 1000)+75);  // Convert seconds to milliseconds
+        int delayInMilliseconds = (int) ((timespeed * 1000)+25);  // Convert seconds to milliseconds
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -600,12 +600,23 @@ labelChangr();
                 if (canMoveBusTo(bus.getX(), newY)) {
 
                     moveTaxi(grid, bus, bus.getX(), newY);
-                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())) {
+                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())&&bus.movingleft==0) {
                     // Move horizontally as a fallbackf
                     if (bus.flagMove == 0) {
                         bus.flagMove = 1;
                     }
                     moveTaxi(grid, bus, bus.getX() + +1, bus.getY());
+
+                }
+                else if (canMoveBusTo(bus.getX() - 1, bus.getY())) {
+                    if(bus.movingleft==0){bus.movingleft=20;
+                    }
+
+;                    // Move horizontally as a fallbackf
+                    if(bus.movingleft>0){moveTaxi(grid, bus, bus.getX() -1, bus.getY());
+                        bus.movingleft--;
+                    }
+
                 }
             }
             //arriving at stop logic
@@ -1079,9 +1090,13 @@ private void bikeTime(Bicycle bike){
             }
         } else if (playerUno.getCell() instanceof busStop) {
             playerMovementEnabled = !playerMovementEnabled;
-            System.out.println(playerMovementEnabled ? "Impatient" : "Waiting for bus");
-            ((busStop) playerUno.getCell()).setPlayerHere(!playerMovementEnabled);
-        }
+            if (!playerMovementEnabled) {
+                playerUno.playerVisual.setVisible(false);
+                System.out.println("Waiting for bus");
+            } else {
+                playerUno.playerVisual.setVisible(true);
+                System.out.println("Impatient");
+            } }
     }
 
     private void moveTaxi(Taxi bus, int newX, int newY) {

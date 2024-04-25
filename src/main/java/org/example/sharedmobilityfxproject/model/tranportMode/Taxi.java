@@ -11,6 +11,7 @@ public class Taxi extends Cell {
     private final double carbonFootprintPerKm = 170; // Assuming this is the rate for a petrol car
     private int x;
     private int y;
+    public int movingleft = 0;
     public int flagMove = 0;
     public boolean arrived = false;
     public boolean hailed = false;
@@ -30,7 +31,7 @@ public class Taxi extends Cell {
 
 
         this.setStyle("-fx-background-image: url('" + absolutePath + "');" +
-                "-fx-background-size: contain; -fx-background-position: center center;");
+                "-fx-background-size: contain; -fx-background-position: center center;"+"-fx-background-repeat: no-repeat;");
     }
     public void setX(int i ){
         this.x = i;
