@@ -205,10 +205,6 @@ System.out.println("GameEndListener in GameController");
         // Fill the grid with the map array, we pass the stage name to the method so it can load the correct map from the resources
         fillGridWithMapArray(map, stageName);
 
-
-
-
-
         obstacleCoordinates = new ArrayList<>();
 
         for (Obstacle obstacle : obstacles) {

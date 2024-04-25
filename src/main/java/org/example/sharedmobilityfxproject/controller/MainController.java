@@ -99,7 +99,11 @@ public class MainController implements GameOverListener {
     }
     public void startPlayingFromLoadedGame() {
         gameController.setFlagLoadGame(true);
+        gameView.flagLoadGame = true;
+        gameController.startPlayingGame("Manhattan");
         this.mapSelectionScene();
+        gameView.flagLoadGame = false;
+
     }
     /**
      * Switches the scene to the stage selection scene.

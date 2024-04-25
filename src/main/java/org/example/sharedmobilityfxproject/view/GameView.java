@@ -71,6 +71,7 @@ public class GameView {
     public Button gameLoadGamebtn;
     public Button ExitBtn;
     public Button gameCreditbtn;
+    public Boolean flagLoadGame = false;
     public Button stageBtn;
     public StackPane root;
     public MediaPlayer mediaPlayer;
@@ -189,6 +190,8 @@ public class GameView {
         this.co2Bar = new ProgressBar(0);
         this.co2Label = new Label("CO2: 0");
         this.primaryStage = primaryStage;
+        this.flagLoadGame = false;
+
         initializeStageClearFlags();
     }
 
@@ -207,71 +210,75 @@ public class GameView {
      * After the dialog is closed, a timer is started with a delay of 5 seconds.
      */
     public void mainGameSetting() {
-        //Stop the video
-        mediaView.getMediaPlayer().stop();
+        if(!flagLoadGame){
+            //Stop the video
+            mediaView.getMediaPlayer().stop();
 
-        //BGM Stop
-        Media gameMusic1 = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
-        mediaPlayer = new MediaPlayer(gameMusic1);
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.play();
-        mediaPlayer.setVolume(0.7);
-        decreaseVolume();
+            //BGM Stop
+            Media gameMusic1 = new Media(new File("src/main/resources/music/mainBGM.mp3").toURI().toString());
+            mediaPlayer = new MediaPlayer(gameMusic1);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            mediaPlayer.play();
+            mediaPlayer.setVolume(0.7);
+            decreaseVolume();
 
-        final Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initOwner(primaryStage);
-        dialog.initStyle(StageStyle.UNDECORATED);
+            final Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(primaryStage);
+            dialog.initStyle(StageStyle.UNDECORATED);
 
-        // Start Pop up
-        VBox popupVbox = new VBox(10);
-        popupVbox.setAlignment(Pos.CENTER);
-        popupVbox.setPrefWidth(400);
-        popupVbox.setPrefHeight(700);
-        popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
+            // Start Pop up
+            VBox popupVbox = new VBox(10);
+            popupVbox.setAlignment(Pos.CENTER);
+            popupVbox.setPrefWidth(400);
+            popupVbox.setPrefHeight(700);
+            popupVbox.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;");
 
-        Label noticeLabel = new Label("Notice");
-        noticeLabel.setFont(titleFont);
-        noticeLabel.setAlignment(Pos.TOP_CENTER);
+            Label noticeLabel = new Label("Notice");
+            noticeLabel.setFont(titleFont);
+            noticeLabel.setAlignment(Pos.TOP_CENTER);
 
-        Label startMessageLabel = new Label(
-                "Eco and Friendly, who cherish the environment, are roaming the city." +
-                        " collecting Gems needed for their journey. " +
-                        "\nTry to gather the Gems in the most eco-friendly way possible."
-        );
-        startMessageLabel.setWrapText(true);
-        startMessageLabel.setAlignment(Pos.CENTER);
-        startMessageLabel.setFont(contentFont);
-        // Close Button
-        Button closeButton = new Button("Let's Rock!");
-        if (contentFont != null) {
+            Label startMessageLabel = new Label(
+                    "Eco and Friendly, who cherish the environment, are roaming the city." +
+                            " collecting Gems needed for their journey. " +
+                            "\nTry to gather the Gems in the most eco-friendly way possible."
+            );
+            startMessageLabel.setWrapText(true);
+            startMessageLabel.setAlignment(Pos.CENTER);
+            startMessageLabel.setFont(contentFont);
+            // Close Button
+            Button closeButton = new Button("Let's Rock!");
+            if (contentFont != null) {
 
-            closeButton.setFont(this.btnFont);
-        } else {
-            System.out.println("Failed to load custom font. Using default font.");
-        }
-        closeButton.requestFocus();
-        popupVbox.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                closeButton.fire();
+                closeButton.setFont(this.btnFont);
+            } else {
+                System.out.println("Failed to load custom font. Using default font.");
             }
-        });
-        closeButton.setPrefSize(160, 80); // Set the preferred size of the button
-        closeButton.setOnAction(e -> {
-            dialog.close();
+            closeButton.requestFocus();
+            popupVbox.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    closeButton.fire();
+                }
+            });
+            closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+            closeButton.setOnAction(e -> {
+                dialog.close();
 
-            PauseTransition wait = new PauseTransition(Duration.seconds(5));
-            wait.setOnFinished(event -> System.out.println("5 Seconds past"));
-            wait.play();
-        });
-        // Add labels and close button to VBox
-        popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
-        VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
+                PauseTransition wait = new PauseTransition(Duration.seconds(5));
+                wait.setOnFinished(event -> System.out.println("5 Seconds past"));
+                wait.play();
+            });
+            // Add labels and close button to VBox
+            popupVbox.getChildren().addAll(noticeLabel, startMessageLabel, closeButton);
+            VBox.setMargin(closeButton, new Insets(20, 0, 0, 0));
 
-        // Scene and stage setup
-        Scene dialogScene = new Scene(popupVbox);
-        dialog.setScene(dialogScene);
-        dialog.showAndWait();
+            // Scene and stage setup
+            Scene dialogScene = new Scene(popupVbox);
+            dialog.setScene(dialogScene);
+            dialog.showAndWait();
+
+        }
+
     }
 
 
@@ -699,70 +706,75 @@ public class GameView {
      */
 
     private void gameOver(Stage primaryStage, String stageName) {
-        System.out.println("Game Over endFLag" + gameEndFlag);
-        isTimeOut = timeSeconds.get() <= 0;
-        isGemCollectedEnough = gemCount >= 5;
-        isCO2Safe = co2Gauge < 100;
+        if(!flagLoadGame){
+            System.out.println("Game Over endFLag" + gameEndFlag);
+            isTimeOut = timeSeconds.get() <= 0;
+            isGemCollectedEnough = gemCount >= 5;
+            isCO2Safe = co2Gauge < 100;
 
-        // Calculate result based on game conditions
-        Text resultLabel;
-        if (isCO2Safe && isGemCollectedEnough && isTimeOut) {
-            resultLabel = new Text("Stage Clear - Requirements met!");
-            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
-        } else {
-            resultLabel = new Text("Stage Fail - Requirements not met");
-            resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
+            // Calculate result based on game conditions
+            Text resultLabel;
+            if (isCO2Safe && isGemCollectedEnough && isTimeOut) {
+                resultLabel = new Text("Stage Clear - Requirements met!");
+                resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
+            } else {
+                resultLabel = new Text("Stage Fail - Requirements not met");
+                resultLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
+            }
+            resultLabel.setFont(contentFont);
+
+
+            // Score calculation
+            int scorePerGem = 100;
+            double scorePenaltyPer10CO2 = 10;
+            int finalScore = (gemCount * scorePerGem) - (int) (co2Gauge / 10.0 * scorePenaltyPer10CO2);
+
+
+            Text gameOverGem = new Text("Total Gems: " + gemCount);
+            Text gameOverCo2 = new Text("Total CO2: " + String.format("%.1f", co2Gauge));
+            gameOverGem.setStyle("-fx-font-size: 20px; -fx-text-fill: lightgreen;");
+            gameOverGem.setFont(contentFont);
+            gameOverCo2.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
+            gameOverCo2.setFont(contentFont);
+
+
+            Text finalScoreLabel = new Text("Final Score: " + finalScore);
+            finalScoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
+            finalScoreLabel.setFont(contentFont);
+
+
+            gameOverDialog = new Stage();
+            gameOverDialog.initModality(Modality.APPLICATION_MODAL);
+            gameOverDialog.initOwner(primaryStage);
+            gameOverDialog.initStyle(StageStyle.UNDECORATED);
+
+
+            Text gameOverLabel = new Text("GAME OVER\nGoodbye " + stageName + "!");
+            gameOverLabel.textAlignmentProperty().setValue(TextAlignment.CENTER);
+            gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
+            gameOverLabel.setFont(titleFont);
+
+
+            VBox dialogVBox = new VBox(10, gameOverLabel, gameOverGem, gameOverCo2, finalScoreLabel, resultLabel);
+            dialogVBox.setAlignment(Pos.CENTER);
+            dialogVBox.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
+
+
+            Scene dialogScene = new Scene(new StackPane(dialogVBox), 500, 400);
+            gameOverDialog.setScene(dialogScene);
+            gameOverDialog.show();
+
+
+            gameEndbtn = new Button("Close");
+            gameEndbtn.setFont(btnFont);
+            dialogVBox.getChildren().add(gameEndbtn);
+            gameEndFlag.set(true);
+            gameEndbtn.requestFocus();
+            System.out.println("Game Over endFlag: " + gameEndFlag.get());
+
+        }else{
+            flagLoadGame = false;
         }
-        resultLabel.setFont(contentFont);
-
-
-        // Score calculation
-        int scorePerGem = 100;
-        double scorePenaltyPer10CO2 = 10;
-        int finalScore = (gemCount * scorePerGem) - (int) (co2Gauge / 10.0 * scorePenaltyPer10CO2);
-
-
-        Text gameOverGem = new Text("Total Gems: " + gemCount);
-        Text gameOverCo2 = new Text("Total CO2: " + String.format("%.1f", co2Gauge));
-        gameOverGem.setStyle("-fx-font-size: 20px; -fx-text-fill: lightgreen;");
-        gameOverGem.setFont(contentFont);
-        gameOverCo2.setStyle("-fx-font-size: 20px; -fx-text-fill: red;");
-        gameOverCo2.setFont(contentFont);
-
-
-        Text finalScoreLabel = new Text("Final Score: " + finalScore);
-        finalScoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
-        finalScoreLabel.setFont(contentFont);
-
-
-        gameOverDialog = new Stage();
-        gameOverDialog.initModality(Modality.APPLICATION_MODAL);
-        gameOverDialog.initOwner(primaryStage);
-        gameOverDialog.initStyle(StageStyle.UNDECORATED);
-
-
-        Text gameOverLabel = new Text("GAME OVER\nGoodbye " + stageName + "!");
-        gameOverLabel.textAlignmentProperty().setValue(TextAlignment.CENTER);
-        gameOverLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
-        gameOverLabel.setFont(titleFont);
-
-
-        VBox dialogVBox = new VBox(10, gameOverLabel, gameOverGem, gameOverCo2, finalScoreLabel, resultLabel);
-        dialogVBox.setAlignment(Pos.CENTER);
-        dialogVBox.setStyle("-fx-padding: 20; -fx-background-color: rgba(255, 255, 255, 0.8);");
-
-
-        Scene dialogScene = new Scene(new StackPane(dialogVBox), 500, 400);
-        gameOverDialog.setScene(dialogScene);
-        gameOverDialog.show();
-
-
-        gameEndbtn = new Button("Close");
-        gameEndbtn.setFont(btnFont);
-        dialogVBox.getChildren().add(gameEndbtn);
-        gameEndFlag.set(true);
-        gameEndbtn.requestFocus();
-        System.out.println("Game Over endFlag: " + gameEndFlag.get());
 
         gameEndbtn.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
@@ -1125,8 +1137,8 @@ public class GameView {
         }
         // Assuming Dublin is already cleared as per your requirement
         stageClearFlags.put("Manhattan", true);
-        stageClearFlags.put("Dublin", true); //TODO: manually set the first stage to cleared, need to change this
-        stageClearFlags.put("Tokyo", true);
+        stageClearFlags.put("Dublin", false); //TODO: manually set the first stage to cleared, need to change this
+        stageClearFlags.put("Tokyo", false);
     }
 
     public Button getEndStage() {
