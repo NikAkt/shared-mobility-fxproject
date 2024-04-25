@@ -382,7 +382,8 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(600); // TODO: Timing
+        timeSeconds = new SimpleIntegerProperty(2
+        ); // TODO: Timing
         new Timeline(
                 new KeyFrame(
                         Duration.seconds(timeSeconds.get()),
@@ -557,6 +558,7 @@ public class GameView {
     public void showStageSelectionScreen() {
         //bring the Stage in gameView
         try {
+            gameEndFlag.set(false);
             System.out.println("ShowStageSelectionScreen in GameView");
             bgmediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             bgmediaPlayer.play();
