@@ -872,13 +872,17 @@ public class GameView {
                 } else {
                     System.out.println("Failed to load custom font. Using default font.");
                 }
-                closeButton.setPrefSize(160, 80); // Set the preferred size of the button
+                closeButton.setPrefSize(160, 80);
                 closeButton.setOnAction(e -> {
-                    dialog.close(); // Close the popup
-                    // Start the timer after the popup is closed
+                    dialog.close();
                     PauseTransition wait = new PauseTransition(Duration.seconds(5));
                     wait.setOnFinished(event -> System.out.println("5 Seconds past"));
                     wait.play();
+                });
+                popupVbox.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        closeButton.fire();
+                    }
                 });
                 // Add labels and close button to VBox
                 popupVbox.getChildren().addAll(noticeLabel, educationalMsgLabel, closeButton);
