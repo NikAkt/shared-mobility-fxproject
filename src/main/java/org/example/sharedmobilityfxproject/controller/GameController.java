@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.sharedmobilityfxproject.model.*;
@@ -327,6 +328,16 @@ System.out.println("GameEndListener in GameController");
 labelChangr();
     }
     private void centerScaleOnPlayer() {
+
+            gameView.scale = new Scale(3, 3);  // Set the initial scale
+
+            gameView.scale.setX(3);
+            gameView.scale.setY(3);
+
+        boolean scaleExists = gameView.grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
+        if (!scaleExists) {
+            gameView.grid.getTransforms().add(gameView.scale);  // Only add scale if not already present
+        }
         // Assume these are defined correctly elsewhere to reflect the current scale
         double pivotX = gameView.scale.getPivotX();
         double pivotY = gameView.scale.getPivotY();
