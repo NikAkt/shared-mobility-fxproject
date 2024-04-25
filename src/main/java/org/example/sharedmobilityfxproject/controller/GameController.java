@@ -153,6 +153,7 @@ public class GameController {
     private void clearGridAndObstacles(Grid grid) {
         if (grid != null) {
             grid.getChildren().clear();  // Clears all cell nodes from the grid
+            gameView.grid = grid;
         }
         obstacles.clear();  // Clears all entries in the obstacles list
         busStopCoordinates.clear();  // Clears all bus stop coordinates
@@ -369,11 +370,12 @@ public class GameController {
         busMovementTimeline.play();
 
 
-        // give playerUno a cell goddamit
-        playerUno.initCell(gameView.grid);
+
 
         // Set the players position in a place that is not an obstacle
         Cell middlePlayerCell = findRoadNearMiddle(gameView.grid);
+        // give playerUno a cell goddamit
+        playerUno.initCellByCell(middlePlayerCell);
         playerUno.setCellByCoords(gameView.grid, middlePlayerCell.getColumn(), middlePlayerCell.getRow());
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
