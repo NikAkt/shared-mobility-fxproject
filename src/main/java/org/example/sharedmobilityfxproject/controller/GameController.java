@@ -155,6 +155,8 @@ public class GameController {
             grid.getChildren().clear();  // Clears all cell nodes from the grid
         }
         obstacles.clear();  // Clears all entries in the obstacles list
+        busStopCoordinates.clear();  // Clears all bus stop coordinates
+        busStops.clear();  // Clears all bus stops
     }
 
     public void startPlayingGame(String stageName) {
