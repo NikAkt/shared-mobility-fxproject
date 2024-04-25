@@ -261,8 +261,6 @@ public class GameController {
         }
 
         taximan = new Taxi(58, 28);
-        cycleman = new Bicycle(10, 5);
-        cycleman2 = new Bicycle(10, 10);
         for (int i = 0; i < busman.list().size(); i++) {
             busStop stop = busman.list().get(i);
             gameView.grid.add(stop, stop.getX(), stop.getY());
