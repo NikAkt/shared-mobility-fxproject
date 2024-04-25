@@ -704,7 +704,8 @@ public class GameView {
      * The dialog can also be closed by clicking anywhere within it.
      */
 
-    private void gameOver(Stage primaryStage, String stageName) {
+    public void gameOver(Stage primaryStage, String stageName) {
+        System.out.println("gameover");
         if(!flagLoadGame){
             System.out.println("Game Over endFLag" + gameEndFlag);
             isTimeOut = timeSeconds.get() <= 0;

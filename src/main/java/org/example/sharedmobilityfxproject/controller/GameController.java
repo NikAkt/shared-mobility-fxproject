@@ -786,7 +786,7 @@ System.out.println("GameEndListener in GameController");
                     break;
             }
 
-            enableMovementAfterDelay(taximan.timeSpeed);
+            enableMovementAfterDelay(taximan.timeSpeed+.075);
         } else if (onBicycle && playerMovementEnabled && playerTimeout) {
             System.out.println("Bicycle time: " + cycleman.bikeTime + " you are still on bike");
             switch (key) {
@@ -1049,8 +1049,8 @@ System.out.println("GameEndListener in GameController");
             collectGem(cell);
         } else if (cell instanceof busStop) {
             interactWithBusStop((busStop) cell);
-        } else if (cell == finishCell) {
-            finishGame();
+        } else if (cell == gameView.finishCell) {
+            gameView.gameOver(gameView.primaryStage,stageName);
         } else if (cell instanceof Bicycle) {
             bikeTime((Bicycle) cell);  // Cast and pass the Bicycle cell directly
         }    }
