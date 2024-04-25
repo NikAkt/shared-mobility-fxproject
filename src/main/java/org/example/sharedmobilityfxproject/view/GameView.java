@@ -455,7 +455,6 @@ public class GameView {
     }
 
 
-    //TODO: later on we need to enable game load
     public Button createStageButton(String stage, ImageView stageImage) {
         Button stageBtn = new Button(stage);
         boolean isStageCleared = stageClearFlags.getOrDefault(stage, false);
@@ -976,8 +975,7 @@ public class GameView {
         return gemCount;
     }
 
-    // This is temporary, later on the function that updates the gem count will be in the controller
-    // TODO: TEMP Move this to the controller
+    // This is temporary, later on the function that updates the gem count
     public void setGemCoount(int gemCountNew) {
         gemCount = gemCountNew;
         updateGemCountLabel();
