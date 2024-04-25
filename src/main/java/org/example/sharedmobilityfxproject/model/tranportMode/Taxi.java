@@ -11,6 +11,7 @@ public class Taxi extends Cell {
     private final double carbonFootprintPerKm = 170; // Assuming this is the rate for a petrol car
     private int x;
     private int y;
+    public int movingleft = 0;
     public int flagMove = 0;
     public boolean arrived = false;
     public boolean hailed = false;

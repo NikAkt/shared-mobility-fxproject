@@ -548,12 +548,23 @@ labelChangr();
                 if (canMoveBusTo(bus.getX(), newY)) {
 
                     moveTaxi(grid, bus, bus.getX(), newY);
-                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())) {
+                } else if (canMoveBusTo(bus.getX() + 1, bus.getY())&&bus.movingleft==0) {
                     // Move horizontally as a fallbackf
                     if (bus.flagMove == 0) {
                         bus.flagMove = 1;
                     }
                     moveTaxi(grid, bus, bus.getX() + +1, bus.getY());
+
+                }
+                else if (canMoveBusTo(bus.getX() - 1, bus.getY())) {
+                    if(bus.movingleft==0){bus.movingleft=20;
+                    }
+
+;                    // Move horizontally as a fallbackf
+                    if(bus.movingleft>0){moveTaxi(grid, bus, bus.getX() -1, bus.getY());
+                        bus.movingleft--;
+                    }
+
                 }
             }
             //arriving at stop logic
