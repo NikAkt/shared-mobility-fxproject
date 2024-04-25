@@ -228,8 +228,8 @@ System.out.println("GameEndListener in GameController");
 //        busStop busS6 = new busStop(60,55);
 //        busStop busS7 = new busStop(31,55);
 
-        metroStop metro1 = new metroStop(2,30);
-        gameView.grid.add(metro1,2,30);
+//        metroStop metro1 = new metroStop(2,30);
+//        gameView.grid.add(metro1,2,30);
 
 //        busStopCoordinates.add(new int[]{busS1.getX(), busS1.getY()});
 //        busStopCoordinates.add(new int[]{busS2.getX(), busS2.getY()});
@@ -834,12 +834,12 @@ labelChangr();
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
-
-        if (gameView.isMetroSceneActive) {
-            playerUno.getCell().unhighlight();
-
-            playerUno.getCell().highlight();
-        }
+//
+//        if (gameView.isMetroSceneActive) {
+//            playerUno.getCell().unhighlight();
+//
+//            playerUno.getCell().highlight();
+//        }
 //        if (playerUno.getCell() instanceof metroStop) {
 //
 //            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
