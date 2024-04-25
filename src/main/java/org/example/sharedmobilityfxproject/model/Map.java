@@ -74,6 +74,7 @@ public class Map {
         Color YELLOW_BUSSTOP3 = Color.decode("#fff220");
         Color YELLOW_BUSSTOP4 = Color.decode("#fff230");
         Color MAROON_METRO = Color.decode("#990030");
+        Color ORANGE_BICYCLE = Color.decode("#FFB200");
         Color GRAY_OBSTACLE = Color.decode("#808080");
         Color BLUE_LAKE = Color.decode("#0000ff");
         Color GREEN_GRASS = Color.decode("#00ff00");
@@ -102,6 +103,9 @@ public class Map {
                 } else if (pixelColor.equals(MAROON_METRO)) {
                     // Assign a special value when the pixel color is MAROON_METRO
                     mapArray[row][column] = 5;
+                } else if (pixelColor.equals(ORANGE_BICYCLE)) {
+                    // Assign a special value when the pixel color is ORANGE_BICYCLE
+                    mapArray[row][column] = 6;
                 } else if (pixelColor.equals(GRAY_OBSTACLE)) {
                     // Assign a special value when the pixel color is GRAY_OBSTACLE
                     mapArray[row][column] = 1;
