@@ -544,9 +544,9 @@ public class GameController {
                         } else if(cycleman2 == null) {
                             cycleman2 = new Bicycle(column, row);
                         } else if(cycleman3 == null) {
-                            cycleman2 = new Bicycle(column, row);
+                            cycleman3 = new Bicycle(column, row);
                         } else if(cycleman4 == null) {
-                            cycleman2 = new Bicycle(column, row);
+                            cycleman4 = new Bicycle(column, row);
                         }
                         break;
                     case 10:
