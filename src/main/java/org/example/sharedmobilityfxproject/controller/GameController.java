@@ -290,7 +290,7 @@ public class GameController {
             gameView.grid.add(busman4, busman4.getX(), busman4.getY());
         }
 
-        taximan = new Taxi(58, 28);
+        taximan = new Taxi(40, 59);
 
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
