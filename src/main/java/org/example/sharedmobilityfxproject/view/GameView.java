@@ -314,17 +314,17 @@ public class GameView {
         StackPane root = new StackPane();
         scene = new Scene(root, WIDTH, HEIGHT);
 
-//        if (scale == null) {
-//            scale = new Scale(3, 3);  // Set the initial scale TODO: scale changed here
-//        } else {
-//            scale.setX(3);
-//            scale.setY(3);
-//        }
-//
-//        boolean scaleExists = grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
-//        if (!scaleExists) {
-//            grid.getTransforms().add(scale);  // Only add scale if not already present
-//        }
+        if (scale == null) {
+            scale = new Scale(3, 3);  // Set the initial scale TODO: scale changed here
+        } else {
+            scale.setX(3);
+            scale.setY(3);
+        }
+
+        boolean scaleExists = grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
+        if (!scaleExists) {
+            grid.getTransforms().add(scale);  // Only add scale if not already present
+        }
 
         // Game Lable Setting
 
