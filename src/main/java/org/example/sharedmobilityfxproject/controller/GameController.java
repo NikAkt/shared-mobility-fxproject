@@ -63,6 +63,8 @@ public class GameController {
     public Bus busman4;
     public Bicycle cycleman;
     public Bicycle cycleman2;
+    public Bicycle cycleman3;
+    public Bicycle cycleman4;
     public ArrayList<busStop> busStops = new ArrayList<>();
     public ArrayList<busStop> busStops2 = new ArrayList<>();
     public ArrayList<busStop> busStops3 = new ArrayList<>();
@@ -274,6 +276,12 @@ System.out.println("GameEndListener in GameController");
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
         gameView.grid.add(cycleman2, cycleman2.getX(), cycleman2.getY());
+        if (cycleman3 != null) {
+            gameView.grid.add(cycleman3, cycleman3.getX(), cycleman3.getY());
+        }
+        if (cycleman4 != null) {
+            gameView.grid.add(cycleman4, cycleman4.getX(), cycleman4.getY());
+        }
 
         // Schedule the bus to move every second
         List<Bus> busmen = Arrays.asList(busman);
@@ -297,7 +305,7 @@ System.out.println("GameEndListener in GameController");
                     moveTaxiTowardsPlayer(gameView.grid, taximan);
                 }
                 if (onBicycle) {
-                    if (cycleman.bikeTime == 0 || cycleman2.bikeTime == 0) {
+                    if (cycleman.bikeTime == 0 || cycleman2.bikeTime == 0|| cycleman3.bikeTime == 0|| cycleman4.bikeTime == 0) {
                         onBicycle = false;
                         Image bikeman = new Image(new File("src/main/resources/images/playerSprite.png").toURI().toString());
                         playerUno.playerVisual = new ImageView(bikeman);
@@ -305,9 +313,15 @@ System.out.println("GameEndListener in GameController");
                         ((ImageView) playerUno.playerVisual).setFitWidth(30);
                         ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
                     }
-                    if (cycleman.bikeTime >= 1 || cycleman2.bikeTime >= 1) {
+                    if (cycleman.bikeTime >= 1 || cycleman2.bikeTime >= 1|| cycleman3.bikeTime >= 1|| cycleman4.bikeTime >= 1) {
                         cycleman.bikeTime -= 1;
                         cycleman2.bikeTime -= 1;
+                        if (cycleman3 != null) {
+                            cycleman3.bikeTime -= 1;
+                        }
+                        if (cycleman4 != null) {
+                            cycleman4.bikeTime -= 1;
+                        }
                     }
                 }
                 if (!busman.isWaiting) {
@@ -474,6 +488,10 @@ labelChangr();
                         if(cycleman == null) {
                             cycleman = new Bicycle(column, row);
                         } else if(cycleman2 == null) {
+                            cycleman2 = new Bicycle(column, row);
+                        } else if(cycleman3 == null) {
+                            cycleman2 = new Bicycle(column, row);
+                        } else if(cycleman4 == null) {
                             cycleman2 = new Bicycle(column, row);
                         }
                         break;
