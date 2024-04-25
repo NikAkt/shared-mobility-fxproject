@@ -129,7 +129,7 @@ public class GameController {
                     }
                     this.gameView.gameOverDialog.close();
                     if (this.gameView.isTimeOut && this.gameView.isGemCollectedEnough && this.gameView.isCO2Safe) {
-//                       this.gameView.gemCountReset();
+                       this.gameView.gemCountReset();
                         this.gameView.co2CountReset();
                         if ("Manhattan".equals(stageName) || ("Dublin".equals(stageName))) {
                             this.gameView.setNextStageCleared(stageName);
@@ -138,7 +138,7 @@ public class GameController {
                         SceneController.isGoingToNext();
                     } else {
                         // Mission Fail
-//                       this.gameView.gemCountReset();
+                       this.gameView.gemCountReset();
                         this.gameView.co2CountReset();
                         SceneController.isGoingToNext();
                     }
