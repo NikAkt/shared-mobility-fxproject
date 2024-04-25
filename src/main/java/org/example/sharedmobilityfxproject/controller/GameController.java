@@ -1196,6 +1196,10 @@ private void bikeTime(Bicycle bike){
 
     // Methods to Save and Load Game
 
+    public void setFlagLoadGame(Boolean flagLoadGameNew) {
+        flagLoadGame = flagLoadGameNew;
+    }
+
     /**
      * This method is used to save the current state of the game.
      * It creates a new SaveGame object with the current positions of the player, the bus and more,
