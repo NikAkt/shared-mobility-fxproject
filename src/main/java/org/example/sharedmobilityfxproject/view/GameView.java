@@ -100,6 +100,7 @@ public class GameView {
     public int gemX = 0;
     public int gemY = 0;
     public String toGem;
+    public Object timeSecons;
     // Carbon footprint
     int carbonFootprint = 0;
 
@@ -137,7 +138,7 @@ public class GameView {
     public boolean gameOverFlag = false;
     public static final double BUTTON_WIDTH = 200;
     public Button gameEndbtn;
-    IntegerProperty timeSeconds;
+    public IntegerProperty timeSeconds;
     // **** Font Setting ****
     Font titleFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 70);
     Font creditFont = Font.loadFont("file:src/main/resources/font/blueShadow.ttf", 50);

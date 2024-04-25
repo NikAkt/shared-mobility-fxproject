@@ -78,6 +78,9 @@ public class SceneController {
      */
     public void initGameScene(String stageName) {
         System.out.println("initGameScene in SceneController");
+        if (gameView.timeSeconds != null) {
+            gameView.timeSeconds = null;
+        }
         gameView.setupGameScene(stageName);
 
         gameView.getPrimaryStage().setScene(gameView.getScene());
