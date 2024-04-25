@@ -235,9 +235,8 @@ public class GameView {
         noticeLabel.setAlignment(Pos.TOP_CENTER);
 
         Label startMessageLabel = new Label(
-                "Eco and Friendly, who cherish the environment, are roaming the city." +
-                        " collecting Gems needed for their journey. " +
-                        "\nTry to gather the Gems in the most eco-friendly way possible."
+                "Welcome to a brand new city with fresh opportunities." +
+                        " Collect as many gems as you can in the most eco-friendly way possible."
         );
         startMessageLabel.setWrapText(true);
         startMessageLabel.setAlignment(Pos.CENTER);
@@ -928,7 +927,7 @@ public class GameView {
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
                         "          My Dearest team mates\n          OilWrestlingLovers :)" +
-                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis\"    and \n          Gyuwon Jung"
+                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis    and \n          Gyuwon Jung"
 
         );
         startMessageLabel.setWrapText(true);
