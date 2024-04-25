@@ -1102,7 +1102,7 @@ public class GameController {
         ((ImageView) playerUno.playerVisual).setFitWidth(30);
         ((ImageView) playerUno.playerVisual).setPreserveRatio(true);
         onBicycle = true;
-        bike.bikeTime = 300;
+        bike.bikeTime = 75;
 
         System.out.println(onBicycle);
 
