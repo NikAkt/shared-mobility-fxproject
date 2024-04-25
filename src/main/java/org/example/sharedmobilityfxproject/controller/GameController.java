@@ -139,14 +139,15 @@ System.out.println("GameEndListener in GameController");
             }
         });
     }
-    private void clearGrid(Grid grid) {
+    private void clearGridAndObstacles(Grid grid) {
         if (grid != null) {
             grid.getChildren().clear();  // Clears all cell nodes from the grid
         }
+        obstacles.clear();  // Clears all entries in the obstacles list
     }
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
-        clearGrid(gameView.grid);
+        clearGridAndObstacles(gameView.grid);
         this.stageName = stageName;
         this.isGameStarted = true;
         // Before showing the primary stage, set the close request handler to save the game state
