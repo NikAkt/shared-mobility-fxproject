@@ -238,17 +238,16 @@ public class GameView {
             noticeLabel.setFont(titleFont);
             noticeLabel.setAlignment(Pos.TOP_CENTER);
 
-            Label startMessageLabel = new Label(
-                    "Eco and Friendly, who cherish the environment, are roaming the city." +
-                            " collecting Gems needed for their journey. " +
-                            "\nTry to gather the Gems in the most eco-friendly way possible."
-            );
-            startMessageLabel.setWrapText(true);
-            startMessageLabel.setAlignment(Pos.CENTER);
-            startMessageLabel.setFont(contentFont);
-            // Close Button
-            Button closeButton = new Button("Let's Rock!");
-            if (contentFont != null) {
+        Label startMessageLabel = new Label(
+                "Welcome to a brand new city with fresh opportunities." +
+                        " Collect as many gems as you can in the most eco-friendly way possible."
+        );
+        startMessageLabel.setWrapText(true);
+        startMessageLabel.setAlignment(Pos.CENTER);
+        startMessageLabel.setFont(contentFont);
+        // Close Button
+        Button closeButton = new Button("Let's Rock!");
+        if (contentFont != null) {
 
                 closeButton.setFont(this.btnFont);
             } else {
@@ -940,7 +939,7 @@ public class GameView {
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
                         "          My Dearest team mates\n          OilWrestlingLovers :)" +
-                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis\"    and \n          Gyuwon Jung"
+                        " \n          Nick Aktoudianakis" + "\n          Mustafa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis" + "\n          Gyuwon Jung"
 
         );
         startMessageLabel.setWrapText(true);

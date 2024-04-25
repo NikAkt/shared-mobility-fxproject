@@ -139,10 +139,15 @@ System.out.println("GameEndListener in GameController");
             }
         });
     }
-
+    private void clearGridAndObstacles(Grid grid) {
+        if (grid != null) {
+            grid.getChildren().clear();  // Clears all cell nodes from the grid
+        }
+        obstacles.clear();  // Clears all entries in the obstacles list
+    }
     public void startPlayingGame(String stageName) {
         this.sceneController.initGameScene(stageName);
-
+        clearGridAndObstacles(gameView.grid);
         this.stageName = stageName;
         this.isGameStarted = true;
         // Before showing the primary stage, set the close request handler to save the game state
@@ -162,15 +167,6 @@ System.out.println("GameEndListener in GameController");
             }
         }
 
-        // Create label for carbon footprint
-//            carbonFootprintLabel = new Label("Carbon Footprint: " + String.format("%.1f", carbonFootprint));
-//            carbonFootprintLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: red;");
-//            carbonFootprintLabel.setAlignment(Pos.TOP_LEFT);
-//            carbonFootprintLabel.setPadding(new Insets(10));
-
-        // Create a VBox to hold the gem count label
-//            VBox vbox = new VBox(gemCountLabel, carbonFootprintLabel);
-//            vbox.setAlignment(Pos.TOP_LEFT);
 
 //        // Sample map array
 //        int[][] mapArray = {
@@ -203,6 +199,7 @@ System.out.println("GameEndListener in GameController");
         // Pass the sizes to Map so it can generate the correct map array
         Map map = new Map(gameView.getRows(), gameView.getColumns());
         // Fill the grid with the map array, we pass the stage name to the method so it can load the correct map from the resources
+
         fillGridWithMapArray(map, stageName);
 
         obstacleCoordinates = new ArrayList<>();
@@ -473,6 +470,7 @@ System.out.println("GameEndListener in GameController");
      * The method handles each cell by its specified action, enhancing the game's visual and functional complexity.
      */
     public void fillGridWithMapArray(Map map, String stageName) {
+
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.getColumns(), gameView.getRows());
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
         int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
