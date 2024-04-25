@@ -78,7 +78,7 @@ public class GameController {
     private double cellHeight;
     private GameOverListener gameOverListener;
 
-    private int numberOfInitialGems = 5; // Replace 5 with the number of gems you want to generate
+    private int numberOfInitialGems = 5;
 
     private void enableMovementAfterDelay(double timespeed) {
         playerTimeout = false;  // Disable further moves immediately when this method is called
@@ -224,7 +224,7 @@ public class GameController {
         }
         System.out.println("Obstacle Coordinates: ");
 
-        generateGems(gameView.grid, numberOfInitialGems); // Replace 5 with the number of gems you want to generate
+        generateGems(gameView.grid, numberOfInitialGems);
 
         // Place the finish cell after the grid is filled and the player's position is initialised
         int finishColumn;
@@ -853,9 +853,7 @@ public class GameController {
 
     private void moveBus(Bus bus, int newX, int newY) {
         // Move the bus to the new position (newX, newY) on the grid
-//        System.out.println("BUS MOVING TO :  "+newX+"  "+newY+". GET OUT THE FUCKING WAY");
-//        int x = bus.getX();
-//        int y = bus.getY();
+
         //Cell cell = grid.getCell(x,y);
         if (this.onBus) {
             double pivX = newX * cellWidth;
@@ -923,24 +921,7 @@ public class GameController {
         int newRow = Math.min(Math.max(playerUno.getCoordY() + dy, 0), gameView.grid.getRows() - 1);
         int newColumn = Math.min(Math.max(playerUno.getCoordX() + dx, 0), gameView.grid.getColumns() - 1);
         Cell newCell = gameView.grid.getCell(newColumn, newRow);
-//
-//        if (gameView.isMetroSceneActive) {
-//            playerUno.getCell().unhighlight();
-//
-//            playerUno.getCell().highlight();
-//        }
-//        if (playerUno.getCell() instanceof metroStop) {
-//
-//            gameView.isMetroSceneActive = !gameView.isMetroSceneActive;
-//            gameView.switchSceneToMetro();// Metro scene is now active
-//            Stage primaryStage = (Stage) gameView.grid.getScene().getWindow();
-//            playerUno.isUnderground = true;
-//            System.out.println(gameView.grid);
-//
-//
-//            playerUno.setCellByCoords(gameView.grid, newColumn, newRow);
-//
-//        }
+
         if (canMoveTo(newColumn, newRow) && (!inTaxi && !onBicycle)) {
             playerUno.getCell().unhighlight();
             playerUno.setX(newColumn);
