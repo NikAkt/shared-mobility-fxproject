@@ -322,19 +322,22 @@ System.out.println("GameEndListener in GameController");
 
 //        // Load the gameState
 //        loadGameState(); TODO: later on we need to enable game load
-
-        double pivotX = this.gameView.scale.getPivotX();
-        double pivotY = this.gameView.scale.getPivotY();
-
-// Calculate the translation needed to recenter the scale
-        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - this.gameView.scale.getX()) - pivotX;
-        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - this.gameView.scale.getY()) - pivotY;
-
-// Apply translation to the grid to recenter
-        this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
-        this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
+        centerScaleOnPlayer();
         System.out.println(busStopCoordinates.toString());
 labelChangr();
+    }
+    private void centerScaleOnPlayer() {
+        // Assume these are defined correctly elsewhere to reflect the current scale
+        double pivotX = gameView.scale.getPivotX();
+        double pivotY = gameView.scale.getPivotY();
+
+        // Recalculate the translation needed to center the scale on the player
+        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - gameView.scale.getX()) - pivotX;
+        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - gameView.scale.getY()) - pivotY;
+
+        // Apply translation to center the grid
+        gameView.grid.setTranslateX(gameView.grid.getTranslateX() - translateX);
+        gameView.grid.setTranslateY(gameView.grid.getTranslateY() - translateY);
     }
     public int manhattanDistance(int x,int y ,int px, int py) {
         return Math.abs(x - px) + Math.abs(y - py);
