@@ -25,7 +25,7 @@ public class Bus extends Cell {
     private ArrayList stopList;
     private Node busVisual;
     public Bus(ArrayList<busStop> stops,int i, int j) {
-        super(i, j); // Assuming default speed is 10 and CO2 is 0 for initialization
+        super(i, j);
         this.x = i;
         this.y = j;
         //this.getStyleClass().add("bus");
@@ -87,20 +87,10 @@ public class Bus extends Cell {
         this.speed = speed;
     }
 
-    // Getter and Setter for carbonFootprintAmount
+
     public double getCarbonFootprintAmount() {
         return carbonFootprintAmount;
     }
-//    public void moveBus(int x,int y) {
-//        // Example movement logic: move the bus to the right and loop around
-//        this.move
-//
-//        // Assuming there's a method in Grid to move items or update the cell's content
-//        // This part depends on how your Grid and Cell classes are implemented
-//        // You need to implement this method based on your design
-//
-//        // If your grid doesn't directly support moving items like this, you may need to manually update cells to reflect the bus's new position
-//    }
 
     public void setCarbonFootprintAmount(double carbonFootprintAmount) {
         this.carbonFootprintAmount = carbonFootprintAmount;
