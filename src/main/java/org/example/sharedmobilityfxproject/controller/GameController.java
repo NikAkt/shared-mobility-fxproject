@@ -270,8 +270,6 @@ System.out.println("GameEndListener in GameController");
         }
 
         taximan = new Taxi (58,28);
-        cycleman= new Bicycle(10,5);
-        cycleman2= new Bicycle(10,10);
 
         gameView.grid.add(taximan, taximan.getX(), taximan.getY());
         gameView.grid.add(cycleman, cycleman.getX(), cycleman.getY());
@@ -471,6 +469,13 @@ labelChangr();
                         busStop busS4 = new busStop(column,row);
                         busStopCoordinates.add(new int[]{busS4.getX(), busS4.getY()});
                         busStops4.add(busS4);
+                        break;
+                    case 6:  // Mark as cycleman
+                        if(cycleman == null) {
+                            cycleman = new Bicycle(column, row);
+                        } else if(cycleman2 == null) {
+                            cycleman2 = new Bicycle(column, row);
+                        }
                         break;
                     default:
                         // Optionally handle default case if needed
