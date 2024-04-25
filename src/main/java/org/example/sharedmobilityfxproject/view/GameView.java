@@ -927,7 +927,7 @@ public class GameView {
         Label startMessageLabel = new Label(
                 "COMP30820 -JAVA Programming\n" +
                         "          My Dearest team mates\n          OilWrestlingLovers :)" +
-                        " \n          Nick aktoudianakis" + "\n          MustaFa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis    and \n          Gyuwon Jung"
+                        " \n          Nick Aktoudianakis" + "\n          Mustafa Yilmaz" + "\n          Eamonn Walsh" + "\n        Matas Martinaitis" + "\n          Gyuwon Jung"
 
         );
         startMessageLabel.setWrapText(true);
