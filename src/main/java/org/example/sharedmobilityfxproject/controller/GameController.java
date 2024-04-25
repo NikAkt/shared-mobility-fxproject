@@ -511,9 +511,10 @@ System.out.println("GameEndListener in GameController");
                         String imagePath = "src/main/resources/images/igor.png";
                         File file = new File(imagePath);
                         String absolutePath = file.toURI().toString();
+
                         gameView.finishCell.setStyle("-fx-background-image: url('" + absolutePath + "');" +
                                 "-fx-background-size: contain; -fx-background-position: center center;"+"-fx-background-repeat: no-repeat;");
-                        break;
+                        gameView.grid.add(gameView.finishCell,column,row);                       break;
                     default:
                         // Optionally handle default case if needed
                         break;
