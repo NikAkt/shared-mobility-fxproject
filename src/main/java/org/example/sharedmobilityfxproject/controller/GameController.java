@@ -122,14 +122,22 @@ System.out.println("GameEndListener in GameController");
         this.gameView.gameEndFlagProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 this.gameView.getEndStage().setOnAction(event -> {
-                    this.gameView.mediaPlayer.stop();
+                    if(this.gameView.mediaPlayer != null) {
+                        this.gameView.mediaPlayer.stop();
+                    }
                     this.gameView.gameOverDialog.close();
                     if (this.gameView.isTimeOut && this.gameView.isGemCollectedEnough && this.gameView.isCO2Safe) {
-//                       this.gameView.gemCountReset();
-                        this.gameView.setNextStageCleared(stageName);
+                       this.gameView.gemCountReset();
+                        this.gameView.co2CountReset();
+                            if("Manhattan".equals(stageName) || ("Dublin".equals(stageName))){
+                                this.gameView.setNextStageCleared(stageName);
+                            }
+
                         SceneController.isGoingToNext();
                     }else{
                         // Mission Fail
+                       this.gameView.gemCountReset();
+                        this.gameView.co2CountReset();
                         SceneController.isGoingToNext();
                     }
 

@@ -390,15 +390,16 @@ public class GameView {
         // Countdown logic
         timeSeconds = new SimpleIntegerProperty(30
         ); // TODO: Timing
-        new Timeline(
-                new KeyFrame(
-                        Duration.seconds(timeSeconds.get()),
-                        event -> gameOver(primaryStage, stageName),
-                        new KeyValue(timeSeconds, 0)
-                )
+        if(!flagLoadGame) {
+            new Timeline(
+                    new KeyFrame(
+                            Duration.seconds(timeSeconds.get()),
+                            event -> gameOver(primaryStage, stageName),
+                            new KeyValue(timeSeconds, 0)
+                    )
 
-        ).play();
-
+            ).play();
+        }
         timeSeconds.addListener((obs, oldVal, newVal) -> {
             timeLabel.setText("Time left: " + newVal + "s");
             timeLabel.setFont(javafx.scene.text.Font.font(40));
@@ -705,7 +706,7 @@ public class GameView {
      */
 
     private void gameOver(Stage primaryStage, String stageName) {
-        if(!flagLoadGame){
+
             System.out.println("Game Over endFLag" + gameEndFlag);
             isTimeOut = timeSeconds.get() <= 0;
             isGemCollectedEnough = gemCount >= 5;
@@ -770,16 +771,13 @@ public class GameView {
             gameEndFlag.set(true);
             gameEndbtn.requestFocus();
             System.out.println("Game Over endFlag: " + gameEndFlag.get());
+            gameEndbtn.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    gameEndbtn.fire();
+                }
+            });
 
-        }else{
-            flagLoadGame = false;
-        }
 
-        gameEndbtn.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                gameEndbtn.fire();
-            }
-        });
     }
 
     public BooleanProperty gameEndFlagProperty() {
@@ -1282,4 +1280,8 @@ public class GameView {
 
     }
 
+    public void co2CountReset() {
+        co2Gauge = 0;
+        updateCo2Label();
+    }
 }

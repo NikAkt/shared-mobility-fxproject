@@ -120,7 +120,7 @@ public class MainController implements GameOverListener {
                 if ("Manhattan".equals(stage)) {
                     gameController.startPlayingGame(stage);
                     System.out.println("stageName in MainController: " + stage);
-                } else if (gameView.isStageCleared(stage)) {
+                } else if (gameView.isStageCleared(stage) ) {
                     gameController.startPlayingGame(stage);
                     System.out.println("stageName in MainController: " + stage);
                 } else {
