@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 public class GameController {
+    public Boolean flagLoadGame = false;
     private boolean playerTimeout = true;
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -358,8 +359,11 @@ System.out.println("GameEndListener in GameController");
 
         gameView.getScene().setOnKeyPressed(e -> setupKeyboardActions(e.getCode()));
 
-//        // Load the gameState
-//        loadGameState(); TODO: later on we need to enable game load
+        // Load the gameState
+        if(flagLoadGame) {
+            loadGameState();
+        }
+        //TODO: later on we need to enable game load
 
         double pivotX = this.gameView.scale.getPivotX();
         double pivotY = this.gameView.scale.getPivotY();
@@ -372,7 +376,7 @@ System.out.println("GameEndListener in GameController");
         this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
         this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
         System.out.println(busStopCoordinates.toString());
-labelChangr();
+        labelChangr();
     }
     public int manhattanDistance(int x,int y ,int px, int py) {
         return Math.abs(x - px) + Math.abs(y - py);
@@ -1189,6 +1193,11 @@ private void bikeTime(Bicycle bike){
         }}
 
     // Methods to Save and Load Game
+
+
+    public void setFlagLoadGame(Boolean flagLoadGameNew) {
+        flagLoadGame = flagLoadGameNew;
+    }
 
     /**
      * This method is used to save the current state of the game.
