@@ -96,7 +96,7 @@ public class GameView {
     public List<Obstacle> obstacles;
     public Player playerUno;
     // Gem count
-    static int gemCount = 10;
+    static int gemCount = 0;
     public int gemX = 0;
     public int gemY = 0;
     public String toGem;
@@ -388,7 +388,7 @@ public class GameView {
         timeLabel.setAlignment(Pos.TOP_CENTER);
 
         // Countdown logic
-        timeSeconds = new SimpleIntegerProperty(30
+        timeSeconds = new SimpleIntegerProperty(3
         ); // TODO: Timing
         if (!flagLoadGame) {
             new Timeline(
@@ -709,6 +709,7 @@ public class GameView {
      */
 
     public void gameOver(Stage primaryStage, String stageName) {
+        if(!flagLoadGame){
         System.out.println("Game over");
         System.out.println("Game Over endFLag" + gameEndFlag);
         isTimeOut = timeSeconds.get() <= 0;
@@ -781,6 +782,14 @@ public class GameView {
         });
 
 
+    }else{
+            gameEndbtn.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    gameEndbtn.fire();
+                }
+            });
+
+        }
     }
 
     public BooleanProperty gameEndFlagProperty() {
