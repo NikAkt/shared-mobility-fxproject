@@ -164,10 +164,10 @@ import java.io.File;
         /**
          * Initializes the cell in which the player is located based on the grid.
          *
-         * @param grid The grid on which the player is located.
          */
-        public void initCell(Grid grid) {
-            this.playerCell = grid.getCell(this.getCoordY(), this.getCoordX());
+        public void initCellByCell(Cell cell){
+            this.playerCell = cell;
+            this.playerCell.getChildren().add(playerVisual);
         }
 
         /**
