@@ -158,6 +158,13 @@ public class GameController {
         obstacles.clear();  // Clears all entries in the obstacles list
         busStopCoordinates.clear();  // Clears all bus stop coordinates
         busStops.clear();  // Clears all bus stops
+        if (busStops2 != null){
+            busStops2.clear();  // Clears all bus stops
+        }if (busStops3 != null){
+            busStops3.clear();  // Clears all bus stops
+        }if (busStops4 != null){
+            busStops4.clear();  // Clears all bus stops
+        }
     }
 
     public void startPlayingGame(String stageName) {
