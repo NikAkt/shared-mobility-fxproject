@@ -362,8 +362,7 @@ System.out.println("GameEndListener in GameController");
         // Load the gameState
         if(flagLoadGame) {
             loadGameState();
-        }
-        //TODO: later on we need to enable game load
+        } // TODO: load game is here
 
         double pivotX = this.gameView.scale.getPivotX();
         double pivotY = this.gameView.scale.getPivotY();
@@ -442,7 +441,7 @@ System.out.println("GameEndListener in GameController");
         System.out.printf("Filling grid with map array %s - %s...%n", gameView.grid.getColumns(), gameView.grid.getRows());
         int[][] mapArray = new int[gameView.getRows()][gameView.getColumns()];  // Default map size initialization
         try {
-            mapArray = map.getMapArray(stageName);  // Attempt to retrieve the map array TODO: needs to be converted to stageName
+            mapArray = map.getMapArray(stageName);  // Attempt to retrieve the map array TODO: stageName passed here
         } catch (Exception e) {
             e.printStackTrace();  // Print any errors encountered
         }
