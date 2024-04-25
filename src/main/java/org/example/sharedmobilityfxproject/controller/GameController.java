@@ -87,7 +87,7 @@ public class GameController {
 
     //Player Movement Check for Stamina
     private int moveCounter = 0;
-
+    private  boolean scaled = false;
     @FunctionalInterface
     public interface GemCollector {
         void collectGem();
@@ -329,15 +329,15 @@ labelChangr();
     }
     private void centerScaleOnPlayer() {
 
-            gameView.scale = new Scale(3, 3);  // Set the initial scale
 
-            gameView.scale.setX(3);
-            gameView.scale.setY(3);
 
         boolean scaleExists = gameView.grid.getTransforms().stream().anyMatch(transform -> transform instanceof Scale);
         if (!scaleExists) {
             gameView.grid.getTransforms().add(gameView.scale);  // Only add scale if not already present
         }
+        System.out.println("hello");
+        if(!scaled){
+
         // Assume these are defined correctly elsewhere to reflect the current scale
         double pivotX = gameView.scale.getPivotX();
         double pivotY = gameView.scale.getPivotY();
@@ -349,6 +349,9 @@ labelChangr();
         // Apply translation to center the grid
         gameView.grid.setTranslateX(gameView.grid.getTranslateX() - translateX);
         gameView.grid.setTranslateY(gameView.grid.getTranslateY() - translateY);
+            System.out.println("22");
+       scaled = true;
+        }
     }
     public int manhattanDistance(int x,int y ,int px, int py) {
         return Math.abs(x - px) + Math.abs(y - py);
