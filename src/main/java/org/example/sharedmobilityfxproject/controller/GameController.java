@@ -377,16 +377,16 @@ System.out.println("GameEndListener in GameController");
             loadGameState();
         } // TODO: load game is here
 
-        double pivotX = this.gameView.scale.getPivotX();
-        double pivotY = this.gameView.scale.getPivotY();
-
-// Calculate the translation needed to recenter the scale
-        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - this.gameView.scale.getX()) - pivotX;
-        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - this.gameView.scale.getY()) - pivotY;
-
-// Apply translation to the grid to recenter
-        this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
-        this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
+//        double pivotX = this.gameView.scale.getPivotX();
+//        double pivotY = this.gameView.scale.getPivotY();
+//
+//// Calculate the translation needed to recenter the scale
+//        double translateX = playerUno.getCoordX() * cellWidth * (1.7 - this.gameView.scale.getX()) - pivotX;
+//        double translateY = playerUno.getCoordY() * cellHeight * (2.3 - this.gameView.scale.getY()) - pivotY;
+//
+//// Apply translation to the grid to recenter
+//        this.gameView.grid.setTranslateX(this.gameView.grid.getTranslateX() - translateX);
+//        this.gameView.grid.setTranslateY(this.gameView.grid.getTranslateY() - translateY);
         centerScaleOnPlayer();
         System.out.println(busStopCoordinates.toString());
         labelChangr();
