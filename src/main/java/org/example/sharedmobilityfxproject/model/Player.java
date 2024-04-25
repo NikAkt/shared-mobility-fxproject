@@ -39,31 +39,74 @@ import java.io.File;
             ((ImageView) this.playerVisual).getStyleClass().add("player"); // TODO: not working delete it if not needed
         }
 
+        /**
+         * Returns the x-coordinate of the player.
+         *
+         * @return The x-coordinate of the player.
+         */
         public int getCoordX() {
             return this.x;
         }
+
+        /**
+         * Returns the y-coordinate of the player.
+         *
+         * @return The y-coordinate of the player.
+         */
         public int getCoordY() {
             return this.y;
         }
+
+        /**
+         * Returns the stamina of the player.
+         *
+         * @return The stamina of the player.
+         */
         public double getStamina() {
             return stamina;
         }
 
+        /**
+         * Sets the speed of the player.
+         *
+         * @param speed The speed to set for the player.
+         */
         public void setSpeed(int speed) {
             this.speed = speed;
         }
 
+        /**
+         * Returns the speed of the player.
+         *
+         * @return The speed of the player.
+         */
         public int getSpeed() {
             return speed;
         }
 
+        /**
+         * Returns the CO2 produced by the player.
+         *
+         * @return The CO2 produced by the player.
+         */
         public double getCo2() {
             return co2;
         }
 
+        /**
+         * Sets the CO2 produced by the player.
+         *
+         * @param co2 The CO2 to set for the player.
+         */
         public void setCo2(double co2) {
             this.co2 = co2;
         }
+
+        /**
+         * Sets the stamina of the player.
+         *
+         * @param stamina The stamina to set for the player.
+         */
         public void setStamina(double stamina) {
             this.stamina = stamina;
         }
@@ -118,17 +161,41 @@ import java.io.File;
             System.out.println("Stamina increased to: " + stamina);
         }
 
+        /**
+         * Initializes the cell in which the player is located based on the grid.
+         *
+         * @param grid The grid on which the player is located.
+         */
         public void initCell(Grid grid) {
             this.playerCell = grid.getCell(this.getCoordY(), this.getCoordX());
         }
 
+        /**
+         * Sets the x-coordinate of the player.
+         *
+         * @param i The x-coordinate to set for the player.
+         */
         public void setX(int i) {
             this.x = i;
         }
 
+        /**
+         * Sets the y-coordinate of the player.
+         *
+         * @param j The y-coordinate to set for the player.
+         */
         public void setY(int j) {
             this.y = j;
         }
+
+        /**
+         * Sets the cell for the player and moves the player to the new cell with an animation.
+         * If the player is already in a cell, it moves the player from the current cell to the new cell.
+         * If the player is not in a cell, it sets the new cell as the player's cell and adds the player to the new cell.
+         *
+         * @param newCell The new cell to set for the player.
+         * @param grid The grid on which the player and cell are located.
+         */
         public void setCell(Cell newCell, Grid grid) {
             // Retrieve grid dimensions
             double cellWidth = grid.getWidth() / grid.getColumns();
@@ -185,8 +252,7 @@ import java.io.File;
             }
         }
 
-
-
+        // Example ! This method should be customized to fit your design
         private Node getPlayerVisual(Grid grid) {
             // This method should return the Node that visually represents the player.
             // It might be a subnode of the cell or a completely separate Node depending on your design.
@@ -199,7 +265,12 @@ import java.io.File;
 
         }
 
-
+        /**
+         * Updates the player's position to a new cell.
+         * This method sets the player's current cell to the new cell, updates the player's x and y coordinates to match the new cell's column and row, and highlights the new cell.
+         *
+         * @param newCell The new cell to which the player's position should be updated.
+         */
         public void updatePosition(Cell newCell) {
             this.playerCell = newCell;
             this.x = newCell.getColumn();
@@ -207,7 +278,14 @@ import java.io.File;
             this.playerCell.highlight(); // Highlight the new cell
         }
 
-
+        /**
+         * Sets the player's cell based on given x and y coordinates.
+         * This method sets the player's current cell's column and row to the given x and y coordinates, and updates the player's x and y coordinates to match.
+         *
+         * @param grid The grid on which the player and cell are located.
+         * @param x The x-coordinate (column) to set for the player's cell.
+         * @param y The y-coordinate (row) to set for the player's cell.
+         */
         public void setCellByCoords(Grid grid, int x, int y) {
             this.playerCell.setColumn(x);
             this.playerCell.setRow(y);
@@ -215,6 +293,11 @@ import java.io.File;
             this.y = y;
         }
 
+        /**
+         * Returns the cell in which the player is currently located.
+         *
+         * @return The cell in which the player is currently located.
+         */
         public Cell getCell() {
             return this.playerCell;
         }
