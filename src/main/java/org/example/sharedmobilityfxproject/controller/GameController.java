@@ -1165,6 +1165,7 @@ public class GameController {
                 playerMovementEnabled = true;
                 onBus = false;
                 System.out.println("You got off the bus.");
+                playerUno.playerVisual.setVisible(true);
             } else {
                 System.out.println("You can only get off the bus at a bus stop.");
             }
