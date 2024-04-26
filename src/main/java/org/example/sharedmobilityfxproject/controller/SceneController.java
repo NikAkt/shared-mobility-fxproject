@@ -19,7 +19,7 @@ public class SceneController {
             System.out.println("isGoingToNext in SceneController");
             gameView.showStageSelectionScreen();
             gameView.getPrimaryStage().setScene(gameView.getScene());
-            gameView.getPrimaryStage().setTitle("WayBackHome :)");
+            gameView.getPrimaryStage().setTitle("Pokémon Go :D");
             gameView.getPrimaryStage().show();
         } else {
             System.out.println("GameView is not initialized");
