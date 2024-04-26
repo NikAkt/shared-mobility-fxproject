@@ -39,7 +39,7 @@ public class SceneController {
         System.out.println("initMainMenu");
         gameView.setupMainMenu();
         gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+        gameView.getPrimaryStage().setTitle("Pokémon Go :D");
         gameView.getPrimaryStage().show();
 
     }
@@ -61,7 +61,7 @@ public class SceneController {
         System.out.println("SwitchStageChoose in SceneController");
         gameView.showStageSelectionScreen();
         gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+        gameView.getPrimaryStage().setTitle("Pokémon Go :D");
         gameView.getPrimaryStage().show();
     }
 
@@ -84,7 +84,7 @@ public class SceneController {
         gameView.setupGameScene(stageName);
 
         gameView.getPrimaryStage().setScene(gameView.getScene());
-        gameView.getPrimaryStage().setTitle("WayBackHome :)");
+        gameView.getPrimaryStage().setTitle("Pokémon Go :D");
         gameView.getPrimaryStage().show();
     }
 
